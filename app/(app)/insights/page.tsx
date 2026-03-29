@@ -63,7 +63,7 @@ export default function InsightsPage() {
       sb.from('monthly_goals').select('month,done,text').eq('user_id', user.id),
     ])
     // Group by month
-    const months = [...new Set((l??[]).map((r:{date:string}) => r.date.slice(0,7)))].sort()
+    const months = Array.from(new Set((l??[]).map((r:{date:string}) => r.date.slice(0,7)))).sort()
     const curMk = `${year}-${String(month+1).padStart(2,'0')}`
     if (!months.includes(curMk)) months.push(curMk); months.sort()
     const rows = months.map(mk => {
@@ -108,7 +108,7 @@ export default function InsightsPage() {
   function getV(hid: string, date: string) { return logs.find(l => l.habit_id===hid && l.date===date)?.status ?? '' }
 
   // Best streak across all time
-  const allDates = [...new Set(allLogs.map(l=>l.date))].sort()
+  const allDates = Array.from(new Set(allLogs.map(l=>l.date))).sort()
   let bestStreak = 0, curStr = 0
   allDates.forEach(d => {
     const anyDone = allLogs.some(l => l.date===d && l.status==='done')
