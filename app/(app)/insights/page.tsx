@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase'
 type Habit  = { id: string; name: string }
 type Log    = { habit_id: string; status: string; date: string }
 type Review = { win: string; improve: string; gratitude: string; next_week: string }
+type WeekScore = { label: string; score: number | null; weekStart: string }
 
 const sb = createClient()
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
@@ -43,6 +44,7 @@ export default function InsightsPage() {
   const [review, setReview] = useState<Review>({ win:'', improve:'', gratitude:'', next_week:'' })
   const [saving, setSaving] = useState(false)
   const [perfData, setPerfData] = useState<{month:string;done:number;total:number;tasks:string;goals:string}[]>([])
+  const [scoreHistory, setScoreHistory] = useState<WeekScore[]>([])
 
   const loadAnalytics = useCallback(async () => {
     const { data: { user } } = await sb.auth.getUser(); if (!user) return
@@ -80,6 +82,34 @@ export default function InsightsPage() {
       }
     })
     setPerfData(rows)
+
+    // Weekly score history — last 24 weeks
+    const { data: nnList } = await sb.from('non_negotiables').select('id').eq('user_id', user.id)
+    const { data: habList } = await sb.from('habits').select('id').eq('user_id', user.id).is('archived_at', null)
+    const weekScores: WeekScore[] = []
+    for (let w = 23; w >= 0; w--) {
+      const mon = getMon(new Date(Date.now() - w * 7 * 86400000))
+      const wStart = fmt(mon)
+      const wDays: string[] = []
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(mon); d.setDate(mon.getDate()+i)
+        const ds = fmt(d)
+        if (ds <= fmt(new Date())) wDays.push(ds)
+      }
+      if (wDays.length === 0) { weekScores.push({ label: mon.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][mon.getMonth()], score: null, weekStart: wStart }); continue }
+      const [{ data: hLogs }, { data: nLogs }] = await Promise.all([
+        sb.from('habit_logs').select('habit_id,status,date').eq('user_id', user.id).in('date', wDays),
+        sb.from('nn_logs').select('nn_id,done,date').eq('user_id', user.id).in('date', wDays),
+      ])
+      let earned = 0, maxPts = 0
+      wDays.forEach(d => {
+        ;(nnList??[]).forEach((n:{id:string}) => { maxPts+=2; const log=(nLogs??[]).find((l:{nn_id:string;date:string;done:boolean}) => l.nn_id===n.id&&l.date===d); if(log?.done) earned+=2 })
+        ;(habList??[]).forEach((h:{id:string}) => { maxPts+=1; const log=(hLogs??[]).find((l:{habit_id:string;date:string;status:string}) => l.habit_id===h.id&&l.date===d&&l.status==='done'); if(log) earned+=1 })
+      })
+      const score = maxPts > 0 ? Math.round(earned/maxPts*100) : null
+      weekScores.push({ label: mon.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][mon.getMonth()], score, weekStart: wStart })
+    }
+    setScoreHistory(weekScores)
   }, [year, month])
 
   const loadReview = useCallback(async () => {
@@ -242,6 +272,42 @@ export default function InsightsPage() {
       {tab === 'performance' && (
         <div className="flex-1 overflow-y-auto p-6">
           {/* Month tiles */}
+          {/* WEEKLY SCORE HISTORY */}
+          {scoreHistory.some(w => w.score !== null) && (
+            <div className="mb-6">
+              <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">Weekly Score — 24 Weeks</div>
+              <div className="bg-white border border-[#efefef] rounded-lg p-4">
+                <div className="flex items-end gap-1 h-32">
+                  {scoreHistory.map((w, i) => {
+                    const s = w.score
+                    const color = s === null ? '#efefef' : s >= 90 ? '#FF5C00' : s >= 75 ? '#22c55e' : s >= 50 ? '#f59e0b' : '#ef4444'
+                    const h = s !== null ? Math.max(4, Math.round(s / 100 * 100)) : 4
+                    const isLast = i === scoreHistory.length - 1
+                    return (
+                      <div key={w.weekStart} className="flex-1 flex flex-col items-center gap-1 group relative">
+                        <div className="absolute bottom-full mb-1 hidden group-hover:block bg-[#0A0A0A] text-white text-[9px] px-1.5 py-1 rounded whitespace-nowrap z-10">
+                          {w.label}: {s !== null ? `${s}%` : '—'}
+                        </div>
+                        <div className="w-full rounded-sm transition-all" style={{height:`${h}%`,background:color,opacity:isLast?1:0.75}} />
+                        {(i === 0 || i === 11 || i === 23) && (
+                          <div className="text-[7px] text-[#bcbcbc] whitespace-nowrap">{w.label}</div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+                <div className="flex gap-3 mt-3 flex-wrap">
+                  {[['#FF5C00','90+ Locked In'],['#22c55e','75+ Solid'],['#f59e0b','50+ Struggling'],['#ef4444','<50 Failing']].map(([c,l])=>(
+                    <div key={l} className="flex items-center gap-1">
+                      <div className="w-2.5 h-2.5 rounded-sm" style={{background:c}} />
+                      <span className="text-[9px] text-[#888]">{l}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">All Months</div>
           <div className="flex flex-wrap gap-2 mb-6">
             {perfData.map(row => {

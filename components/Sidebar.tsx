@@ -5,18 +5,19 @@ import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
 const NAV = [
-  { href: '/war-room', icon: '⚔', label: 'War Room' },
+  { href: '/war-room',          icon: '⚔',  label: 'War Room' },
   { divider: true },
-  { href: '/setup',    icon: '⚙', label: 'Setup' },
-  { href: '/calendar', icon: '◫', label: 'Calendar' },
-  { href: '/tracker',  icon: '▦', label: 'Tracker' },
+  { href: '/setup',             icon: '⚙',  label: 'Setup' },
+  { href: '/calendar',          icon: '◫',  label: 'Calendar' },
+  { href: '/tracker',           icon: '▦',  label: 'Tracker' },
   { divider: true },
-  { href: '/weekly',   icon: '◷', label: 'Weekly' },
-  { href: '/goals',    icon: '◎', label: '6M Goals' },
-  { href: '/insights', icon: '◈', label: 'Insights' },
+  { href: '/weekly',            icon: '◷',  label: 'Weekly' },
+  { href: '/goals',             icon: '◎',  label: '6M Goals' },
+  { href: '/content-calendar',  icon: '□',  label: 'Content' },
+  { href: '/insights',          icon: '◈',  label: 'Insights' },
   { divider: true },
-  { href: '/letters',  icon: '✍', label: 'Letters' },
-  { href: '/database', icon: '◳', label: 'Database' },
+  { href: '/letters',           icon: '✍',  label: 'Letters' },
+  { href: '/database',          icon: '◳',  label: 'Database' },
 ]
 
 interface Props { streak?: string; monthPct?: string; tasks?: string }
