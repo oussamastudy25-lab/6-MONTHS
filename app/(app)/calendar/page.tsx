@@ -30,7 +30,7 @@ const MONTHS = ['January','February','March','April','May','June','July','August
 const MONTHS_S = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 const HOUR_START = 4
 const HOUR_END   = 24
-const PX_PER_HOUR = 64
+const PX_PER_HOUR = 72
 const SNAP_MINS  = 15
 
 /* ── Helpers ────────────────────────────────────────────────────── */
@@ -438,19 +438,19 @@ export default function CalendarPage() {
         {/* ── MAIN GRID ── */}
         <div className="flex-1 overflow-auto relative">
           {/* Day headers */}
-          <div className="sticky top-0 z-20 bg-white border-b border-[#e0e0e0] flex" style={{paddingLeft:48}}>
+          <div className="sticky top-0 z-20 bg-white border-b-2 border-[#e0e0e0] flex shadow-sm" style={{paddingLeft:48}}>
             {viewDates.map(date=>{
               const d=new Date(date)
               const isToday=date===today
               const pct=habitPct(date)
               const dow=d.getDay()===0?6:d.getDay()-1
               return (
-                <div key={date} className="flex-1 flex flex-col items-center py-2 border-r border-[#f1f3f4] last:border-0 cursor-pointer hover:bg-[#f8f9fa]"
+                <div key={date} className="flex-1 flex flex-col items-center py-3 border-r border-[#f1f3f4] last:border-0 cursor-pointer hover:bg-[#f8f9fa] transition-colors"
                   onClick={()=>{setDayDate(date);setViewMode('day')}}>
-                  <div className={`text-[11px] font-medium mb-0.5 ${isToday?'text-[#1a73e8]':'text-[#5f6368]'}`}>
+                  <div className={`text-[11px] font-bold tracking-wider uppercase mb-0.5 ${isToday?'text-[#1a73e8]':'text-[#70757a]'}`}>
                     {viewMode==='week'?DOW[dow]:DOW_FULL[dow]}
                   </div>
-                  <div className={`text-[22px] font-normal leading-none w-9 h-9 flex items-center justify-center rounded-full ${isToday?'bg-[#1a73e8] text-white':'text-[#3c4043]'}`}>
+                  <div className={`text-[22px] font-semibold leading-none w-10 h-10 flex items-center justify-center rounded-full ${isToday?'bg-[#1a73e8] text-white shadow-md':'text-[#1a1a1a] hover:bg-[#f1f3f4]'}`}>
                     {d.getDate()}
                   </div>
                   {pct!==null&&(
@@ -489,12 +489,11 @@ export default function CalendarPage() {
               const dayBlocks=getBlocksForDate(date)
               const laid=layoutBlocks(dayBlocks)
               const isToday=date===today
-              const dayZones=zones.map(z=>({...z,isActive:isToday&&nowMins>=z.start_hour*60&&nowMins<z.end_hour*60}))
 
               return (
                 <div key={date}
                   data-col={date}
-                  className={`flex-1 relative border-r border-[#f1f3f4] last:border-0 ${isToday?'bg-[#fffbf7]':'bg-white'}`}
+                  className="flex-1 relative border-r border-[#f1f3f4] last:border-0 bg-white"
                   style={{height:totalH,cursor:'crosshair'}}
                   onPointerDown={e=>onColPointerDown(e,date)}>
 
@@ -509,13 +508,7 @@ export default function CalendarPage() {
                       style={{top:(h-HOUR_START)*PX_PER_HOUR+PX_PER_HOUR/2}} />
                   ))}
 
-                  {/* Phone-free zone shading */}
-                  {dayZones.map(z=>(
-                    <div key={z.id} className="absolute left-0 right-0 pointer-events-none"
-                      style={{top:minsToY(z.start_hour*60),height:(z.end_hour-z.start_hour)*PX_PER_HOUR,background:'rgba(239,68,68,.04)',borderLeft:'2px solid rgba(239,68,68,.15)'}}>
-                      <span className="text-[8px] text-[#ef4444]/40 px-0.5 absolute top-0.5">📵</span>
-                    </div>
-                  ))}
+
 
                   {/* Now line */}
                   {isToday&&nowMins>=HOUR_START*60&&nowMins<=HOUR_END*60&&(
@@ -539,7 +532,7 @@ export default function CalendarPage() {
                   {/* Blocks */}
                   {laid.map(({block:b,colIdx,totalCols})=>{
                     const top=minsToY(b.start_minutes)
-                    const height=Math.max(20,minsToY(b.end_minutes)-minsToY(b.start_minutes)-2)
+                    const height=Math.max(28,minsToY(b.end_minutes)-minsToY(b.start_minutes)-2)
                     const w=`calc(${100/totalCols}% - ${totalCols>1?4:2}px)`
                     const left=`calc(${colIdx*100/totalCols}% + 1px)`
                     const cat=CAT[b.category]??CAT.other
@@ -553,13 +546,13 @@ export default function CalendarPage() {
                         onClick={e=>{e.stopPropagation();openBlockEdit(b)}}
                         onPointerDown={e=>onBlockPointerDown(e,b,false)}>
                         <div className="px-1.5 py-1 h-full flex flex-col overflow-hidden select-none">
-                          <div className="text-[10px] text-white font-semibold leading-tight truncate">
+                          <div className="text-[11px] text-white font-bold leading-tight truncate">
                             {cat.emoji} {b.title}
                             {b.is_recurring&&<span className="opacity-60 ml-0.5">↻</span>}
                           </div>
-                          {height>30&&(
+                          {height>36&&(
                             <div className="text-[9px] text-white/75 leading-tight mt-0.5">
-                              {minsToLabel(b.start_minutes)} – {minsToLabel(b.end_minutes)} · {dur}
+                              {minsToLabel(b.start_minutes)}–{minsToLabel(b.end_minutes)} · {dur}
                             </div>
                           )}
                         </div>
