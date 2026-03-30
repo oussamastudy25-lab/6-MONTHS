@@ -172,16 +172,16 @@ export default function CalendarPage() {
       const s=y2m(d.curS===d.curS?m2y(d.origS??y2m(d.startY-rect.top)):0)
       const e2=y2m(e.clientY-rect.top)
       const [ns,ne]=d.curS<=e2?[d.curS,Math.max(d.curS+SNAP,e2)]:[e2,d.curS+SNAP]
-      drag.current.curS=ns; drag.current.curE=ne
+      d.curS=ns; d.curE=ne
       setDv({date:d.date,s:ns,e:ne,color:'#4285f4'})
     } else if(d.type==='move'){
       const ns=Math.max(0,Math.min(HOUR_END*60-SNAP,(d.origS??0)+dm))
       const dur=(d.origE??60)-(d.origS??0)
-      drag.current.curS=ns; drag.current.curE=ns+dur
+      d.curS=ns; d.curE=ns+dur
       setDv({date:d.date,s:ns,e:ns+dur,color:blocks.find(b=>b.id===d.id)?.color??'#4285f4'})
     } else {
       const ne=Math.max((d.origS??0)+SNAP,Math.min(HOUR_END*60,(d.origE??60)+dm))
-      drag.current.curE=ne
+      d.curE=ne
       setDv({date:d.date,s:d.origS??0,e:ne,color:blocks.find(b=>b.id===d.id)?.color??'#4285f4'})
     }
   }
