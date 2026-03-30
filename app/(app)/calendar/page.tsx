@@ -549,7 +549,7 @@ export default function CalendarPage() {
                     return (
                       <div key={b.id}
                         className={`absolute rounded-lg overflow-hidden z-10 transition-shadow ${isDragging?'opacity-50':'opacity-100'} ${isNow?'ring-2 ring-offset-1':'hover:brightness-95'}`}
-                        style={{top:top+1,height,width:w,left,background:b.color,cursor:b.is_recurring?'pointer':'grab',ringColor:isNow?b.color:undefined,outline:isNow?`2px solid ${b.color}`:undefined}}
+                        style={{top:top+1,height,width:w,left,background:b.color,cursor:b.is_recurring?'pointer':'grab',outline:isNow?`2px solid ${b.color}`:undefined}}
                         onClick={e=>{e.stopPropagation();openBlockEdit(b)}}
                         onPointerDown={e=>onBlockPointerDown(e,b,false)}>
                         <div className="px-1.5 py-1 h-full flex flex-col overflow-hidden select-none">
