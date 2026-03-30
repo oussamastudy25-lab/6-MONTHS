@@ -265,7 +265,6 @@ export default function ContentCalendarPage() {
                                 style={{
                                   background: done ? t.color : isPast ? '#f7f7f7' : '#fafafa',
                                   color: done ? 'white' : isPast ? '#bcbcbc' : '#efefef',
-                                  ringColor: isToday ? t.color : undefined,
                                   outline: isToday&&!done ? `2px solid ${t.color}` : undefined,
                                 }}>
                                 {d}
