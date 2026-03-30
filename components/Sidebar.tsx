@@ -13,6 +13,7 @@ const NAV = [
   { divider: true },
   { href: '/weekly',            icon: '◷',  label: 'Weekly' },
   { href: '/goals',             icon: '◎',  label: '6M Goals' },
+  { href: '/schedule',          icon: '🗓',  label: 'Schedule' },
   { href: '/timer',             icon: '⏱',  label: 'Timer' },
   { href: '/insights',          icon: '◈',  label: 'Insights' },
   { divider: true },
