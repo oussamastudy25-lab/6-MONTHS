@@ -156,7 +156,10 @@ export default function TrackerPage() {
                     <div className="flex items-center gap-2 mb-3">
                       <span className="font-mono text-[10px] text-[#bcbcbc]">#{idx+1}</span>
                       <span className="text-[13px] font-bold flex-1">{h.name}</span>
-                      <span className="font-mono text-[18px] font-semibold text-[#FF5C00]">{pct}%</span>
+                      <div className="text-right">
+                    <div className="font-mono text-[18px] font-semibold text-[#FF5C00]">{pct}%</div>
+                    {streak>0&&<div className="text-[9px] text-[#FF5C00]/70 font-bold">🔥 {streak}d</div>}
+                  </div>
                     </div>
                     <div className="h-1 bg-[#efefef] rounded-full overflow-hidden mb-3">
                       <div className="h-full bg-[#FF5C00] rounded-full" style={{width:`${pct}%`}} />
