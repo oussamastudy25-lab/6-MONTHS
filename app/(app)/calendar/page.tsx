@@ -21,7 +21,7 @@ const DOW       = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
 const DOW_FULL  = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 const MONTHS    = ['January','February','March','April','May','June','July','August','September','October','November','December']
 const MONTHS_S  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-const HOUR_START   = 4
+const HOUR_START   = 0
 const HOUR_END     = 24
 const PX_PER_HOUR  = 72   // taller slots
 const SNAP_MINS    = 15
@@ -108,6 +108,7 @@ export default function CalendarPage() {
   }|null>(null)
   const [dragVisual, setDragVisual] = useState<{date:string;start:number;end:number;color:string}|null>(null)
   const gridRef = useRef<HTMLDivElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const totalH = (HOUR_END-HOUR_START)*PX_PER_HOUR
 
   /* ── Load ── */
@@ -407,7 +408,7 @@ export default function CalendarPage() {
         </div>
 
         {/* ── MAIN GRID ── */}
-        <div className="flex-1 overflow-auto bg-white">
+        <div ref={scrollRef} className="flex-1 overflow-auto bg-white">
 
           {/* ══ MONTH VIEW ══ */}
           {viewMode==='month'&&(
@@ -440,7 +441,7 @@ export default function CalendarPage() {
                         const pct=habitPct(ds)
                         const day=parseInt(ds.split('-')[2])
                         return (
-                          <div key={ds} className={`border-r border-[#e0e0e0] p-1 cursor-pointer hover:bg-[#f8f9fa] transition-colors ${isToday?'bg-[#fffbf7]':''}`}
+                          <div key={ds} className="border-r border-[#e0e0e0] p-1 cursor-pointer hover:bg-[#f8f9fa] transition-colors"
                             onClick={()=>{setDayDate(ds);setViewMode('day')}}>
                             <div className="flex items-center justify-between mb-1">
                               <span className={`text-[12px] font-medium w-6 h-6 flex items-center justify-center rounded-full ${isToday?'bg-[#1a73e8] text-white':'text-[#3c4043]'}`}>
@@ -479,14 +480,14 @@ export default function CalendarPage() {
                   const pct=habitPct(date)
                   const dow=d.getDay()===0?6:d.getDay()-1
                   return (
-                    <div key={date} className={`flex-1 flex flex-col items-center py-2 border-r border-[#f1f3f4] last:border-0 cursor-pointer hover:bg-[#f8f9fa] transition-colors ${isToday?'bg-[#fffbf7]':''}`}
+                    <div key={date} className="flex-1 flex flex-col items-center py-1.5 border-r border-[#f1f3f4] last:border-0 cursor-pointer hover:bg-[#f8f9fa] transition-colors"
                       onClick={()=>{setDayDate(date);if(viewMode==='week')setViewMode('day')}}>
                       {/* Day label — bolder, larger */}
                       <div className={`text-[11px] font-semibold uppercase tracking-[.08em] mb-1 ${isToday?'text-[#1a73e8]':'text-[#5f6368]'}`}>
                         {viewMode==='week'?DOW[dow]:DOW_FULL[dow]}
                       </div>
                       {/* Date circle */}
-                      <div className={`text-[24px] font-normal leading-none w-11 h-11 flex items-center justify-center rounded-full transition-colors ${isToday?'bg-[#1a73e8] text-white':'text-[#3c4043] hover:bg-[#f1f3f4]'}`}>
+                      <div className={`text-[20px] font-normal leading-none w-9 h-9 flex items-center justify-center rounded-full transition-colors ${isToday?'bg-[#1a73e8] text-white':'text-[#3c4043] hover:bg-[#f1f3f4]'}`}>
                         {d.getDate()}
                       </div>
                       {/* Habit bar */}
@@ -524,7 +525,7 @@ export default function CalendarPage() {
                   const isToday=date===today
                   return (
                     <div key={date} data-col={date}
-                      className={`flex-1 relative border-r border-[#f1f3f4] last:border-0 ${isToday?'bg-[#fffbf7]':'bg-white'}`}
+                      className="flex-1 relative border-r border-[#f1f3f4] last:border-0 bg-white"
                       style={{height:totalH,cursor:'crosshair'}}
                       onPointerDown={e=>onColPointerDown(e,date)}>
 
