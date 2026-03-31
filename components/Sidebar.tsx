@@ -5,8 +5,6 @@ import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
 const NAV = [
-  { href: '/war-room',          icon: '⚔',  label: 'War Room' },
-  { divider: true },
   { href: '/setup',             icon: '⚙',  label: 'Setup' },
   { href: '/calendar',          icon: '◫',  label: 'Calendar' },
   { href: '/tracker',           icon: '▦',  label: 'Tracker' },
@@ -46,7 +44,6 @@ export default function Sidebar({ streak='—', monthPct='—', tasks='—' }: P
         {NAV.map((item, i) => {
           if ('divider' in item) return <div key={i} className="h-px bg-[#1E1E1E] mx-3.5 my-1.5" />
           const active = path === item.href
-          const isWarRoom = item.href === '/war-room'
           return (
             <Link key={item.href} href={item.href}
               className={`flex items-center gap-2.5 px-4 py-2.5 text-[10.5px] font-semibold tracking-[.1em] uppercase border-l-2 transition-all
