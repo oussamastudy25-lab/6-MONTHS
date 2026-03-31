@@ -107,17 +107,17 @@ export default function WarRoomPage() {
     // Weekly score
     const weekDays:string[]=[]
     for(let i=0;i<7;i++){const d=new Date(getMonday());d.setDate(getMonday().getDate()+i);if(fmt(d)<=today)weekDays.push(fmt(d))}
-    const [{data:habLogs},{data:nnWeekLogs},{data:habList}]=await Promise.all([
+    const [{data:habLogs},{data:nnWeekLogs},{data:habListW}]=await Promise.all([
       sb.from('habit_logs').select('status,date,habit_id').eq('user_id',uid).in('date',weekDays),
       sb.from('nn_logs').select('done,date,nn_id').eq('user_id',uid).in('date',weekDays),
       sb.from('habits').select('id').eq('user_id',uid).is('archived_at',null),
     ])
-    setHabitsTotal((habList??[]).length)
+    setHabitsTotal((habListW??[]).length)
     setHabitsDone((habLogs??[]).filter((l:{status:string;date:string}) => l.date===today&&l.status==='done').length)
     let earned=0,maxPts=0
     weekDays.forEach(d=>{
       ;(nnList??[]).forEach((n:{id:string})=>{maxPts+=2;const log=(nnWeekLogs??[]).find((l:{nn_id:string;date:string;done:boolean})=>l.nn_id===n.id&&l.date===d);if(log?.done)earned+=2})
-      ;(habList??[]).forEach((h:{id:string})=>{maxPts+=1;const log=(habLogs??[]).find((l:{habit_id:string;date:string;status:string})=>l.habit_id===h.id&&l.date===d&&l.status==='done');if(log)earned+=1})
+      ;(habListW??[]).forEach((h:{id:string})=>{maxPts+=1;const log=(habLogs??[]).find((l:{habit_id:string;date:string;status:string})=>l.habit_id===h.id&&l.date===d&&l.status==='done');if(log)earned+=1})
     })
     setScore(maxPts>0?Math.round(earned/maxPts*100):null)
   }, [today,weekStart,prevWeekStart])
