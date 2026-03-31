@@ -8,8 +8,13 @@ type Log   = { habit_id: string; status: string; date: string }
 const sb = createClient()
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
 
+function fmt(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
+}
+
 export default function TrackerPage() {
-  const now = new Date()
+  const now   = new Date()
+  const today = fmt(now)
   const [year, setYear]   = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth())
   const [habits, setHabits] = useState<Habit[]>([])
@@ -38,6 +43,26 @@ export default function TrackerPage() {
     return logs.find(l => l.habit_id === habitId && l.date === date)?.status ?? ''
   }
 
+  async function setStatus(habitId: string, date: string, newStatus: string) {
+    const { data: { user } } = await sb.auth.getUser(); if (!user) return
+    const current = getStatus(habitId, date)
+    // cycle: '' → done → missed → na → ''
+    const next = current === '' ? 'done' : current === 'done' ? 'missed' : current === 'missed' ? 'na' : ''
+    const actual = newStatus || next
+
+    setLogs(prev => {
+      const without = prev.filter(l => !(l.habit_id === habitId && l.date === date))
+      if (actual === '') return without
+      return [...without, { habit_id: habitId, status: actual, date }]
+    })
+
+    if (actual === '') {
+      await sb.from('habit_logs').delete().eq('user_id', user.id).eq('habit_id', habitId).eq('date', date)
+    } else {
+      await sb.from('habit_logs').upsert({ user_id: user.id, habit_id: habitId, date, status: actual }, { onConflict: 'user_id,habit_id,date' })
+    }
+  }
+
   function cardStats(habitId: string) {
     let done = 0, missed = 0, streak = 0, best = 0, cur = 0
     days.forEach(d => {
@@ -46,7 +71,6 @@ export default function TrackerPage() {
       else if (v === 'missed') { missed++; cur = 0 }
       else cur = 0
     })
-    // current streak = from end of month backwards
     for (let i = days.length - 1; i >= 0; i--) {
       if (getStatus(habitId, days[i]) === 'done') streak++
       else break
@@ -56,14 +80,14 @@ export default function TrackerPage() {
     return { done, missed, streak, best, pct }
   }
 
+  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth()
   const activeHabits = habits.filter(h => h.name)
 
   return (
     <>
-      {/* Header */}
       <div className="bg-white px-6 py-3 border-b-2 border-[#0A0A0A] flex-shrink-0">
         <div className="text-[19px] font-bold tracking-[.04em]">Tracker</div>
-        <div className="text-[10px] text-[#888] tracking-[.12em] uppercase mt-0.5">Habit cards · monthly view</div>
+        <div className="text-[10px] text-[#888] tracking-[.12em] uppercase mt-0.5">Log today's habits · monthly overview</div>
       </div>
 
       {/* Month nav */}
@@ -77,59 +101,100 @@ export default function TrackerPage() {
           className="text-[9px] font-bold uppercase tracking-[.1em] px-3 py-1 rounded border border-[#dedede] text-[#888] hover:bg-[#FF5C00] hover:text-white hover:border-[#FF5C00] transition-colors">Today</button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5">
-        {activeHabits.length === 0 && (
+      <div className="flex-1 overflow-y-auto">
+        {activeHabits.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-4xl mb-3">▦</div>
             <div className="text-[15px] font-bold mb-1">No habits yet</div>
-            <div className="text-[13px] text-[#888]">Add habits in Setup, then log them in Calendar</div>
+            <div className="text-[13px] text-[#888]">Add habits in Setup first</div>
           </div>
-        )}
-        <div className="grid grid-cols-1 gap-3 max-w-5xl" style={{gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))'}}>
-          {activeHabits.map((h, idx) => {
-            const { done, missed, streak, best, pct } = cardStats(h.id)
-            return (
-              <div key={h.id} className="bg-white border border-[#efefef] rounded-lg p-4 hover:border-[#dedede] transition-colors">
-                {/* Card header */}
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="font-mono text-[10px] text-[#bcbcbc]">#{idx+1}</span>
-                  <span className="text-[13px] font-bold flex-1">{h.name}</span>
-                  <span className="font-mono text-[18px] font-semibold text-[#FF5C00]">{pct}%</span>
+        ) : (
+          <>
+            {/* TODAY'S LOG — shown only on current month */}
+            {isCurrentMonth && (
+              <div className="px-5 pt-4 pb-3 border-b border-[#efefef] bg-white">
+                <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">
+                  Today — {now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' })}
                 </div>
-
-                {/* Progress bar */}
-                <div className="h-1 bg-[#efefef] rounded-full overflow-hidden mb-3">
-                  <div className="h-full bg-[#FF5C00] rounded-full bar-animated" style={{width:`${pct}%`}} />
-                </div>
-
-                {/* Day squares */}
-                <div className="flex flex-wrap gap-0.5 mb-3">
-                  {days.map(d => {
-                    const v = getStatus(h.id, d)
-                    const day = parseInt(d.split('-')[2])
+                <div className="space-y-1.5">
+                  {activeHabits.map(h => {
+                    const s = getStatus(h.id, today)
                     return (
-                      <div key={d} title={`Day ${day}: ${v || '—'}`}
-                        className={`w-[18px] h-[18px] rounded-[3px] flex items-center justify-center font-mono text-[8px] transition-transform hover:scale-110 cursor-default
-                          ${v==='done' ? 'bg-[#FF5C00] text-white' : v==='missed' ? 'bg-[#FBE9E7] text-[#8B0000]' : v==='na' ? 'bg-[#f5f5f5] text-[#bcbcbc]' : 'bg-[#f7f7f7] text-[#dedede]'}`}>
-                        {day}
+                      <div key={h.id} className="flex items-center gap-3 bg-[#f7f7f7] rounded-lg px-3 py-2.5">
+                        <span className="text-[13px] font-semibold flex-1">{h.name}</span>
+                        <div className="flex gap-1">
+                          {(['done','missed','na'] as const).map(status => {
+                            const active = s === status
+                            const labels = { done: '✓ Done', missed: '✗ Missed', na: '— Skip' }
+                            const colors = {
+                              done:   active ? 'bg-[#22c55e] text-white border-[#22c55e]' : 'border-[#dedede] text-[#888] hover:border-[#22c55e] hover:text-[#22c55e]',
+                              missed: active ? 'bg-[#ef4444] text-white border-[#ef4444]' : 'border-[#dedede] text-[#888] hover:border-[#ef4444] hover:text-[#ef4444]',
+                              na:     active ? 'bg-[#888] text-white border-[#888]'       : 'border-[#dedede] text-[#bcbcbc] hover:border-[#888] hover:text-[#888]',
+                            }
+                            return (
+                              <button key={status}
+                                onClick={() => setStatus(h.id, today, active ? '' : status)}
+                                className={`px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-[.06em] border transition-all ${colors[status]}`}>
+                                {labels[status]}
+                              </button>
+                            )
+                          })}
+                        </div>
                       </div>
                     )
                   })}
                 </div>
-
-                {/* Footer stats */}
-                <div className="flex gap-4 pt-2 border-t border-[#f7f7f7]">
-                  {[['Done', done],['Missed', missed],['Streak', `${streak}d`],['Best', `${best}d`]].map(([l,v])=>(
-                    <div key={l}>
-                      <div className="font-mono text-[14px] font-semibold text-[#0A0A0A]">{v}</div>
-                      <div className="text-[8px] text-[#888] uppercase tracking-[.08em] mt-0.5">{l}</div>
-                    </div>
-                  ))}
-                </div>
               </div>
-            )
-          })}
-        </div>
+            )}
+
+            {/* MONTHLY GRID CARDS */}
+            <div className="p-5 grid gap-3 max-w-5xl" style={{gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))'}}>
+              {activeHabits.map((h, idx) => {
+                const { done, missed, streak, best, pct } = cardStats(h.id)
+                return (
+                  <div key={h.id} className="bg-white border border-[#efefef] rounded-lg p-4 hover:border-[#dedede] transition-colors">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="font-mono text-[10px] text-[#bcbcbc]">#{idx+1}</span>
+                      <span className="text-[13px] font-bold flex-1">{h.name}</span>
+                      <span className="font-mono text-[18px] font-semibold text-[#FF5C00]">{pct}%</span>
+                    </div>
+                    <div className="h-1 bg-[#efefef] rounded-full overflow-hidden mb-3">
+                      <div className="h-full bg-[#FF5C00] rounded-full" style={{width:`${pct}%`}} />
+                    </div>
+                    <div className="flex flex-wrap gap-0.5 mb-3">
+                      {days.map(d => {
+                        const v = getStatus(h.id, d)
+                        const day = parseInt(d.split('-')[2])
+                        const isToday = d === today
+                        return (
+                          <button key={d}
+                            title={`Day ${day}: ${v || 'not logged'}`}
+                            onClick={() => setStatus(h.id, d, '')}
+                            className={`w-[18px] h-[18px] rounded-[3px] flex items-center justify-center font-mono text-[8px] transition-all hover:scale-125 cursor-pointer
+                              ${v==='done'   ? 'bg-[#FF5C00] text-white'
+                              : v==='missed' ? 'bg-[#FBE9E7] text-[#8B0000]'
+                              : v==='na'     ? 'bg-[#f5f5f5] text-[#bcbcbc]'
+                              : isToday      ? 'bg-[#f0f0f0] text-[#0A0A0A] ring-1 ring-[#FF5C00]'
+                              : 'bg-[#f7f7f7] text-[#dedede]'}`}>
+                            {day}
+                          </button>
+                        )
+                      })}
+                    </div>
+                    <div className="flex gap-4 pt-2 border-t border-[#f7f7f7]">
+                      {[['Done',done],['Missed',missed],['Streak',`${streak}d`],['Best',`${best}d`]].map(([l,v])=>(
+                        <div key={l as string}>
+                          <div className="font-mono text-[14px] font-semibold">{v}</div>
+                          <div className="text-[8px] text-[#888] uppercase tracking-[.08em] mt-0.5">{l}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </>
+        )}
       </div>
     </>
   )

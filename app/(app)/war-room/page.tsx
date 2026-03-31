@@ -7,6 +7,7 @@ import MilestoneCelebration from '@/components/MilestoneCelebration'
 const sb = createClient()
 
 type NN       = { id: string; name: string; done: boolean }
+type Habit    = { id: string; name: string }
 type BadHabit = { id: string; name: string; cleanDays: number; lastRelapse: string | null }
 type Goal     = { id: string; title: string; category: string; end_date: string; pct: number }
 type Metric   = { id: string; name: string; unit: string; value: number | null; prev: number | null }
@@ -34,6 +35,8 @@ export default function WarRoomPage() {
   const prevWeekStart = fmt(getMonday(new Date(Date.now()-7*86400000)))
 
   const [nns, setNNs]           = useState<NN[]>([])
+  const [habits, setHabits]      = useState<Habit[]>([])
+  const [habitLogs, setHabitLogs]= useState<{habit_id:string;status:string}[]>([])
   const [badHabits, setBH]      = useState<BadHabit[]>([])
   const [goals, setGoals]       = useState<Goal[]>([])
   const [metrics, setMetrics]   = useState<Metric[]>([])
@@ -50,13 +53,17 @@ export default function WarRoomPage() {
     const { data: { user } } = await sb.auth.getUser(); if (!user) return
     const uid = user.id
 
-    const [{ data: nnList }, { data: nnLogs }] = await Promise.all([
+    const [{ data: nnList }, { data: nnLogs }, { data: habList }, { data: todayLogs }] = await Promise.all([
       sb.from('non_negotiables').select('*').eq('user_id',uid).order('position'),
       sb.from('nn_logs').select('*').eq('user_id',uid).eq('date',today),
+      sb.from('habits').select('id,name').eq('user_id',uid).is('archived_at',null).order('position'),
+      sb.from('habit_logs').select('habit_id,status').eq('user_id',uid).eq('date',today),
     ])
     const nnMap: Record<string,boolean> = {}
     ;(nnLogs??[]).forEach((l:{nn_id:string;done:boolean}) => { nnMap[l.nn_id]=l.done })
     setNNs((nnList??[]).map((n:{id:string;name:string}) => ({id:n.id,name:n.name,done:nnMap[n.id]??false})))
+    setHabits(habList??[])
+    setHabitLogs((todayLogs??[]).map((l:{habit_id:string;status:string})=>({habit_id:l.habit_id,status:l.status})))
 
     // Bad habits + relapses
     const { data: bh } = await sb.from('bad_habits').select('*').eq('user_id',uid).order('position')
@@ -122,6 +129,23 @@ export default function WarRoomPage() {
       if(MILESTONES.includes(bh.cleanDays))setMilestone({name:bh.name,days:bh.cleanDays})
     })
   },[badHabits])
+
+
+  async function setHabitStatus(habitId:string, status:string){
+    const {data:{user}}=await sb.auth.getUser();if(!user)return
+    const current=habitLogs.find(l=>l.habit_id===habitId)?.status??''
+    const actual=current===status?'':status
+    setHabitLogs(prev=>{
+      const without=prev.filter(l=>l.habit_id!==habitId)
+      if(actual==='')return without
+      return [...without,{habit_id:habitId,status:actual}]
+    })
+    if(actual===''){
+      await sb.from('habit_logs').delete().eq('user_id',user.id).eq('habit_id',habitId).eq('date',today)
+    } else {
+      await sb.from('habit_logs').upsert({user_id:user.id,habit_id:habitId,date:today,status:actual},{onConflict:'user_id,habit_id,date'})
+    }
+  }
 
   async function toggleNN(nn:NN){
     const {data:{user}}=await sb.auth.getUser();if(!user)return
@@ -200,7 +224,45 @@ export default function WarRoomPage() {
               </div>
             </div>
 
-            {/* CLEAN DAYS */}
+
+            {/* DAILY HABITS */}
+            {habits.filter(h=>h.name).length>0&&(
+              <div className="bg-white border border-[#efefef] rounded-lg overflow-hidden">
+                <div className="bg-[#0A0A0A] px-4 py-3 flex items-center justify-between">
+                  <span className="text-[11px] font-bold tracking-[.1em] text-white uppercase">Habits Today</span>
+                  <span className="font-mono text-[13px] font-bold text-[#888]">
+                    {habitLogs.filter(l=>l.status==='done').length}/{habits.filter(h=>h.name).length}
+                  </span>
+                </div>
+                {habits.filter(h=>h.name).map(h=>{
+                  const s=habitLogs.find(l=>l.habit_id===h.id)?.status??''
+                  return(
+                    <div key={h.id} className="px-4 py-3 border-b border-[#f7f7f7] last:border-0 flex items-center gap-3">
+                      <span className="text-[13px] font-semibold flex-1">{h.name}</span>
+                      <div className="flex gap-1">
+                        {(['done','missed','na'] as const).map(status=>{
+                          const active=s===status
+                          const cfg={
+                            done:  {label:'✓',tip:'Done',   on:'bg-[#22c55e] text-white border-[#22c55e]',  off:'border-[#dedede] text-[#888] hover:border-[#22c55e] hover:text-[#22c55e]'},
+                            missed:{label:'✗',tip:'Missed', on:'bg-[#ef4444] text-white border-[#ef4444]',  off:'border-[#dedede] text-[#888] hover:border-[#ef4444] hover:text-[#ef4444]'},
+                            na:    {label:'—',tip:'Skip',   on:'bg-[#888] text-white border-[#888]',        off:'border-[#dedede] text-[#bcbcbc] hover:border-[#888] hover:text-[#888]'},
+                          }[status]
+                          return(
+                            <button key={status} title={cfg.tip}
+                              onClick={()=>setHabitStatus(h.id,status)}
+                              className={`w-7 h-7 rounded-md text-[11px] font-bold border transition-all ${active?cfg.on:cfg.off}`}>
+                              {cfg.label}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* CLEAN DAYS */
             {badHabits.length>0&&(
               <div className="bg-white border border-[#efefef] rounded-lg overflow-hidden">
                 <div className="bg-[#0A0A0A] px-4 py-3"><span className="text-[11px] font-bold tracking-[.1em] text-white uppercase">Clean Days</span></div>
