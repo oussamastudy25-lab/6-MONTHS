@@ -48,9 +48,7 @@ export default function Sidebar({ streak='—', monthPct='—', tasks='—' }: P
             <Link key={item.href} href={item.href}
               className={`flex items-center gap-2.5 px-4 py-2.5 text-[10.5px] font-semibold tracking-[.1em] uppercase border-l-2 transition-all
                 ${active
-                  ? isWarRoom
-                    ? 'text-white border-white bg-[rgba(255,255,255,.08)]'
-                    : 'text-[#FF5C00] border-[#FF5C00] bg-[rgba(255,92,0,.07)]'
+                  ? 'text-[#FF5C00] border-[#FF5C00] bg-[rgba(255,92,0,.07)]'
                   : 'text-[#888] border-transparent hover:text-white hover:bg-white/[.04]'
                 }`}
             >
