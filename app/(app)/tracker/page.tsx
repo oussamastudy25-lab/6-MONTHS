@@ -18,21 +18,24 @@ export default function TrackerPage() {
   const [year, setYear]   = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth())
   const [habits, setHabits] = useState<Habit[]>([])
-  const [logs, setLogs]     = useState<Log[]>([])
+  const [logs, setLogs]     = useState<Log[]>([])   // ALL logs, all months
+  const [loaded, setLoaded] = useState(false)
 
+  // Load habits + ALL logs once on mount — month nav never re-fetches
   const load = useCallback(async () => {
     const { data: { user } } = await sb.auth.getUser(); if (!user) return
-    const ym = `${year}-${String(month+1).padStart(2,'0')}`
     const [{ data: h }, { data: l }] = await Promise.all([
       sb.from('habits').select('id,name').eq('user_id', user.id).is('archived_at', null).order('position'),
-      sb.from('habit_logs').select('habit_id,status,date').eq('user_id', user.id).like('date', `${ym}-%`),
+      sb.from('habit_logs').select('habit_id,status,date').eq('user_id', user.id),
     ])
     setHabits(h ?? [])
     setLogs(l ?? [])
-  }, [year, month])
+    setLoaded(true)
+  }, [])
 
   useEffect(() => { load() }, [load])
 
+  // Derive days for the currently viewed month (UI only — no fetch)
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const days = Array.from({ length: daysInMonth }, (_, i) => {
     const d = i + 1
@@ -43,17 +46,16 @@ export default function TrackerPage() {
     return logs.find(l => l.habit_id === habitId && l.date === date)?.status ?? ''
   }
 
-  // Used by Today buttons — toggles a specific status on/off
-  async function toggleStatus(habitId: string, date: string, status: string) {
+  async function save(habitId: string, date: string, next: string) {
     const { data: { user } } = await sb.auth.getUser(); if (!user) return
-    const current = getStatus(habitId, date)
-    const next = current === status ? '' : status   // tap same = clear, tap different = set
 
+    // Update local state immediately
     setLogs(prev => {
       const without = prev.filter(l => !(l.habit_id === habitId && l.date === date))
       return next === '' ? without : [...without, { habit_id: habitId, status: next, date }]
     })
 
+    // Persist to DB
     if (next === '') {
       await sb.from('habit_logs').delete()
         .eq('user_id', user.id).eq('habit_id', habitId).eq('date', date)
@@ -65,26 +67,17 @@ export default function TrackerPage() {
     }
   }
 
-  // Used by grid squares — cycles '' → done → missed → na → ''
-  async function cycleStatus(habitId: string, date: string) {
-    const { data: { user } } = await sb.auth.getUser(); if (!user) return
+  // Today buttons: tap to set specific status, tap again to clear
+  function toggleStatus(habitId: string, date: string, status: string) {
+    const current = getStatus(habitId, date)
+    save(habitId, date, current === status ? '' : status)
+  }
+
+  // Grid squares: tap cycles '' → done → missed → na → ''
+  function cycleStatus(habitId: string, date: string) {
     const current = getStatus(habitId, date)
     const next = current === '' ? 'done' : current === 'done' ? 'missed' : current === 'missed' ? 'na' : ''
-
-    setLogs(prev => {
-      const without = prev.filter(l => !(l.habit_id === habitId && l.date === date))
-      return next === '' ? without : [...without, { habit_id: habitId, status: next, date }]
-    })
-
-    if (next === '') {
-      await sb.from('habit_logs').delete()
-        .eq('user_id', user.id).eq('habit_id', habitId).eq('date', date)
-    } else {
-      await sb.from('habit_logs').upsert(
-        { user_id: user.id, habit_id: habitId, date, status: next },
-        { onConflict: 'user_id,habit_id,date' }
-      )
-    }
+    save(habitId, date, next)
   }
 
   function cardStats(habitId: string) {
@@ -125,7 +118,9 @@ export default function TrackerPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {activeHabits.length === 0 ? (
+        {!loaded ? (
+          <div className="text-center py-20 text-[#888] text-[13px]">Loading…</div>
+        ) : activeHabits.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-4xl mb-3">▦</div>
             <div className="text-[15px] font-bold mb-1">No habits yet</div>
@@ -149,9 +144,9 @@ export default function TrackerPage() {
                           {(['done','missed','na'] as const).map(status => {
                             const active = s === status
                             const cfg = {
-                              done:   { label:'✓ Done',    on:'bg-[#22c55e] text-white border-[#22c55e]',   off:'border-[#dedede] text-[#888] hover:border-[#22c55e] hover:text-[#22c55e]' },
-                              missed: { label:'✗ Missed',  on:'bg-[#ef4444] text-white border-[#ef4444]',   off:'border-[#dedede] text-[#888] hover:border-[#ef4444] hover:text-[#ef4444]' },
-                              na:     { label:'— Skip',    on:'bg-[#888] text-white border-[#888]',          off:'border-[#dedede] text-[#bcbcbc] hover:border-[#888] hover:text-[#888]' },
+                              done:   { label:'✓ Done',   on:'bg-[#22c55e] text-white border-[#22c55e]',  off:'border-[#dedede] text-[#888] hover:border-[#22c55e] hover:text-[#22c55e]' },
+                              missed: { label:'✗ Missed', on:'bg-[#ef4444] text-white border-[#ef4444]',  off:'border-[#dedede] text-[#888] hover:border-[#ef4444] hover:text-[#ef4444]' },
+                              na:     { label:'— Skip',   on:'bg-[#888] text-white border-[#888]',         off:'border-[#dedede] text-[#bcbcbc] hover:border-[#888] hover:text-[#888]' },
                             }[status]
                             return (
                               <button key={status}
@@ -180,13 +175,12 @@ export default function TrackerPage() {
                       <span className="text-[13px] font-bold flex-1">{h.name}</span>
                       <div className="text-right">
                         <div className="font-mono text-[18px] font-semibold text-[#FF5C00]">{pct}%</div>
-                        {streak>0 && <div className="text-[9px] text-[#FF5C00]/70 font-bold">🔥 {streak}d</div>}
+                        {streak > 0 && <div className="text-[9px] text-[#FF5C00]/70 font-bold">🔥 {streak}d</div>}
                       </div>
                     </div>
                     <div className="h-1 bg-[#efefef] rounded-full overflow-hidden mb-3">
                       <div className="h-full bg-[#FF5C00] rounded-full" style={{width:`${pct}%`}} />
                     </div>
-                    {/* Grid squares — click to cycle */}
                     <div className="flex flex-wrap gap-0.5 mb-3">
                       {days.map(d => {
                         const v = getStatus(h.id, d)
