@@ -12,7 +12,6 @@ const NAV = [
   { href: '/weekly',            icon: '◷',  label: 'Weekly' },
   { href: '/goals',             icon: '◎',  label: '6M Goals' },
   { href: '/timer',             icon: '⏱',  label: 'Timer' },
-  { href: '/insights',          icon: '◈',  label: 'Insights' },
   { divider: true },
   { href: '/letters',           icon: '✍',  label: 'Letters' },
   { href: '/database',          icon: '◳',  label: 'Database' },

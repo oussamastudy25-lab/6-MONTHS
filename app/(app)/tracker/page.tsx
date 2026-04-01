@@ -43,23 +43,47 @@ export default function TrackerPage() {
     return logs.find(l => l.habit_id === habitId && l.date === date)?.status ?? ''
   }
 
-  async function setStatus(habitId: string, date: string, newStatus: string) {
+  // Used by Today buttons — toggles a specific status on/off
+  async function toggleStatus(habitId: string, date: string, status: string) {
     const { data: { user } } = await sb.auth.getUser(); if (!user) return
     const current = getStatus(habitId, date)
-    // cycle: '' → done → missed → na → ''
-    const next = current === '' ? 'done' : current === 'done' ? 'missed' : current === 'missed' ? 'na' : ''
-    const actual = newStatus || next
+    const next = current === status ? '' : status   // tap same = clear, tap different = set
 
     setLogs(prev => {
       const without = prev.filter(l => !(l.habit_id === habitId && l.date === date))
-      if (actual === '') return without
-      return [...without, { habit_id: habitId, status: actual, date }]
+      return next === '' ? without : [...without, { habit_id: habitId, status: next, date }]
     })
 
-    if (actual === '') {
-      await sb.from('habit_logs').delete().eq('user_id', user.id).eq('habit_id', habitId).eq('date', date)
+    if (next === '') {
+      await sb.from('habit_logs').delete()
+        .eq('user_id', user.id).eq('habit_id', habitId).eq('date', date)
     } else {
-      await sb.from('habit_logs').upsert({ user_id: user.id, habit_id: habitId, date, status: actual }, { onConflict: 'user_id,habit_id,date' })
+      await sb.from('habit_logs').upsert(
+        { user_id: user.id, habit_id: habitId, date, status: next },
+        { onConflict: 'user_id,habit_id,date' }
+      )
+    }
+  }
+
+  // Used by grid squares — cycles '' → done → missed → na → ''
+  async function cycleStatus(habitId: string, date: string) {
+    const { data: { user } } = await sb.auth.getUser(); if (!user) return
+    const current = getStatus(habitId, date)
+    const next = current === '' ? 'done' : current === 'done' ? 'missed' : current === 'missed' ? 'na' : ''
+
+    setLogs(prev => {
+      const without = prev.filter(l => !(l.habit_id === habitId && l.date === date))
+      return next === '' ? without : [...without, { habit_id: habitId, status: next, date }]
+    })
+
+    if (next === '') {
+      await sb.from('habit_logs').delete()
+        .eq('user_id', user.id).eq('habit_id', habitId).eq('date', date)
+    } else {
+      await sb.from('habit_logs').upsert(
+        { user_id: user.id, habit_id: habitId, date, status: next },
+        { onConflict: 'user_id,habit_id,date' }
+      )
     }
   }
 
@@ -90,7 +114,6 @@ export default function TrackerPage() {
         <div className="text-[10px] text-[#888] tracking-[.12em] uppercase mt-0.5">Log today's habits · monthly overview</div>
       </div>
 
-      {/* Month nav */}
       <div className="flex items-center gap-2 px-6 py-2 bg-[#f7f7f7] border-b border-[#efefef] flex-shrink-0">
         <button onClick={() => { if(month===0){setMonth(11);setYear(y=>y-1)}else setMonth(m=>m-1) }}
           className="w-6 h-6 border border-[#dedede] rounded flex items-center justify-center text-[14px] text-[#888] hover:bg-[#0A0A0A] hover:text-white hover:border-[#0A0A0A] transition-colors">‹</button>
@@ -110,32 +133,31 @@ export default function TrackerPage() {
           </div>
         ) : (
           <>
-            {/* TODAY'S LOG — shown only on current month */}
+            {/* TODAY'S LOG */}
             {isCurrentMonth && (
-              <div className="px-5 pt-4 pb-3 border-b border-[#efefef] bg-white">
+              <div className="px-5 pt-4 pb-4 border-b border-[#efefef] bg-white">
                 <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">
                   Today — {now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' })}
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {activeHabits.map(h => {
                     const s = getStatus(h.id, today)
                     return (
                       <div key={h.id} className="flex items-center gap-3 bg-[#f7f7f7] rounded-lg px-3 py-2.5">
                         <span className="text-[13px] font-semibold flex-1">{h.name}</span>
-                        <div className="flex gap-1">
+                        <div className="flex gap-1.5">
                           {(['done','missed','na'] as const).map(status => {
                             const active = s === status
-                            const labels = { done: '✓ Done', missed: '✗ Missed', na: '— Skip' }
-                            const colors = {
-                              done:   active ? 'bg-[#22c55e] text-white border-[#22c55e]' : 'border-[#dedede] text-[#888] hover:border-[#22c55e] hover:text-[#22c55e]',
-                              missed: active ? 'bg-[#ef4444] text-white border-[#ef4444]' : 'border-[#dedede] text-[#888] hover:border-[#ef4444] hover:text-[#ef4444]',
-                              na:     active ? 'bg-[#888] text-white border-[#888]'       : 'border-[#dedede] text-[#bcbcbc] hover:border-[#888] hover:text-[#888]',
-                            }
+                            const cfg = {
+                              done:   { label:'✓ Done',    on:'bg-[#22c55e] text-white border-[#22c55e]',   off:'border-[#dedede] text-[#888] hover:border-[#22c55e] hover:text-[#22c55e]' },
+                              missed: { label:'✗ Missed',  on:'bg-[#ef4444] text-white border-[#ef4444]',   off:'border-[#dedede] text-[#888] hover:border-[#ef4444] hover:text-[#ef4444]' },
+                              na:     { label:'— Skip',    on:'bg-[#888] text-white border-[#888]',          off:'border-[#dedede] text-[#bcbcbc] hover:border-[#888] hover:text-[#888]' },
+                            }[status]
                             return (
                               <button key={status}
-                                onClick={() => setStatus(h.id, today, active ? '' : status)}
-                                className={`px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-[.06em] border transition-all ${colors[status]}`}>
-                                {labels[status]}
+                                onClick={() => toggleStatus(h.id, today, status)}
+                                className={`px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-[.06em] border-2 transition-all ${active ? cfg.on : cfg.off}`}>
+                                {cfg.label}
                               </button>
                             )
                           })}
@@ -157,13 +179,14 @@ export default function TrackerPage() {
                       <span className="font-mono text-[10px] text-[#bcbcbc]">#{idx+1}</span>
                       <span className="text-[13px] font-bold flex-1">{h.name}</span>
                       <div className="text-right">
-                    <div className="font-mono text-[18px] font-semibold text-[#FF5C00]">{pct}%</div>
-                    {streak>0&&<div className="text-[9px] text-[#FF5C00]/70 font-bold">🔥 {streak}d</div>}
-                  </div>
+                        <div className="font-mono text-[18px] font-semibold text-[#FF5C00]">{pct}%</div>
+                        {streak>0 && <div className="text-[9px] text-[#FF5C00]/70 font-bold">🔥 {streak}d</div>}
+                      </div>
                     </div>
                     <div className="h-1 bg-[#efefef] rounded-full overflow-hidden mb-3">
                       <div className="h-full bg-[#FF5C00] rounded-full" style={{width:`${pct}%`}} />
                     </div>
+                    {/* Grid squares — click to cycle */}
                     <div className="flex flex-wrap gap-0.5 mb-3">
                       {days.map(d => {
                         const v = getStatus(h.id, d)
@@ -171,8 +194,8 @@ export default function TrackerPage() {
                         const isToday = d === today
                         return (
                           <button key={d}
-                            title={`Day ${day}: ${v || 'not logged'}`}
-                            onClick={() => setStatus(h.id, d, '')}
+                            title={`${d}: ${v || 'tap to log'}`}
+                            onClick={() => cycleStatus(h.id, d)}
                             className={`w-[18px] h-[18px] rounded-[3px] flex items-center justify-center font-mono text-[8px] transition-all hover:scale-125 cursor-pointer
                               ${v==='done'   ? 'bg-[#FF5C00] text-white'
                               : v==='missed' ? 'bg-[#FBE9E7] text-[#8B0000]'
