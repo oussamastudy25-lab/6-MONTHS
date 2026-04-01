@@ -347,7 +347,7 @@ export default function InsightsPage() {
                   Day-of-Week — Where You Fail Most
                 </div>
                 <div className="bg-white border border-[#efefef] rounded-lg p-4">
-                  <div className="flex items-end gap-2 h-28">
+                  <div className="flex items-end gap-2" style={{height:112}}>
                     {dowData.map(d => {
                       const failRate = d.total>0?Math.round(d.missed/d.total*100):0
                       const height = Math.max(4, failRate)
@@ -357,7 +357,7 @@ export default function InsightsPage() {
                           <div className="absolute bottom-full mb-1 hidden group-hover:block bg-[#0A0A0A] text-white text-[9px] px-1.5 py-1 rounded whitespace-nowrap z-10">
                             {d.day}: {failRate}% miss ({d.missed}/{d.total})
                           </div>
-                          <div className="w-full rounded-sm" style={{height:`${height}%`,background:color}} />
+                          <div className="w-full rounded-sm" style={{height:Math.max(4,Math.round(Number(height)*1.12)),background:color}} />
                           <div className="text-[9px] font-bold text-[#888]">{d.day}</div>
                           <div className="text-[8px] font-mono text-[#bcbcbc]">{failRate}%</div>
                         </div>
@@ -386,7 +386,7 @@ export default function InsightsPage() {
                               <div className="absolute bottom-full mb-1 hidden group-hover:block bg-[#0A0A0A] text-white text-[9px] px-1.5 py-1 rounded whitespace-nowrap z-10">
                                 {m.month}: {m.clean}/{m.total} clean days
                               </div>
-                              <div className="w-full rounded-sm" style={{height:`${Math.max(4,pct)}%`,background:color}} />
+                              <div className="w-full rounded-sm" style={{height:Math.max(4,Math.round(pct*1.28)),background:color}} />
                               <div className="text-[8px] font-bold text-[#888]">{m.month}</div>
                               <div className="text-[8px] font-mono text-[#bcbcbc]">{pct}%</div>
                             </div>
@@ -444,7 +444,7 @@ export default function InsightsPage() {
             <div>
               <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">Weekly Score — 24 Weeks</div>
               <div className="bg-white border border-[#efefef] rounded-lg p-4">
-                <div className="flex items-end gap-1 h-32">
+                <div className="flex items-end gap-1" style={{height:128}}>
                   {scoreHistory.map((w,i)=>{
                     const s=w.score
                     const color=s===null?'#efefef':s>=90?'#FF5C00':s>=75?'#22c55e':s>=50?'#f59e0b':'#ef4444'
@@ -454,7 +454,7 @@ export default function InsightsPage() {
                         <div className="absolute bottom-full mb-1 hidden group-hover:block bg-[#0A0A0A] text-white text-[9px] px-1.5 py-1 rounded whitespace-nowrap z-10">
                           {w.label}: {s!==null?`${s}%`:'—'}
                         </div>
-                        <div className="w-full rounded-sm" style={{height:`${h}%`,background:color,opacity:i===scoreHistory.length-1?1:0.8}} />
+                        <div className="w-full rounded-sm" style={{height:Math.max(4,Math.round(Number(h)*1.28)),background:color,opacity:i===scoreHistory.length-1?1:0.8}} />
                         {(i===0||i===11||i===23)&&<div className="text-[7px] text-[#bcbcbc] whitespace-nowrap">{w.label}</div>}
                       </div>
                     )

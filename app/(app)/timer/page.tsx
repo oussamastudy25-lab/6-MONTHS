@@ -404,17 +404,18 @@ export default function TimerPage() {
                   <div key={c.id}>
                     <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">{c.emoji} {c.name} — Last 7 Days</div>
                     <div className="bg-white border border-[#efefef] rounded-lg p-4">
-                      <div className="flex items-end gap-2 h-28 mb-2">
+                      <div className="flex items-end gap-2 mb-2" style={{height:96}}>
                         {weekly.map((d,i)=>{
-                          const h=d.mins>0?Math.max(8,Math.round(d.mins/maxMins*100)):4
+                          const barH=d.mins>0?Math.max(6,Math.round(d.mins/maxMins*80)):3
                           const isToday=i===6
                           return (
-                            <div key={d.day} className="flex-1 flex flex-col items-center gap-1 group relative">
+                            <div key={d.day} className="flex-1 flex flex-col items-center gap-1 group relative" style={{height:96}}>
                               <div className="absolute bottom-full mb-1 hidden group-hover:block bg-[#0A0A0A] text-white text-[9px] px-1.5 py-1 rounded whitespace-nowrap z-10">
                                 {d.day}: {fmtMins(d.mins)}
                               </div>
-                              <div className="w-full rounded-sm" style={{height:`${h}%`,background:d.mins>0?c.color:'#efefef',opacity:isToday?1:0.7}}/>
-                              <div className="text-[8px] text-[#bcbcbc]">{d.day.slice(0,2)}</div>
+                              <div className="flex-1"/>
+                              <div className="w-full rounded-sm" style={{height:barH,background:d.mins>0?c.color:'#efefef',opacity:isToday?1:0.7}}/>
+                              <div className="text-[8px] text-[#bcbcbc]" style={{lineHeight:'1.2'}}>{d.day.slice(0,2)}</div>
                             </div>
                           )
                         })}
