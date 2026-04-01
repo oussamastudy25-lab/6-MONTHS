@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Background -->
+  <rect width="32" height="32" rx="7" fill="#0A0A0A"/>
+  <!-- Center post -->
+  <rect x="15" y="7" width="2" height="18" rx="1" fill="#FF5C00"/>
+  <!-- Base -->
+  <rect x="10" y="24" width="12" height="2" rx="1" fill="#FF5C00"/>
+  <!-- Horizontal beam -->
+  <rect x="6" y="10" width="20" height="2" rx="1" fill="#FF5C00"/>
+  <!-- Left pan string -->
+  <line x1="8" y1="12" x2="8" y2="18" stroke="#FF5C00" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Right pan string -->
+  <line x1="24" y1="12" x2="24" y2="18" stroke="#FF5C00" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Left pan -->
+  <path d="M5 18 Q8 21 11 18" stroke="#FF5C00" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <!-- Right pan -->
+  <path d="M21 18 Q24 21 27 18" stroke="#FF5C00" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <!-- Top pivot dot -->
+  <circle cx="16" cy="10" r="1.5" fill="#FF5C00"/>
+</svg>
