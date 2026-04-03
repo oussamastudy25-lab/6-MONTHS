@@ -118,13 +118,14 @@ export default function TimerPage() {
   async function saveCategory(){
     if(!form.name.trim())return
     const {data:{user}}=await sb.auth.getUser();if(!user)return
-    if(editId){
+    if(editId && editId!=='new'){
       await sb.from('focus_categories').update({name:form.name,color:form.color,emoji:form.emoji,target_minutes:form.target_minutes}).eq('id',editId)
-      setCategories(prev=>prev.map(c=>c.id===editId?{...c,...form}:c));setEditId(null)
+      setCategories(prev=>prev.map(c=>c.id===editId?{...c,...form}:c))
     } else {
       const {data}=await sb.from('focus_categories').insert({user_id:user.id,...form,position:categories.length}).select().single()
       if(data){setCategories(prev=>[...prev,data]);if(!activeCat)setActiveCat(data.id)}
     }
+    setEditId(null)
     setForm({name:'',color:'#FF5C00',emoji:'📚',target_minutes:120})
   }
 
@@ -456,78 +457,123 @@ export default function TimerPage() {
         {/* Setup sidebar */}
         {showSetup&&(
           <div className="w-64 border-l border-[#efefef] flex flex-col bg-white flex-shrink-0 min-h-0">
-            <div className="px-4 py-3 border-b border-[#efefef] flex-shrink-0">
-              <div className="text-[12px] font-bold">{editId?'Edit Category':'New Category'}</div>
-            </div>
-            <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-3">
-              <div>
-                <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Name</div>
-                <input className="w-full bg-[#f7f7f7] border border-[#dedede] rounded-md px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00]"
-                  placeholder="e.g. Study, Business…" value={form.name}
-                  onChange={e=>setForm(p=>({...p,name:e.target.value}))}
-                  onKeyDown={e=>e.key==='Enter'&&saveCategory()}/>
-              </div>
-              <div>
-                <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Daily Target</div>
-                <div className="flex items-center gap-2">
-                  <input type="number" min="15" max="600" step="15"
-                    className="flex-1 bg-[#f7f7f7] border border-[#dedede] rounded-md px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00]"
-                    value={form.target_minutes} onChange={e=>setForm(p=>({...p,target_minutes:parseInt(e.target.value)||60}))}/>
-                  <span className="text-[10px] text-[#888]">{fmtMins(form.target_minutes)}</span>
+
+            {/* Mode: choose */}
+            {!editId&&(
+              <>
+                <div className="px-4 py-3 border-b border-[#efefef] flex-shrink-0 flex items-center justify-between">
+                  <div className="text-[12px] font-bold">Categories</div>
+                  <button onClick={()=>setShowSetup(false)} className="text-[16px] text-[#bcbcbc] hover:text-[#888] transition-colors leading-none">×</button>
                 </div>
-              </div>
-              <div>
-                <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Icon</div>
-                <div className="flex flex-wrap gap-1.5">
-                  {PRESET_EMOJIS.map(em=>(
-                    <button key={em} onClick={()=>setForm(p=>({...p,emoji:em}))}
-                      className={`w-8 h-8 rounded-md flex items-center justify-center text-[16px] transition-all ${form.emoji===em?'bg-[#FFF0E8] ring-2 ring-[#FF5C00]':'bg-[#f7f7f7] hover:bg-[#efefef]'}`}>
-                      {em}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Color</div>
-                <div className="flex flex-wrap gap-1.5">
-                  {PRESET_COLORS.map(c=>(
-                    <button key={c} onClick={()=>setForm(p=>({...p,color:c}))}
-                      className={`w-7 h-7 rounded-md transition-all ${form.color===c?'ring-2 ring-offset-1 ring-[#0A0A0A] scale-110':''}`}
-                      style={{background:c}}/>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center gap-2 p-2.5 bg-[#f7f7f7] rounded-md">
-                <span className="text-[18px]">{form.emoji}</span>
-                <span className="text-[12px] font-bold flex-1">{form.name||'Name'}</span>
-                <span className="text-[10px] text-[#888]">{fmtMins(form.target_minutes)}/day</span>
-                <div className="w-4 h-4 rounded-sm" style={{background:form.color}}/>
-              </div>
-              <button onClick={saveCategory} className="w-full bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] py-2 rounded-md hover:bg-[#FF7A2E] transition-colors">
-                {editId?'Update':'+ Add Category'}
-              </button>
-              {editId&&(
-                <button onClick={()=>{setEditId(null);setForm({name:'',color:'#FF5C00',emoji:'📚',target_minutes:120})}}
-                  className="w-full border border-[#dedede] text-[10px] font-bold uppercase tracking-[.1em] py-2 rounded-md hover:border-[#0A0A0A] transition-colors">Cancel</button>
-              )}
-              {categories.length>0&&(
-                <div className="pt-3 border-t border-[#efefef]">
-                  <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-2">Your Categories</div>
-                  {categories.map(c=>(
-                    <div key={c.id} className="flex items-center gap-2 py-2 border-b border-[#f7f7f7] last:border-0">
-                      <span className="text-[14px]">{c.emoji}</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-[11px] font-semibold truncate">{c.name}</div>
-                        <div className="text-[9px] text-[#888]">{fmtMins(c.target_minutes)}/day</div>
-                      </div>
-                      <div className="w-3 h-3 rounded-full" style={{background:c.color}}/>
-                      <button onClick={()=>startEdit(c)} className="text-[10px] text-[#bcbcbc] hover:text-[#888] transition-colors">✎</button>
-                      <button onClick={()=>deleteCategory(c.id)} className="text-[10px] text-[#bcbcbc] hover:text-[#ef4444] transition-colors">×</button>
+                <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-3">
+                  {/* Add new button */}
+                  <button
+                    onClick={()=>{setEditId('new');setForm({name:'',color:'#FF5C00',emoji:'📚',target_minutes:120})}}
+                    className="w-full flex items-center gap-3 px-3 py-3 bg-[#FF5C00] text-white rounded-lg hover:bg-[#FF7A2E] transition-colors">
+                    <span className="text-[20px]">＋</span>
+                    <div className="text-left">
+                      <div className="text-[12px] font-bold">New Category</div>
+                      <div className="text-[9px] opacity-80">Create a new focus category</div>
                     </div>
-                  ))}
+                  </button>
+
+                  {/* Existing categories */}
+                  {categories.length>0&&(
+                    <div>
+                      <div className="text-[9px] font-bold text-[#bcbcbc] uppercase tracking-[.12em] mb-2">Your Categories</div>
+                      <div className="space-y-1">
+                        {categories.map(c=>(
+                          <button key={c.id}
+                            onClick={()=>startEdit(c)}
+                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border border-[#efefef] hover:border-[#FF5C00] hover:bg-[#FFF8F5] transition-all text-left group">
+                            <span className="text-[18px]">{c.emoji}</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-[12px] font-semibold truncate">{c.name}</div>
+                              <div className="text-[9px] text-[#888]">{fmtMins(c.target_minutes)}/day</div>
+                            </div>
+                            <div className="w-3 h-3 rounded-full flex-shrink-0" style={{background:c.color}}/>
+                            <span className="text-[10px] text-[#bcbcbc] group-hover:text-[#FF5C00] transition-colors">✎</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {categories.length===0&&(
+                    <div className="text-center py-6 text-[12px] text-[#bcbcbc]">
+                      No categories yet.<br/>Create your first one above.
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
+
+            {/* Mode: edit / create form */}
+            {editId&&(
+              <>
+                <div className="px-4 py-3 border-b border-[#efefef] flex-shrink-0 flex items-center gap-2">
+                  <button onClick={()=>{setEditId(null);setForm({name:'',color:'#FF5C00',emoji:'📚',target_minutes:120})}}
+                    className="text-[14px] text-[#bcbcbc] hover:text-[#0A0A0A] transition-colors">‹</button>
+                  <div className="text-[12px] font-bold">{editId==='new'?'New Category':'Edit Category'}</div>
+                  {editId!=='new'&&(
+                    <button onClick={()=>deleteCategory(editId)}
+                      className="ml-auto text-[9px] font-bold text-[#bcbcbc] hover:text-[#ef4444] transition-colors uppercase tracking-[.08em]">Delete</button>
+                  )}
+                </div>
+                <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-3">
+                  <div>
+                    <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Name</div>
+                    <input className="w-full bg-[#f7f7f7] border border-[#dedede] rounded-md px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00]"
+                      placeholder="e.g. Study, Business…" value={form.name} autoFocus
+                      onChange={e=>setForm(p=>({...p,name:e.target.value}))}
+                      onKeyDown={e=>e.key==='Enter'&&saveCategory()}/>
+                  </div>
+                  <div>
+                    <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Daily Target</div>
+                    <div className="flex items-center gap-2">
+                      <input type="number" min="15" max="600" step="15"
+                        className="flex-1 bg-[#f7f7f7] border border-[#dedede] rounded-md px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00]"
+                        value={form.target_minutes} onChange={e=>setForm(p=>({...p,target_minutes:parseInt(e.target.value)||60}))}/>
+                      <span className="text-[10px] text-[#888]">{fmtMins(form.target_minutes)}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Icon</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {PRESET_EMOJIS.map(em=>(
+                        <button key={em} onClick={()=>setForm(p=>({...p,emoji:em}))}
+                          className={`w-8 h-8 rounded-md flex items-center justify-center text-[16px] transition-all ${form.emoji===em?'bg-[#FFF0E8] ring-2 ring-[#FF5C00]':'bg-[#f7f7f7] hover:bg-[#efefef]'}`}>
+                          {em}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Color</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {PRESET_COLORS.map(col=>(
+                        <button key={col} onClick={()=>setForm(p=>({...p,color:col}))}
+                          className={`w-7 h-7 rounded-md transition-all ${form.color===col?'ring-2 ring-offset-1 ring-[#0A0A0A] scale-110':''}`}
+                          style={{background:col}}/>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-2.5 bg-[#f7f7f7] rounded-md">
+                    <span className="text-[18px]">{form.emoji}</span>
+                    <span className="text-[12px] font-bold flex-1">{form.name||'Name'}</span>
+                    <span className="text-[10px] text-[#888]">{fmtMins(form.target_minutes)}/day</span>
+                    <div className="w-4 h-4 rounded-sm" style={{background:form.color}}/>
+                  </div>
+                  <button onClick={saveCategory} className="w-full bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] py-2.5 rounded-md hover:bg-[#FF7A2E] transition-colors">
+                    {editId==='new'?'+ Create Category':'Update'}
+                  </button>
+                  <button onClick={()=>{setEditId(null);setForm({name:'',color:'#FF5C00',emoji:'📚',target_minutes:120})}}
+                    className="w-full border border-[#dedede] text-[10px] font-bold uppercase tracking-[.1em] py-2 rounded-md hover:border-[#0A0A0A] transition-colors">
+                    ‹ Back
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
