@@ -455,7 +455,7 @@ export default function TimerPage() {
 
         {/* Setup sidebar */}
         {showSetup&&(
-          <div className="w-64 border-l border-[#efefef] flex flex-col bg-white flex-shrink-0 overflow-y-auto">
+          <div className="w-64 border-l border-[#efefef] flex flex-col bg-white flex-shrink-0 overflow-y-auto min-h-0">
             <div className="px-4 py-3 border-b border-[#efefef]">
               <div className="text-[12px] font-bold">{editId?'Edit Category':'New Category'}</div>
             </div>
