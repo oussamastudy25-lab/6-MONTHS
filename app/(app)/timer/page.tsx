@@ -191,7 +191,7 @@ export default function TimerPage() {
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 overflow-y-auto">
           {view==='timer'?(
-            <div className="p-6">
+            <div className="p-6 pb-20">
               {categories.length===0?(
                 <div className="flex flex-col items-center justify-center py-20 text-center">
                   <div className="text-5xl mb-4">⏱</div>
@@ -297,9 +297,10 @@ export default function TimerPage() {
                           <span className="text-[11px] text-[#888] font-mono">{fmtMins(catTodayMins)} / {fmtMins(targetMins)}</span>
                         </div>
 
-                        {/* Note */}
+                        {/* Note + Control — sticky so always visible */}
+                        <div className="sticky bottom-0 bg-white/95 backdrop-blur-sm pt-3 pb-2 -mx-6 px-6 border-t border-[#f0f0f0] mt-4">
                         {!running&&(
-                          <input className="w-full max-w-sm mx-auto block bg-[#f7f7f7] border border-[#dedede] rounded-md px-3 py-2 text-[12px] outline-none focus:border-[#FF5C00] text-center mb-4"
+                          <input className="w-full max-w-sm mx-auto block bg-[#f7f7f7] border border-[#dedede] rounded-md px-3 py-2 text-[12px] outline-none focus:border-[#FF5C00] text-center mb-3"
                             placeholder="What are you working on? (optional)"
                             value={note} onChange={e=>setNote(e.target.value)}/>
                         )}
@@ -336,6 +337,7 @@ export default function TimerPage() {
                             {timeboxMode?`▶ Start ${timeboxMins}m Block`:'▶ Start'}
                           </button>
                         )}
+                        </div>{/* end sticky */}
                       </div>
 
                       {/* Today's sessions */}
