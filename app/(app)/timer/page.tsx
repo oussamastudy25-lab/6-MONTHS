@@ -455,11 +455,11 @@ export default function TimerPage() {
 
         {/* Setup sidebar */}
         {showSetup&&(
-          <div className="w-64 border-l border-[#efefef] flex flex-col bg-white flex-shrink-0 overflow-y-auto min-h-0">
-            <div className="px-4 py-3 border-b border-[#efefef]">
+          <div className="w-64 border-l border-[#efefef] flex flex-col bg-white flex-shrink-0 min-h-0">
+            <div className="px-4 py-3 border-b border-[#efefef] flex-shrink-0">
               <div className="text-[12px] font-bold">{editId?'Edit Category':'New Category'}</div>
             </div>
-            <div className="p-4 space-y-3">
+            <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-3">
               <div>
                 <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Name</div>
                 <input className="w-full bg-[#f7f7f7] border border-[#dedede] rounded-md px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00]"
