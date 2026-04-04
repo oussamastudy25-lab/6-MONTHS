@@ -36,6 +36,7 @@ export default function LettersPage() {
   const today = fmt(new Date())
   const [letters, setLetters]     = useState<Letter[]>([])
   const [selected, setSelected]   = useState<Letter|null>(null)
+  const [titleVal, setTitleVal]     = useState('')
   const [showNew, setShowNew]     = useState(false)
   const [newTitle, setNewTitle]   = useState('')
   const [newDate, setNewDate]     = useState(today)
@@ -44,6 +45,7 @@ export default function LettersPage() {
   const editorRef   = useRef<HTMLDivElement>(null)
   const saveTimer   = useRef<ReturnType<typeof setTimeout>|null>(null)
   const currentId   = useRef<string|null>(null)
+  const titleValRef = useRef<string>('')
 
   const load = useCallback(async () => {
     const { data: { user } } = await sb.auth.getUser(); if (!user) return
@@ -63,8 +65,7 @@ export default function LettersPage() {
   async function doSave() {
     if (!currentId.current || !editorRef.current) return
     const html = editorRef.current.innerHTML
-    const titleEl = document.getElementById('letter-title') as HTMLInputElement|null
-    const title = titleEl?.value || today
+    const title = titleValRef.current || today
     await sb.from('letters').update({ content: html, title, updated_at: new Date().toISOString() }).eq('id', currentId.current)
     setSaveState('saved')
     setTimeout(() => setSaveState('idle'), 2000)
@@ -91,6 +92,8 @@ export default function LettersPage() {
   function openLetter(l: Letter) {
     if (saveTimer.current) { clearTimeout(saveTimer.current); doSave() }
     setSelected(l)
+    setTitleVal(l.title)
+    titleValRef.current = l.title
     currentId.current = l.id
     setSaveState('idle')
     setShowColors(false)
@@ -222,11 +225,11 @@ export default function LettersPage() {
           <>
             {/* Header */}
             <div className="px-6 py-2.5 border-b border-[#efefef] flex items-center gap-3 flex-shrink-0">
-              <input id="letter-title"
+              <input
                 className="flex-1 text-[16px] font-bold outline-none placeholder:text-[#dedede] min-w-0"
                 placeholder="Title…"
-                defaultValue={selected.title}
-                onChange={() => scheduleAutoSave()}
+                value={titleVal}
+                onChange={e => { setTitleVal(e.target.value); titleValRef.current = e.target.value; scheduleAutoSave() }}
               />
               <div className="flex items-center gap-2 flex-shrink-0">
                 {saveState === 'saving' && <span className="text-[10px] text-[#aaa]">Saving…</span>}
