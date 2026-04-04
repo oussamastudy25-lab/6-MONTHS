@@ -17,6 +17,8 @@ const NAV = [
   { divider: true },
   { href: '/letters',           icon: '✍',  label: 'Letters' },
   { href: '/database',          icon: '◳',  label: 'Database' },
+  { divider: true },
+  { href: '/accountability',    icon: '◈',  label: 'Accountability' },
 ]
 
 interface Props { streak?: string; monthPct?: string; tasks?: string }
