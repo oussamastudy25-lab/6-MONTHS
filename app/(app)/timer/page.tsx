@@ -46,6 +46,11 @@ export default function TimerPage() {
   const [timeboxMode, setTimeboxMode] = useState(false)
   const [timeboxMins, setTimeboxMins] = useState(25)
   const [timeboxDone, setTimeboxDone] = useState(false)
+  // Rest / break state
+  const [restMode, setRestMode]       = useState(false)
+  const [restMins, setRestMins]       = useState(5)
+  const [restElapsed, setRestElapsed] = useState(0)
+  const [restDone, setRestDone]       = useState(false)
 
   const load = useCallback(async () => {
     const {data:{user}}=await sb.auth.getUser();if(!user)return
@@ -88,15 +93,49 @@ export default function TimerPage() {
     return()=>{if(timerRef.current)clearInterval(timerRef.current)}
   },[running,timeboxMode,timeboxMins,timeboxDone])
 
-  // Browser tab title when running
+  // Browser tab title — running or resting
   useEffect(()=>{
+    if(restMode){
+      if(restDone){ document.title='🔔 Rest over — Ready!'; return }
+      const remaining = restMins*60 - restElapsed
+      const m=Math.floor(remaining/60).toString().padStart(2,'0')
+      const s=(remaining%60).toString().padStart(2,'0')
+      document.title=`😴 ${m}:${s} — Rest`
+      return()=>{ document.title='Mizan ميزان' }
+    }
     if(!running){document.title='Mizan ميزان';return}
     const cat=categories.find(c=>c.id===running.category_id)
     const mins=Math.floor(elapsed/60).toString().padStart(2,'0')
     const secs=(elapsed%60).toString().padStart(2,'0')
     document.title=`🔴 ${mins}:${secs} — ${cat?.name??'Focus'}`
     return()=>{document.title='Mizan ميزان'}
-  },[running,elapsed,categories])
+  },[running,elapsed,categories,restMode,restDone,restElapsed,restMins])
+
+  // Rest countdown effect
+  const restRef = useRef<ReturnType<typeof setInterval>|null>(null)
+  useEffect(()=>{
+    if(restMode && !restDone){
+      restRef.current = setInterval(()=>{
+        setRestElapsed(e=>{
+          const next = e+1
+          if(next >= restMins*60){ setRestDone(true); return next }
+          return next
+        })
+      },1000)
+    } else {
+      if(restRef.current) clearInterval(restRef.current)
+    }
+    return ()=>{ if(restRef.current) clearInterval(restRef.current) }
+  },[restMode,restDone,restMins])
+
+  function startRest(mins:number){
+    setRestMins(mins); setRestElapsed(0); setRestDone(false); setRestMode(true)
+    setTimeboxDone(false)
+  }
+  function endRest(){
+    setRestMode(false); setRestElapsed(0); setRestDone(false)
+  }
+  function skipRest(){ endRest() }
 
   async function startTimer(){
     if(!activeCat)return
@@ -316,17 +355,70 @@ export default function TimerPage() {
                         )}
 
                         {/* Control button */}
-                        {timeboxDone?(
+                        {restMode?(
+                          /* REST MODE */
+                          <div className="space-y-3 py-2">
+                            {restDone?(
+                              <div className="text-center space-y-2">
+                                <div className="text-[28px]">🔔</div>
+                                <div className="text-[15px] font-bold text-[#0A0A0A]">Rest over!</div>
+                                <div className="text-[11px] text-[#888]">Ready for the next block?</div>
+                                <div className="flex gap-2 justify-center pt-1">
+                                  <button onClick={()=>{endRest();setTimeboxDone(false)}}
+                                    className="px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[.1em] text-white transition-colors"
+                                    style={{background:currentCat?.color??'#FF5C00'}}>
+                                    ▶ Start Next Block
+                                  </button>
+                                  <button onClick={()=>{endRest();stopTimer()}}
+                                    className="px-4 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[.1em] border border-[#dedede] text-[#888] hover:border-[#0A0A0A] transition-colors">
+                                    Done for now
+                                  </button>
+                                </div>
+                              </div>
+                            ):(
+                              <div className="text-center space-y-2">
+                                <div className="text-[11px] font-bold text-[#888] uppercase tracking-[.1em]">Rest Break</div>
+                                {/* Rest progress ring */}
+                                <div className="relative w-24 h-24 mx-auto">
+                                  <svg className="w-24 h-24 -rotate-90" viewBox="0 0 96 96">
+                                    <circle cx="48" cy="48" r="40" fill="none" stroke="#f0f0f0" strokeWidth="6"/>
+                                    <circle cx="48" cy="48" r="40" fill="none" stroke="#22c55e" strokeWidth="6"
+                                      strokeDasharray={`${2*Math.PI*40}`}
+                                      strokeDashoffset={`${2*Math.PI*40*(restElapsed/(restMins*60))}`}
+                                      strokeLinecap="round"/>
+                                  </svg>
+                                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span className="font-mono text-[16px] font-bold text-[#22c55e]">
+                                      {String(Math.floor((restMins*60-restElapsed)/60)).padStart(2,'0')}:{String((restMins*60-restElapsed)%60).padStart(2,'0')}
+                                    </span>
+                                    <span className="text-[9px] text-[#aaa] uppercase tracking-[.08em]">rest</span>
+                                  </div>
+                                </div>
+                                <div className="text-[11px] text-[#aaa]">Step away, breathe, hydrate 💧</div>
+                                <button onClick={skipRest}
+                                  className="text-[10px] text-[#bcbcbc] hover:text-[#888] transition-colors uppercase tracking-[.08em]">
+                                  Skip rest →
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        ):timeboxDone?(
                           <div className="space-y-2">
                             <div className="text-[13px] font-bold text-[#22c55e]">✓ Block complete — {fmtMins(timeboxMins)} focused</div>
-                            <div className="flex gap-2 justify-center">
+                            <div className="flex gap-2 justify-center flex-wrap">
                               <button onClick={stopTimer}
-                                className="px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[.1em] bg-[#22c55e] text-white hover:bg-green-600 transition-colors">
-                                ✓ Save & Finish
+                                className="px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[.1em] bg-[#22c55e] text-white hover:bg-green-600 transition-colors">
+                                ✓ Finish
                               </button>
-                              <button onClick={()=>{setTimeboxDone(false)}}
-                                className="px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[.1em] border border-[#dedede] text-[#888] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors">
-                                + Another Block
+                              {[5,10,15].map(m=>(
+                                <button key={m} onClick={()=>startRest(m)}
+                                  className="px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[.1em] border border-[#22c55e] text-[#22c55e] hover:bg-[#f0fdf4] transition-colors">
+                                  😴 {m}m Rest
+                                </button>
+                              ))}
+                              <button onClick={()=>setTimeboxDone(false)}
+                                className="px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[.1em] border border-[#dedede] text-[#888] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors">
+                                + Again
                               </button>
                             </div>
                           </div>
