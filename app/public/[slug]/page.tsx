@@ -22,154 +22,214 @@ function fmtMins(m: number) {
   const h = Math.floor(m/60), min = m%60
   return h > 0 ? `${h}h${min > 0 ? ` ${min}m` : ''}` : `${min}m`
 }
-function isInWindow(w: Win) {
-  const now = new Date()
+function isInWindow(w: Win, now = new Date()) {
   const dow = now.getDay()
   const mins = now.getHours()*60 + now.getMinutes()
   return w.days_of_week.includes(dow) && mins >= w.start_minutes && mins < w.end_minutes
 }
-
-const CAT_COLORS: Record<string,string> = {
-  Health:'#22c55e', Mind:'#8b5cf6', Work:'#FF5C00',
-  Relationships:'#ec4899', Finance:'#f59e0b', Spirit:'#06b6d4', Other:'#888'
+function minsUntilWindowEnd(w: Win, now = new Date()) {
+  const mins = now.getHours()*60 + now.getMinutes()
+  return Math.max(0, w.end_minutes - mins)
+}
+function minsOffline(timerRunning: boolean, windows: Win[], now = new Date()) {
+  // rough: we don't know exactly when they stopped, just show "since window started" if !running
+  if (timerRunning) return 0
+  const activeWin = windows.find(w => isInWindow(w, now))
+  if (!activeWin) return 0
+  const mins = now.getHours()*60 + now.getMinutes()
+  return mins - activeWin.start_minutes
 }
 
+const CAT_COLORS: Record<string,string> = {
+  Health:'#16a34a', Mind:'#7c3aed', Work:'#ea580c',
+  Relationships:'#db2777', Finance:'#d97706', Spirit:'#0891b2', Other:'#6b7280'
+}
+const DOW_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+
 export default function PublicPage({ params }: { params: { slug: string } }) {
-  const [data, setData]       = useState<Data|null>(null)
+  const [data, setData]         = useState<Data|null>(null)
   const [notFound, setNotFound] = useState(false)
-  const [updatedAt, setUpdatedAt] = useState<Date|null>(null)
-  const [tick, setTick]       = useState(0) // forces re-render every second for live clock
+  const [now, setNow]           = useState(new Date())
 
   const load = useCallback(async () => {
     const { data: result } = await sb.rpc('get_public_profile', { p_slug: params.slug })
     if (!result) { setNotFound(true); return }
     setData(result)
-    setUpdatedAt(new Date())
   }, [params.slug])
 
   useEffect(() => {
     load()
     const refresh = setInterval(load, 30_000)
-    const clock   = setInterval(() => setTick(t => t+1), 1000)
+    const clock   = setInterval(() => setNow(new Date()), 1000)
     return () => { clearInterval(refresh); clearInterval(clock) }
   }, [load])
 
   if (notFound) return (
-    <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+    <div className="min-h-screen bg-[#f8f8f6] flex items-center justify-center">
       <div className="text-center">
-        <div className="text-[48px] mb-4">🔍</div>
-        <div className="text-white text-[20px] font-bold mb-2">Profile not found</div>
-        <div className="text-[#444] text-[13px]">This page doesn&apos;t exist or is set to private.</div>
+        <div className="text-[56px] mb-4">🔍</div>
+        <div className="text-[#0A0A0A] text-[20px] font-bold mb-2">Profile not found</div>
+        <div className="text-[#888] text-[13px]">This accountability page doesn&apos;t exist or is set to private.</div>
       </div>
     </div>
   )
 
   if (!data) return (
-    <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
-      <div className="text-[#444] text-[13px]">Loading…</div>
+    <div className="min-h-screen bg-[#f8f8f6] flex items-center justify-center">
+      <div className="text-[#aaa] text-[13px]">Loading…</div>
     </div>
   )
 
-  const activeWindow  = data.windows.find(w => isInWindow(w))
+  const activeWindow  = data.windows.find(w => isInWindow(w, now))
   const inWindow      = !!activeWindow
   const isLive        = data.timer_running
+  const offlineMins   = minsOffline(isLive, data.windows, now)
+  const remainingMins = activeWindow ? minsUntilWindowEnd(activeWindow, now) : 0
 
-  const status = inWindow
-    ? (isLive ? 'live' : 'offline')
-    : (isLive ? 'working' : 'free')
+  // Determine status
+  const status = inWindow ? (isLive ? 'live' : 'offline') : (isLive ? 'working' : 'free')
 
-  const cfg = {
-    live:    { color:'#22c55e', border:'#22c55e40', bg:'#021a0d', dot:'🟢', label:'LIVE',         sub:'Timer is running · In the zone' },
-    offline: { color:'#ef4444', border:'#ef444440', bg:'#1a0202', dot:'🔴', label:'NOT WORKING',  sub:`${activeWindow?.label ?? 'Deep Work'} window is active` },
-    working: { color:'#f59e0b', border:'#f59e0b40', bg:'#1a1002', dot:'🟡', label:'WORKING',      sub:'Working outside scheduled window' },
-    free:    { color:'#555',    border:'#55555540', bg:'#111111', dot:'⚫', label:'FREE TIME',     sub:'No accountability window right now' },
-  }[status]
+  const dateStr = now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' })
+  const timeStr = now.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })
 
-  const now    = new Date()
-  const timeStr= now.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' })
-  const dateStr= now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
+  // Habit completion %
+  const habitPct = data.habits_total > 0 ? Math.round(data.habits_done / data.habits_total * 100) : 0
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-white" style={{fontFamily:'system-ui,-apple-system,sans-serif'}}>
+    <div className="min-h-screen bg-[#f5f5f2]" style={{fontFamily:'system-ui,-apple-system,sans-serif'}}>
 
       {/* Top bar */}
-      <div className="px-5 pt-6 pb-4 border-b border-[#1a1a1a]">
-        <div className="max-w-md mx-auto flex items-center justify-between">
-          <div>
-            <span className="text-[13px] font-black tracking-[.12em]">MIZAN</span>
-            <span className="text-[12px] text-[#FF5C00] ml-2" style={{fontFamily:'serif'}}>ميزان</span>
-            <div className="text-[9px] text-[#333] uppercase tracking-[.12em] mt-0.5">accountability</div>
+      <div className="bg-white border-b border-[#e8e8e4] px-5 py-3">
+        <div className="max-w-lg mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-[12px] font-black tracking-[.1em] text-[#0A0A0A]">MIZAN</span>
+            <span className="text-[11px] text-[#FF5C00]" style={{fontFamily:'serif'}}>ميزان</span>
+            <span className="text-[10px] text-[#bbb] ml-1">accountability</span>
           </div>
           <div className="text-right">
-            <div className="font-mono text-[20px] font-bold" style={{color:cfg.color}}>{timeStr}</div>
-            <div className="text-[9px] text-[#444] mt-0.5">{dateStr}</div>
+            <div className="text-[13px] font-bold text-[#0A0A0A]">{timeStr}</div>
+            <div className="text-[10px] text-[#aaa]">{dateStr}</div>
           </div>
         </div>
       </div>
 
-      <div className="px-5 py-5 max-w-md mx-auto space-y-4">
+      <div className="px-5 py-6 max-w-lg mx-auto space-y-4">
 
         {/* Name */}
-        <div className="text-[22px] font-black">{data.display_name}</div>
-
-        {/* BIG STATUS CARD */}
-        <div className="rounded-2xl px-5 py-6 text-center"
-          style={{background:cfg.bg, border:`1px solid ${cfg.border}`}}>
-          <div className="text-[11px] uppercase tracking-[.18em] mb-2" style={{color:cfg.color+'99'}}>
-            status
-          </div>
-          <div className="text-[28px] font-black tracking-[.03em] mb-1" style={{color:cfg.color}}>
-            {cfg.dot} {cfg.label}
-          </div>
-          <div className="text-[13px]" style={{color:cfg.color+'88'}}>{cfg.sub}</div>
-          {inWindow && activeWindow && (
-            <div className="text-[11px] font-mono mt-3 px-3 py-1.5 rounded-lg inline-block" style={{background:cfg.color+'15',color:cfg.color+'99'}}>
-              {activeWindow.label} · {minsToLabel(activeWindow.start_minutes)}–{minsToLabel(activeWindow.end_minutes)}
+        <div>
+          <div className="text-[24px] font-black text-[#0A0A0A] leading-tight">{data.display_name}</div>
+          {data.windows.length > 0 && (
+            <div className="text-[11px] text-[#aaa] mt-1">
+              {data.windows.map(w =>
+                `${w.days_of_week.map(d=>DOW_SHORT[d]).join('/')} ${minsToLabel(w.start_minutes)}–${minsToLabel(w.end_minutes)}`
+              ).join(' · ')}
             </div>
           )}
         </div>
 
-        {/* Stats grid */}
-        <div className="grid grid-cols-3 gap-2.5">
+        {/* STATUS CARD — only show when in a window */}
+        {inWindow && (
+          <div className={`rounded-2xl p-5 ${isLive
+            ? 'bg-[#f0fdf4] border border-[#bbf7d0]'
+            : 'bg-[#fef2f2] border border-[#fecaca]'}`}>
+            <div className="flex items-start justify-between">
+              <div>
+                <div className={`text-[11px] font-bold uppercase tracking-[.12em] mb-1 ${isLive?'text-[#16a34a]':'text-[#dc2626]'}`}>
+                  {isLive ? '● Live' : '● Not working'}
+                </div>
+                <div className="text-[18px] font-black text-[#0A0A0A] leading-tight">
+                  {isLive
+                    ? `In the zone`
+                    : offlineMins > 0
+                      ? `${offlineMins}m without working`
+                      : `Should be working`}
+                </div>
+                <div className={`text-[12px] mt-1 ${isLive?'text-[#16a34a]':'text-[#888]'}`}>
+                  {isLive
+                    ? `${activeWindow?.label ?? 'Deep Work'} · ${remainingMins}m left in window`
+                    : `${activeWindow?.label ?? 'Deep Work'} window is active`}
+                </div>
+              </div>
+              <div className={`text-[40px] leading-none ${isLive?'':'opacity-30 grayscale'}`}>
+                {isLive ? '🟢' : '🔴'}
+              </div>
+            </div>
+
+            {/* Time left bar */}
+            {activeWindow && (
+              <div className="mt-4">
+                <div className="flex justify-between text-[9px] text-[#aaa] mb-1 uppercase tracking-[.08em]">
+                  <span>{minsToLabel(activeWindow.start_minutes)}</span>
+                  <span>{remainingMins}m remaining</span>
+                  <span>{minsToLabel(activeWindow.end_minutes)}</span>
+                </div>
+                <div className="h-1.5 bg-[#e5e5e5] rounded-full overflow-hidden">
+                  <div className="h-full rounded-full transition-all"
+                    style={{
+                      width: `${Math.round((1 - remainingMins / (activeWindow.end_minutes - activeWindow.start_minutes)) * 100)}%`,
+                      background: isLive ? '#16a34a' : '#dc2626'
+                    }} />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Working outside window */}
+        {!inWindow && isLive && (
+          <div className="bg-[#fffbeb] border border-[#fde68a] rounded-2xl p-4 flex items-center gap-3">
+            <span className="text-[28px]">🟡</span>
+            <div>
+              <div className="text-[14px] font-bold text-[#92400e]">Working</div>
+              <div className="text-[11px] text-[#a16207]">Timer running outside scheduled window — bonus points</div>
+            </div>
+          </div>
+        )}
+
+        {/* Stats row */}
+        <div className="grid grid-cols-3 gap-3">
           {data.show_habits && (
-            <div className="bg-[#111] border border-[#1E1E1E] rounded-xl p-4 text-center">
-              <div className="font-mono text-[22px] font-bold text-[#FF5C00]">{data.habits_done}/{data.habits_total}</div>
-              <div className="text-[9px] text-[#444] uppercase tracking-[.1em] mt-1">Habits</div>
-              <div className="text-[9px] text-[#2a2a2a] mt-1">{data.days_active_30}d / 30d</div>
+            <div className="bg-white border border-[#e8e8e4] rounded-xl p-4">
+              <div className="text-[10px] font-bold text-[#aaa] uppercase tracking-[.1em] mb-2">Habits</div>
+              <div className="text-[22px] font-black text-[#0A0A0A]">{data.habits_done}<span className="text-[14px] text-[#aaa] font-normal">/{data.habits_total}</span></div>
+              <div className="mt-2 h-1 bg-[#f0f0f0] rounded-full overflow-hidden">
+                <div className="h-full bg-[#FF5C00] rounded-full" style={{width:`${habitPct}%`}} />
+              </div>
+              <div className="text-[9px] text-[#aaa] mt-1">{habitPct}% done today</div>
             </div>
           )}
           {data.show_focus && (
-            <div className="bg-[#111] border border-[#1E1E1E] rounded-xl p-4 text-center">
-              <div className="font-mono text-[22px] font-bold text-[#FF5C00]">{fmtMins(data.focus_today_mins)}</div>
-              <div className="text-[9px] text-[#444] uppercase tracking-[.1em] mt-1">Focus</div>
-              <div className="text-[9px] text-[#2a2a2a] mt-1">today</div>
+            <div className="bg-white border border-[#e8e8e4] rounded-xl p-4">
+              <div className="text-[10px] font-bold text-[#aaa] uppercase tracking-[.1em] mb-2">Focus</div>
+              <div className="text-[22px] font-black text-[#0A0A0A]">{fmtMins(data.focus_today_mins)}</div>
+              <div className="text-[9px] text-[#aaa] mt-3">{data.days_active_30} active days<br/>last 30 days</div>
             </div>
           )}
-          <div className="bg-[#111] border border-[#1E1E1E] rounded-xl p-4 text-center">
-            <div className="font-mono text-[22px] font-bold text-[#FF5C00]">{data.weekly_goals_done}/{data.weekly_goals_total}</div>
-            <div className="text-[9px] text-[#444] uppercase tracking-[.1em] mt-1">Goals</div>
-            <div className="text-[9px] text-[#2a2a2a] mt-1">this week</div>
+          <div className="bg-white border border-[#e8e8e4] rounded-xl p-4">
+            <div className="text-[10px] font-bold text-[#aaa] uppercase tracking-[.1em] mb-2">Goals</div>
+            <div className="text-[22px] font-black text-[#0A0A0A]">{data.weekly_goals_done}<span className="text-[14px] text-[#aaa] font-normal">/{data.weekly_goals_total}</span></div>
+            <div className="text-[9px] text-[#aaa] mt-3">weekly goals<br/>completed</div>
           </div>
         </div>
 
-        {/* Active 6M goals */}
+        {/* 6M Goals */}
         {data.show_goals && data.goals && data.goals.length > 0 && (
-          <div className="bg-[#111] border border-[#1E1E1E] rounded-xl p-4">
-            <div className="text-[9px] font-bold text-[#333] uppercase tracking-[.12em] mb-3">Active Goals</div>
-            <div className="space-y-3">
+          <div className="bg-white border border-[#e8e8e4] rounded-xl p-4">
+            <div className="text-[10px] font-bold text-[#aaa] uppercase tracking-[.1em] mb-4">6-Month Goals</div>
+            <div className="space-y-4">
               {(data.goals as Goal[]).map((g, i) => {
-                const color = CAT_COLORS[g.category] ?? '#888'
+                const color = CAT_COLORS[g.category] ?? '#6b7280'
                 return (
                   <div key={i}>
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2 min-w-0">
-                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{background:color}} />
-                        <span className="text-[12px] font-medium truncate">{g.title}</span>
+                        <div className="w-2 h-2 rounded-full flex-shrink-0" style={{background:color}} />
+                        <span className="text-[13px] font-semibold text-[#0A0A0A] truncate">{g.title}</span>
                       </div>
-                      <span className="font-mono text-[11px] font-bold flex-shrink-0 ml-2" style={{color}}>{g.pct}%</span>
+                      <span className="text-[12px] font-bold flex-shrink-0 ml-3" style={{color}}>{g.pct}%</span>
                     </div>
-                    <div className="h-[3px] bg-[#1E1E1E] rounded-full overflow-hidden">
-                      <div className="h-full rounded-full" style={{width:`${g.pct}%`,background:color}} />
+                    <div className="h-1.5 bg-[#f0f0f0] rounded-full overflow-hidden">
+                      <div className="h-full rounded-full transition-all" style={{width:`${g.pct}%`,background:color}} />
                     </div>
                   </div>
                 )
@@ -178,15 +238,18 @@ export default function PublicPage({ params }: { params: { slug: string } }) {
           </div>
         )}
 
-        {/* Footer */}
-        <div className="text-center pt-2 pb-6 space-y-1">
-          <div className="text-[9px] text-[#2a2a2a] uppercase tracking-[.1em]">
-            Refreshes every 30s · updated {updatedAt?.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) ?? '...'}
+        {/* No windows = clean neutral state */}
+        {data.windows.length === 0 && !isLive && (
+          <div className="text-center py-4 text-[11px] text-[#bbb]">
+            No accountability windows set
           </div>
-          <div className="text-[9px] text-[#222]">
-            Powered by <span className="text-[#FF5C00]">Mizan ميزان</span> · Habit OS
-          </div>
+        )}
+
+        {/* Minimal footer */}
+        <div className="text-center pb-4">
+          <span className="text-[9px] text-[#ccc] uppercase tracking-[.1em]">Mizan ميزان</span>
         </div>
+
       </div>
     </div>
   )
