@@ -51,6 +51,7 @@ export default function TimerPage() {
   const [restMins, setRestMins]       = useState(5)
   const [restElapsed, setRestElapsed] = useState(0)
   const [restDone, setRestDone]       = useState(false)
+  const restStartedAt = useRef<number|null>(null)  // timestamp-based, no closure issues
   // Minimum warning + 2-min rule
   const [showMinWarning, setShowMinWarning] = useState(false)
   const [showRestOffer, setShowRestOffer] = useState(false)
@@ -116,28 +117,29 @@ export default function TimerPage() {
     return()=>{document.title='Mizan ميزان'}
   },[running,elapsed,categories,restMode,restDone,restElapsed,restMins])
 
-  // Rest countdown effect
+  // Rest countdown — timestamp-based so no stale closure issues
   const restRef = useRef<ReturnType<typeof setInterval>|null>(null)
   useEffect(()=>{
     if(restMode && !restDone){
       restRef.current = setInterval(()=>{
-        setRestElapsed(e=>{
-          const next = e+1
-          if(next >= restMins*60){ setRestDone(true); return next }
-          return next
-        })
-      },1000)
+        if(!restStartedAt.current) return
+        const elapsed = Math.floor((Date.now() - restStartedAt.current) / 1000)
+        setRestElapsed(elapsed)
+        if(elapsed >= restMins * 60) setRestDone(true)
+      }, 500)
     } else {
-      if(restRef.current) clearInterval(restRef.current)
+      if(restRef.current){ clearInterval(restRef.current); restRef.current = null }
     }
-    return ()=>{ if(restRef.current) clearInterval(restRef.current) }
+    return ()=>{ if(restRef.current){ clearInterval(restRef.current); restRef.current = null } }
   },[restMode,restDone,restMins])
 
   function startRest(mins:number){
+    restStartedAt.current = Date.now()  // record start time
     setRestMins(mins); setRestElapsed(0); setRestDone(false); setRestMode(true)
     setTimeboxDone(false)
   }
   function endRest(){
+    restStartedAt.current = null
     setRestMode(false); setRestElapsed(0); setRestDone(false)
   }
   function skipRest(){ endRest() }
