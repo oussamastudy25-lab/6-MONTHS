@@ -301,7 +301,11 @@ export default function CalendarPage() {
   }
 
   function titleLabel() {
-    if(viewMode==='week') return `${MONTHS[weekMon.getMonth()]} ${weekMon.getFullYear()}`
+    if(viewMode==='week') {
+      // Use Thursday (day 3) of the week — always falls in the dominant month
+      const thu = new Date(weekMon); thu.setDate(weekMon.getDate() + 3)
+      return `${MONTHS[thu.getMonth()]} ${thu.getFullYear()}`
+    }
     if(viewMode==='day') return new Date(dayDate).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})
     return `${MONTHS[monthMonth]} ${monthYear}`
   }
