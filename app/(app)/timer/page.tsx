@@ -141,7 +141,14 @@ export default function TimerPage() {
     setEditId(c.id);setShowSetup(true)
   }
 
-  function todayMins(catId:string){return sessions.filter(s=>s.category_id===catId&&s.ended_at).reduce((a,s)=>a+s.duration_minutes,0)}
+  function todayMins(catId:string){return sessions.filter(s=>s.category_id===catId&&s.ended_at&&s.date===today).reduce((a,s)=>a+s.duration_minutes,0)}
+  function totalTodayAllCats(){return sessions.filter(s=>s.ended_at&&s.date===today).reduce((a,s)=>a+s.duration_minutes,0)}
+  function totalWeekAllCats(){
+    const now2=new Date(),dow=now2.getDay(),diff=dow===0?-6:1-dow
+    const mon=new Date(now2);mon.setDate(now2.getDate()+diff);mon.setHours(0,0,0,0)
+    const monStr=fmt(mon)
+    return sessions.filter(s=>s.ended_at&&s.date>=monStr&&s.date<=today).reduce((a,s)=>a+s.duration_minutes,0)
+  }
 
   function last7Days(){
     const days:string[]=[]
@@ -174,7 +181,11 @@ export default function TimerPage() {
       <div className="bg-white px-6 py-3 border-b-2 border-[#0A0A0A] flex items-center flex-shrink-0">
         <div>
           <div className="text-[19px] font-bold tracking-[.04em]">Focus Timer</div>
-          <div className="text-[10px] text-[#888] tracking-[.12em] uppercase mt-0.5">Total today: {fmtMins(todayTotal)}</div>
+          <div className="text-[10px] text-[#888] tracking-[.12em] uppercase mt-0.5 flex items-center gap-3">
+            <span>TODAY: <span className="text-[#FF5C00] font-bold">{fmtMins(totalTodayAllCats())}</span></span>
+            <span className="text-[#dedede]">·</span>
+            <span>THIS WEEK: <span className="text-[#FF5C00] font-bold">{fmtMins(totalWeekAllCats())}</span></span>
+          </div>
         </div>
         <div className="ml-auto flex items-center gap-2">
           <button onClick={()=>setView(v=>v==='timer'?'analytics':'timer')}

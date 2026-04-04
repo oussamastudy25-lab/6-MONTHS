@@ -5,6 +5,30 @@ import { createClient } from '@/lib/supabase'
 const sb = createClient()
 type Row = { id: string; name: string; position: number }
 
+function HabitInput({ habit, onUpdate, onRemove }: {
+  habit: Row
+  onUpdate: (id: string, name: string) => void
+  onRemove: (id: string) => void
+}) {
+  const [val, setVal] = useState(habit.name)
+  return (
+    <div className="flex items-center gap-1.5 bg-[#f7f7f7] border border-[#efefef] rounded-md px-2 mb-1 h-10 focus-within:border-[#FF5C00] focus-within:bg-white transition-colors">
+      <span className="font-mono text-[10px] text-[#bcbcbc] min-w-[16px]">{habit.position + 1}</span>
+      <div className="w-px h-[18px] bg-[#dedede]"/>
+      <input
+        className="flex-1 bg-transparent border-none outline-none text-[13px]"
+        placeholder="Habit name…"
+        value={val}
+        onChange={e => setVal(e.target.value)}
+        onBlur={() => { if (val !== habit.name) onUpdate(habit.id, val) }}
+        onKeyDown={e => { if (e.key === 'Enter') { (e.target as HTMLInputElement).blur() } }}
+      />
+      <button onClick={() => onRemove(habit.id)}
+        className="w-6 h-6 rounded border border-[#dedede] flex items-center justify-center text-[13px] text-[#888] hover:bg-[#FBE9E7] hover:border-[#e0a0a0] hover:text-[#8B0000] transition-colors">×</button>
+    </div>
+  )
+}
+
 export default function SetupPage() {
   const [habits, setHabits] = useState<Row[]>([])
 
@@ -42,16 +66,8 @@ export default function SetupPage() {
           <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-1">Daily Habits</div>
           <div className="text-[10px] text-[#aaa] mb-3">Logged in Tracker every day. ✓ Done / ✗ Missed / — N/A</div>
 
-          {habits.map((h,i) => (
-            <div key={h.id} className="flex items-center gap-1.5 bg-[#f7f7f7] border border-[#efefef] rounded-md px-2 mb-1 h-10 focus-within:border-[#FF5C00] focus-within:bg-white transition-colors">
-              <span className="font-mono text-[10px] text-[#bcbcbc] min-w-[16px]">{i+1}</span>
-              <div className="w-px h-[18px] bg-[#dedede]"/>
-              <input className="flex-1 bg-transparent border-none outline-none text-[13px]"
-                placeholder="Habit name…" value={h.name}
-                onChange={e => update(h.id, e.target.value)}/>
-              <button onClick={() => remove(h.id)}
-                className="w-6 h-6 rounded border border-[#dedede] flex items-center justify-center text-[13px] text-[#888] hover:bg-[#FBE9E7] hover:border-[#e0a0a0] hover:text-[#8B0000] transition-colors">×</button>
-            </div>
+          {habits.map(h => (
+            <HabitInput key={h.id} habit={h} onUpdate={update} onRemove={remove} />
           ))}
 
           <button onClick={add}

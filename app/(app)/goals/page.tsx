@@ -38,6 +38,7 @@ export default function GoalsPage() {
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const today = new Date().toISOString().slice(0,10)
   const [form, setForm] = useState({ title:'', description:'', category:'Work', start_date: today, end_date:'' })
+  const [formErr, setFormErr] = useState('')
 
   const load = useCallback(async () => {
     const { data: { user } } = await sb.auth.getUser(); if (!user) return
@@ -51,7 +52,9 @@ export default function GoalsPage() {
   useEffect(() => { load() }, [load])
 
   async function saveGoal() {
-    if (!form.title.trim() || !form.end_date) return
+    if (!form.title.trim()) { setFormErr('Please enter a title.'); return }
+    if (!form.end_date) { setFormErr('Please set an end date.'); return }
+    setFormErr('')
     const { data: { user } } = await sb.auth.getUser(); if (!user) return
     if (editId) {
       await sb.from('six_month_goals').update({ title:form.title, description:form.description, category:form.category, start_date:form.start_date, end_date:form.end_date }).eq('id', editId)
@@ -62,6 +65,7 @@ export default function GoalsPage() {
       if (data) setGoals(prev => [...prev, {...data, milestones:[]}])
     }
     setForm({ title:'', description:'', category:'Work', start_date:today, end_date:'' })
+    setFormErr('')
     setShowForm(false)
   }
 
@@ -168,6 +172,7 @@ export default function GoalsPage() {
               </div>
             </div>
             <div className="col-span-2 flex gap-2">
+              {formErr && <div className="text-[11px] text-[#ef4444] font-medium">{formErr}</div>}
               <button onClick={saveGoal} className="bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] px-5 py-2 rounded hover:bg-[#FF7A2E] transition-colors">
                 {editId ? 'Update' : 'Create Goal'}
               </button>
@@ -210,6 +215,9 @@ export default function GoalsPage() {
                           {g.category}
                         </span>
                         {g.archived && <span className="text-[9px] font-bold uppercase tracking-[.1em] px-2 py-0.5 rounded-full bg-[#f0f0f0] text-[#888]">Archived</span>}
+                        {!isExpanded && (g.milestones??[]).length>0 && (
+                          <span className="font-mono text-[11px] font-bold text-[#FF5C00]">{pct(g)}%</span>
+                        )}
                         <span className="font-mono text-[10px] text-[#888] ml-auto">{daysLeft(g.end_date)}</span>
                         <span className="font-mono text-[10px] text-[#bcbcbc]">{duration(g.start_date,g.end_date)}</span>
                       </div>

@@ -88,8 +88,10 @@ export default function LettersPage() {
     }
   }
 
-  function openLetter(l: Letter) {
-    if (saveTimer.current) { clearTimeout(saveTimer.current); doSave() }
+  async function openLetter(l: Letter) {
+    // Flush any pending save for current letter before switching
+    if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null }
+    if (currentId.current && editorRef.current) { await doSave() }
     setSelected(l)
     currentId.current = l.id
     setSaveState('idle')
