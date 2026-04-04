@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase'
 
 const sb = createClient()
-type Letter = { id: string; title: string; content: string; letter_date: string; created_at: string }
+type Letter = { id: string; title: string; content: string; letter_date: string; created_at: string; tags: string[] }
 
 function fmt(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
@@ -43,6 +43,8 @@ export default function LettersPage() {
   const [saveState, setSaveState] = useState<'idle'|'saving'|'saved'>('idle')
   const [search, setSearch] = useState('')
   const [showColors, setShowColors] = useState(false)
+  const [tagInput, setTagInput] = useState('')
+  const [tagFilter, setTagFilter] = useState('')
   const editorRef   = useRef<HTMLDivElement>(null)
   const saveTimer   = useRef<ReturnType<typeof setTimeout>|null>(null)
   const currentId   = useRef<string|null>(null)
@@ -74,7 +76,8 @@ export default function LettersPage() {
       if (firstLine) title = firstLine.slice(0, 60)
     }
     title = title || today
-    await sb.from('letters').update({ content: html, title, updated_at: new Date().toISOString() }).eq('id', currentId.current)
+    const currentTags = selected?.tags ?? []
+    await sb.from('letters').update({ content: html, title, tags: currentTags, updated_at: new Date().toISOString() }).eq('id', currentId.current)
     setSaveState('saved')
     setTimeout(() => setSaveState('idle'), 2000)
     // Update local list
@@ -105,12 +108,34 @@ export default function LettersPage() {
     currentId.current = l.id
     setSaveState('idle')
     setShowColors(false)
+    setTagInput('')
     setTimeout(() => {
       if (editorRef.current) {
         editorRef.current.innerHTML = l.content || ''
         editorRef.current.focus()
       }
     }, 50)
+  }
+
+  async function addTag(tag: string) {
+    if (!selected || !tag.trim()) return
+    const { data: { user } } = await sb.auth.getUser(); if (!user) return
+    const newTags = Array.from(new Set([...(selected.tags??[]), tag.trim().toLowerCase()]))
+    setSelected(prev => prev ? {...prev, tags: newTags} : prev)
+    setLetters(prev => prev.map(l => l.id === selected.id ? {...l, tags: newTags} : l))
+    await sb.from('letters').update({ tags: newTags }).eq('id', selected.id)
+    setTagInput('')
+  }
+  async function removeTag(tag: string) {
+    if (!selected) return
+    const { data: { user } } = await sb.auth.getUser(); if (!user) return
+    const newTags = (selected.tags??[]).filter(t => t !== tag)
+    setSelected(prev => prev ? {...prev, tags: newTags} : prev)
+    setLetters(prev => prev.map(l => l.id === selected.id ? {...l, tags: newTags} : l))
+    await sb.from('letters').update({ tags: newTags }).eq('id', selected.id)
+  }
+  function printLetter() {
+    window.print()
   }
 
   async function deleteLetter() {
@@ -168,12 +193,33 @@ export default function LettersPage() {
           />
         </div>
 
+        {/* Tag filter */}
+        {(() => {
+          const allTags = Array.from(new Set(letters.flatMap(l => l.tags??[]))).sort()
+          if (allTags.length === 0) return null
+          return (
+            <div className="px-3 py-2 border-b border-[#efefef] flex gap-1 flex-wrap">
+              <button onClick={() => setTagFilter('')}
+                className={`text-[9px] font-bold px-2 py-0.5 rounded-full transition-all ${!tagFilter ? 'bg-[#0A0A0A] text-white' : 'bg-[#f0f0f0] text-[#888] hover:bg-[#e0e0e0]'}`}>
+                All
+              </button>
+              {allTags.map(t => (
+                <button key={t} onClick={() => setTagFilter(tagFilter === t ? '' : t)}
+                  className={`text-[9px] font-bold px-2 py-0.5 rounded-full transition-all ${tagFilter === t ? 'bg-[#FF5C00] text-white' : 'bg-[#f0f0f0] text-[#888] hover:bg-[#e0e0e0]'}`}>
+                  #{t}
+                </button>
+              ))}
+            </div>
+          )
+        })()}
+
         <div className="flex-1 overflow-y-auto py-1">
           {(() => {
             const filtered = letters.filter(l =>
-              !search.trim() ||
+              (!tagFilter || (l.tags??[]).includes(tagFilter)) &&
+              (!search.trim() ||
               l.title.toLowerCase().includes(search.toLowerCase()) ||
-              l.content.replace(/<[^>]*>/g,'').toLowerCase().includes(search.toLowerCase())
+              l.content.replace(/<[^>]*>/g,'').toLowerCase().includes(search.toLowerCase()))
             )
             if (filtered.length === 0) return (
               <div className="text-center py-8 text-[12px] text-[#bcbcbc] px-4">
@@ -190,9 +236,10 @@ export default function LettersPage() {
                   {snippet && (
                     <div className="text-[10px] text-[#aaa] mt-0.5 line-clamp-2 leading-relaxed">{snippet}</div>
                   )}
-                  <div className="text-[9px] text-[#bcbcbc] mt-1 flex items-center gap-2">
+                  <div className="text-[9px] text-[#bcbcbc] mt-1 flex items-center gap-2 flex-wrap">
                     <span>{displayDate(l.letter_date)}</span>
                     {l.content && <span>{wordCount(l.content)}w</span>}
+                    {(l.tags??[]).map(t => <span key={t} className="text-[#FF5C00]" >#{t}</span>)}
                   </div>
                 </button>
               )
@@ -266,6 +313,8 @@ export default function LettersPage() {
                 {saveState === 'saving' && <span className="text-[10px] text-[#aaa]">Saving…</span>}
                 {saveState === 'saved'  && <span className="text-[10px] text-[#22c55e] font-bold">✓ Saved</span>}
                 <span className="text-[10px] text-[#bcbcbc] font-mono">{displayDate(selected.letter_date)}</span>
+                <button onClick={printLetter} title="Export as PDF"
+                  className="text-[10px] text-[#bcbcbc] hover:text-[#0A0A0A] transition-colors px-1">⎙ PDF</button>
                 <button onClick={deleteLetter} className="text-[10px] text-[#bcbcbc] hover:text-[#ef4444] transition-colors px-1">Delete</button>
               </div>
             </div>
@@ -356,6 +405,24 @@ export default function LettersPage() {
               <ToolBtn onClick={()=>cmd('indent')}  title="Indent"  active={false}><span className="text-[11px]">→</span></ToolBtn>
               <ToolBtn onClick={()=>cmd('outdent')} title="Outdent" active={false}><span className="text-[11px]">←</span></ToolBtn>
 
+            </div>
+
+            {/* Tags row */}
+            <div className="px-4 py-2 border-b border-[#efefef] flex items-center gap-2 flex-wrap bg-[#fafafa]">
+              <span className="text-[9px] font-bold text-[#bcbcbc] uppercase tracking-[.1em] flex-shrink-0">Tags</span>
+              {(selected.tags??[]).map(t => (
+                <span key={t} className="flex items-center gap-1 bg-[#FFF0E8] text-[#FF5C00] text-[9px] font-bold px-2 py-0.5 rounded-full">
+                  #{t}
+                  <button onClick={() => removeTag(t)} className="ml-0.5 hover:text-[#0A0A0A] transition-colors leading-none">×</button>
+                </span>
+              ))}
+              <input
+                className="text-[11px] bg-transparent outline-none placeholder:text-[#dedede] min-w-[80px]"
+                placeholder="Add tag…"
+                value={tagInput}
+                onChange={e => setTagInput(e.target.value.replace(/\s/g,''))}
+                onKeyDown={e => { if(e.key==='Enter'||e.key===','){ e.preventDefault(); addTag(tagInput) } }}
+              />
             </div>
 
             {/* Editor */}

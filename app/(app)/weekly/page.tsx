@@ -2,8 +2,9 @@
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase'
 
-type WGoal = { id: string; text: string; done: boolean; position: number }
+type WGoal = { id: string; text: string; done: boolean; position: number; goal_id: string|null }
 type Task  = { id: string; text: string; done: boolean; position: number; date: string }
+type SixGoal = { id: string; title: string; category: string }
 
 const sb = createClient()
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
@@ -48,6 +49,8 @@ export default function WeeklyPage() {
   const [weekMon, setWeekMon] = useState(() => fmt(getMon()))
   const [wgoals, setWgoals] = useState<WGoal[]>([])
   const [tasks, setTasks]   = useState<Record<string, Task[]>>({})
+  const [sixGoals, setSixGoals] = useState<SixGoal[]>([])
+  const [linkingId, setLinkingId] = useState<string|null>(null)
 
   const weeks = weeksForMonth(year, month)
 
@@ -61,11 +64,13 @@ export default function WeeklyPage() {
   const load = useCallback(async () => {
     const { data: { user } } = await sb.auth.getUser(); if (!user) return
     const days = weekDays(weekMon)
-    const [{ data: wg }, { data: ts }] = await Promise.all([
+    const [{ data: wg }, { data: ts }, { data: sg }] = await Promise.all([
       sb.from('weekly_goals').select('*').eq('user_id', user.id).eq('week_start', weekMon).order('position'),
       sb.from('tasks').select('*').eq('user_id', user.id).in('date', days).order('position'),
+      sb.from('six_month_goals').select('id,title,category').eq('user_id', user.id).eq('archived', false).order('position'),
     ])
     setWgoals(wg ?? [])
+    setSixGoals(sg ?? [])
     const grouped: Record<string, Task[]> = {}
     days.forEach(d => { grouped[d] = (ts ?? []).filter((t: Task) => t.date===d) })
     setTasks(grouped)
@@ -90,6 +95,11 @@ export default function WeeklyPage() {
   async function deleteWGoal(id: string) {
     await sb.from('weekly_goals').delete().eq('id', id)
     setWgoals(g => g.filter(x => x.id!==id))
+  }
+  async function linkWGoal(id: string, goal_id: string|null) {
+    setWgoals(g => g.map(x => x.id===id ? {...x,goal_id} : x))
+    setLinkingId(null)
+    await sb.from('weekly_goals').update({ goal_id }).eq('id', id)
   }
 
   // Tasks
@@ -156,7 +166,8 @@ export default function WeeklyPage() {
           </div>
           <div className="bg-white">
             {wgoals.map((g, i) => (
-              <div key={g.id} className="flex items-center gap-1.5 bg-white border-b border-[#f7f7f7] last:border-0 px-3 h-10 focus-within:bg-[#fafafa] transition-colors">
+              <div key={g.id} className="flex flex-col bg-white border-b border-[#f7f7f7] last:border-0">
+                <div className="flex items-center gap-1.5 px-3 h-10 focus-within:bg-[#fafafa] transition-colors">
                 <input type="checkbox" checked={g.done} onChange={e => toggleWGoal(g.id, e.target.checked)}
                   className="w-[13px] h-[13px] accent-[#FF5C00] cursor-pointer flex-shrink-0" />
                 <span className="font-mono text-[9.5px] text-[#bcbcbc] min-w-[13px]">{i+1}</span>
@@ -169,6 +180,32 @@ export default function WeeklyPage() {
                   onSave={val => saveWGoalText(g.id, val)}
                 />
                 <button onClick={() => deleteWGoal(g.id)} className="w-5 h-5 flex items-center justify-center text-[11px] text-[#bcbcbc] hover:text-[#8B0000] transition-colors flex-shrink-0">×</button>
+                <button
+                  onClick={() => setLinkingId(linkingId === g.id ? null : g.id)}
+                  title="Link to a 6M goal"
+                  className={`w-5 h-5 flex items-center justify-center text-[11px] rounded transition-colors flex-shrink-0 ${g.goal_id ? 'text-[#FF5C00]' : 'text-[#dedede] hover:text-[#aaa]'}`}>
+                  ◎
+                </button>
+                </div>
+                {linkingId === g.id && (
+                  <div className="px-3 pb-2">
+                    <select
+                      value={g.goal_id ?? ''}
+                      onChange={e => linkWGoal(g.id, e.target.value || null)}
+                      className="w-full text-[11px] bg-[#f7f7f7] border border-[#efefef] rounded-md px-2 py-1.5 outline-none focus:border-[#FF5C00] transition-colors"
+                    >
+                      <option value="">— No goal linked —</option>
+                      {sixGoals.map(sg => (
+                        <option key={sg.id} value={sg.id}>{sg.category} · {sg.title}</option>
+                      ))}
+                    </select>
+                    {g.goal_id && (
+                      <div className="text-[9px] text-[#FF5C00] mt-1 font-medium">
+                        ◎ {sixGoals.find(sg => sg.id === g.goal_id)?.title ?? 'Linked goal'}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
             <div className="px-3 py-2">

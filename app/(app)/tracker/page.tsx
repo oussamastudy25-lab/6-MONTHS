@@ -2,11 +2,19 @@
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase'
 
-type Habit = { id: string; name: string }
+type Habit = { id: string; name: string; frequency: string }
 type Log   = { habit_id: string; status: string; date: string }
 
 const sb = createClient()
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
+
+function isScheduled(frequency: string, d = new Date()) {
+  const dow = d.getDay()
+  if (frequency === 'weekdays') return dow >= 1 && dow <= 5
+  if (frequency === 'weekends') return dow === 0 || dow === 6
+  if (frequency === '3x') return [1, 3, 5].includes(dow)
+  return true
+}
 
 function fmt(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
@@ -25,7 +33,7 @@ export default function TrackerPage() {
   const load = useCallback(async () => {
     const { data: { user } } = await sb.auth.getUser(); if (!user) return
     const [{ data: h }, { data: l }] = await Promise.all([
-      sb.from('habits').select('id,name').eq('user_id', user.id).is('archived_at', null).order('position'),
+      sb.from('habits').select('id,name,frequency').eq('user_id', user.id).is('archived_at', null).order('position'),
       sb.from('habit_logs').select('habit_id,status,date').eq('user_id', user.id),
     ])
     setHabits(h ?? [])
@@ -99,6 +107,8 @@ export default function TrackerPage() {
 
   const isCurrentMonth = year === now.getFullYear() && month === now.getMonth()
   const activeHabits = habits.filter(h => h.name)
+  const scheduledToday = activeHabits.filter(h => isScheduled(h.frequency))
+  const restDayToday   = activeHabits.filter(h => !isScheduled(h.frequency))
 
   return (
     <>
@@ -139,7 +149,7 @@ export default function TrackerPage() {
                   Today — {now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' })}
                 </div>
                 <div className="space-y-2">
-                  {activeHabits.map(h => {
+                  {scheduledToday.map(h => {
                     const s = getStatus(h.id, today)
                     return (
                       <div key={h.id} className="flex items-center gap-3 bg-[#f7f7f7] rounded-lg px-3 py-2.5">
@@ -165,6 +175,15 @@ export default function TrackerPage() {
                     )
                   })}
                 </div>
+                {restDayToday.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1.5 px-1">
+                    {restDayToday.map(h => (
+                      <span key={h.id} className="text-[9px] text-[#bcbcbc] bg-[#f5f5f5] px-2 py-1 rounded-md">
+                        {h.name} · rest day
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
@@ -190,17 +209,20 @@ export default function TrackerPage() {
                         const v = getStatus(h.id, d)
                         const day = parseInt(d.split('-')[2])
                         const isToday = d === today
+                        const dayDow = new Date(d+'T12:00:00').getDay()
+                        const dayScheduled = isScheduled(h.frequency, new Date(d+'T12:00:00'))
                         return (
                           <button key={d}
-                            title={`${d}: ${v || 'tap to log'}`}
-                            onClick={() => cycleStatus(h.id, d)}
-                            className={`w-[18px] h-[18px] rounded-[3px] flex items-center justify-center font-mono text-[8px] transition-all hover:scale-125 cursor-pointer
-                              ${v==='done'   ? 'bg-[#FF5C00] text-white'
-                              : v==='missed' ? 'bg-[#FBE9E7] text-[#8B0000]'
-                              : v==='na'     ? 'bg-[#f5f5f5] text-[#bcbcbc]'
-                              : isToday      ? 'bg-[#f0f0f0] text-[#0A0A0A] ring-1 ring-[#FF5C00]'
-                              : 'bg-[#f7f7f7] text-[#dedede]'}`}>
-                            {day}
+                            title={`${d}: ${!dayScheduled ? 'rest day' : v || 'tap to log'}`}
+                            onClick={() => dayScheduled && cycleStatus(h.id, d)}
+                            className={`w-[18px] h-[18px] rounded-[3px] flex items-center justify-center font-mono text-[8px] transition-all cursor-pointer
+                              ${!dayScheduled   ? 'bg-[#f3f3f3] text-[#e0e0e0] cursor-default'
+                              : v==='done'       ? 'bg-[#FF5C00] text-white hover:scale-125'
+                              : v==='missed'     ? 'bg-[#FBE9E7] text-[#8B0000] hover:scale-125'
+                              : v==='na'         ? 'bg-[#f5f5f5] text-[#bcbcbc] hover:scale-125'
+                              : isToday          ? 'bg-[#f0f0f0] text-[#0A0A0A] ring-1 ring-[#FF5C00] hover:scale-125'
+                              : 'bg-[#f7f7f7] text-[#dedede] hover:scale-125'}`}>
+                            {dayScheduled ? day : '·'}
                           </button>
                         )
                       })}

@@ -5,6 +5,8 @@ import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
 const NAV = [
+  { href: '/dashboard',         icon: '⌂',  label: 'Dashboard' },
+  { divider: true },
   { href: '/setup',             icon: '⚙',  label: 'Setup' },
   { href: '/calendar',          icon: '◫',  label: 'Calendar' },
   { href: '/tracker',           icon: '▦',  label: 'Tracker' },
