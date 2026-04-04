@@ -131,6 +131,18 @@ export default function CalendarPage() {
 
   useEffect(()=>{load()},[load])
 
+  // Scroll to current time on mount and when view changes (week/day)
+  useEffect(()=>{
+    if(viewMode==='month') return
+    const el = scrollRef.current
+    if(!el) return
+    const nowMins = new Date().getHours()*60+new Date().getMinutes()
+    const nowY = minsToY(nowMins)
+    // Center the now line in the viewport, with some offset so you see context above
+    const offset = el.clientHeight * 0.35
+    el.scrollTop = Math.max(0, nowY - offset)
+  },[viewMode])
+
   /* ── Expand recurring ── */
   function getBlocksForDate(date: string): Block[] {
     const specific = blocks.filter(b=>b.date===date)
