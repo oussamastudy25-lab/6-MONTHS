@@ -124,7 +124,11 @@ export default function TrackerPage() {
           <div className="text-center py-20">
             <div className="text-4xl mb-3">▦</div>
             <div className="text-[15px] font-bold mb-1">No habits yet</div>
-            <div className="text-[13px] text-[#888]">Add habits in Setup first</div>
+            <div className="text-[13px] text-[#888] mb-4">Add your first habit to start tracking</div>
+            <a href="/setup"
+              className="inline-block bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] px-5 py-2.5 rounded-lg hover:bg-[#FF7A2E] transition-colors">
+              + Add Habits in Setup
+            </a>
           </div>
         ) : (
           <>

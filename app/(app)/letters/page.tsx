@@ -41,6 +41,7 @@ export default function LettersPage() {
   const [newTitle, setNewTitle]   = useState('')
   const [newDate, setNewDate]     = useState(today)
   const [saveState, setSaveState] = useState<'idle'|'saving'|'saved'>('idle')
+  const [search, setSearch] = useState('')
   const [showColors, setShowColors] = useState(false)
   const editorRef   = useRef<HTMLDivElement>(null)
   const saveTimer   = useRef<ReturnType<typeof setTimeout>|null>(null)
@@ -65,7 +66,14 @@ export default function LettersPage() {
   async function doSave() {
     if (!currentId.current || !editorRef.current) return
     const html = editorRef.current.innerHTML
-    const title = titleValRef.current || today
+    // Auto-suggest title from first content line if title is empty
+    let title = titleValRef.current
+    if (!title.trim() && editorRef.current) {
+      const text = editorRef.current.innerText.trim()
+      const firstLine = text.split('\n').find(l => l.trim())
+      if (firstLine) title = firstLine.slice(0, 60)
+    }
+    title = title || today
     await sb.from('letters').update({ content: html, title, updated_at: new Date().toISOString() }).eq('id', currentId.current)
     setSaveState('saved')
     setTimeout(() => setSaveState('idle'), 2000)
@@ -150,23 +158,46 @@ export default function LettersPage() {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto py-2">
-          {letters.length === 0 && (
-            <div className="text-center py-8 text-[12px] text-[#bcbcbc] px-4">
-              No letters yet.<br/>Click + to start writing.
-            </div>
-          )}
-          {letters.map(l => (
-            <button key={l.id} onClick={() => openLetter(l)}
-              className={`w-full text-left px-3 py-2.5 border-b border-[#f0f0f0] transition-all hover:bg-white
-                ${selected?.id === l.id ? 'bg-white border-l-2 border-l-[#FF5C00]' : 'border-l-2 border-l-transparent'}`}>
-              <div className="text-[12px] font-semibold truncate text-[#0A0A0A]">{l.title || l.letter_date}</div>
-              <div className="text-[9px] text-[#aaa] mt-0.5 flex items-center gap-2">
-                <span>{displayDate(l.letter_date)}</span>
-                {l.content && <span className="text-[#bcbcbc]">{wordCount(l.content)}w</span>}
+        {/* Search */}
+        <div className="px-3 py-2 border-b border-[#efefef] flex-shrink-0">
+          <input
+            className="w-full bg-[#f0f0f0] rounded-md px-2.5 py-1.5 text-[11px] outline-none focus:bg-white focus:ring-1 focus:ring-[#FF5C00] transition-all placeholder:text-[#bcbcbc]"
+            placeholder="Search letters…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+
+        <div className="flex-1 overflow-y-auto py-1">
+          {(() => {
+            const filtered = letters.filter(l =>
+              !search.trim() ||
+              l.title.toLowerCase().includes(search.toLowerCase()) ||
+              l.content.replace(/<[^>]*>/g,'').toLowerCase().includes(search.toLowerCase())
+            )
+            if (filtered.length === 0) return (
+              <div className="text-center py-8 text-[12px] text-[#bcbcbc] px-4">
+                {search ? 'No results found.' : <>No letters yet.<br/>Click + to start writing.</>}
               </div>
-            </button>
-          ))}
+            )
+            return filtered.map(l => {
+              const snippet = l.content.replace(/<[^>]*>/g,'').trim().slice(0, 80)
+              return (
+                <button key={l.id} onClick={() => openLetter(l)}
+                  className={`w-full text-left px-3 py-2.5 border-b border-[#f0f0f0] transition-all hover:bg-white
+                    ${selected?.id === l.id ? 'bg-white border-l-2 border-l-[#FF5C00]' : 'border-l-2 border-l-transparent'}`}>
+                  <div className="text-[12px] font-semibold truncate text-[#0A0A0A]">{l.title || l.letter_date}</div>
+                  {snippet && (
+                    <div className="text-[10px] text-[#aaa] mt-0.5 line-clamp-2 leading-relaxed">{snippet}</div>
+                  )}
+                  <div className="text-[9px] text-[#bcbcbc] mt-1 flex items-center gap-2">
+                    <span>{displayDate(l.letter_date)}</span>
+                    {l.content && <span>{wordCount(l.content)}w</span>}
+                  </div>
+                </button>
+              )
+            })
+          })()}
         </div>
       </div>
 

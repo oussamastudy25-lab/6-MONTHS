@@ -88,6 +88,16 @@ export default function TimerPage() {
     return()=>{if(timerRef.current)clearInterval(timerRef.current)}
   },[running,timeboxMode,timeboxMins,timeboxDone])
 
+  // Browser tab title when running
+  useEffect(()=>{
+    if(!running){document.title='Mizan ميزان';return}
+    const cat=categories.find(c=>c.id===running.category_id)
+    const mins=Math.floor(elapsed/60).toString().padStart(2,'0')
+    const secs=(elapsed%60).toString().padStart(2,'0')
+    document.title=`🔴 ${mins}:${secs} — ${cat?.name??'Focus'}`
+    return()=>{document.title='Mizan ميزان'}
+  },[running,elapsed,categories])
+
   async function startTimer(){
     if(!activeCat)return
     const {data:{user}}=await sb.auth.getUser();if(!user)return

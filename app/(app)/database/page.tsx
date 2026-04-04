@@ -13,6 +13,7 @@ interface Stats {
   smgoals: number
   milestones: number
   reviews: number
+  letters: number
   months: number
 }
 
@@ -20,19 +21,21 @@ export default function DatabasePage() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
   const [resetting, setResetting] = useState(false)
+  const [resetInput, setResetInput] = useState('')
+  const [showResetModal, setShowResetModal] = useState(false)
   const [exporting, setExporting] = useState(false)
 
   async function loadStats() {
     const { data: { user } } = await sb.auth.getUser(); if (!user) return
-    const tables = ['habits','habit_logs','tasks','weekly_goals','monthly_goals','six_month_goals','milestones','reviews']
+    const tables = ['habits','habit_logs','tasks','weekly_goals','monthly_goals','six_month_goals','milestones','reviews','letters']
     const counts = await Promise.all(tables.map(t =>
       sb.from(t).select('*', { count: 'exact', head: true }).eq('user_id', user.id)
     ))
-    const [habits, logs, tasks, wgoals, mgoals, smgoals, milestones, reviews] = counts.map(r => r.count ?? 0)
+    const [habits, logs, tasks, wgoals, mgoals, smgoals, milestones, reviews, letters] = counts.map(r => r.count ?? 0)
     // distinct months
     const { data: logDates } = await sb.from('habit_logs').select('date').eq('user_id', user.id)
     const months = new Set((logDates ?? []).map((r: {date:string}) => r.date.slice(0,7))).size
-    setStats({ habits, logs, tasks, wgoals, mgoals, smgoals, milestones, reviews, months })
+    setStats({ habits, logs, tasks, wgoals, mgoals, smgoals, milestones, reviews, letters, months })
     setLoading(false)
   }
 
@@ -56,13 +59,13 @@ export default function DatabasePage() {
   }
 
   async function resetAll() {
-    if (!confirm('Delete ALL your data? This cannot be undone.')) return
     const { data: { user } } = await sb.auth.getUser(); if (!user) return
     setResetting(true)
-    // Delete in reverse FK order
-    const tables = ['milestones','six_month_goals','reviews','weekly_goals','monthly_goals','tasks','habit_logs','habits']
+    const tables = ['milestones','six_month_goals','reviews','weekly_goals','monthly_goals','tasks','habit_logs','habits','letters']
     for (const t of tables) { await sb.from(t).delete().eq('user_id', user.id) }
     setResetting(false)
+    setShowResetModal(false)
+    setResetInput('')
     loadStats()
   }
 
@@ -99,6 +102,7 @@ export default function DatabasePage() {
                   ['6M Goals',    stats.smgoals],
                   ['Milestones',  stats.milestones],
                   ['Reviews',     stats.reviews],
+                  ['Letters',     stats.letters],
                   ['Months Tracked', stats.months],
                 ] as [string, number][]).map(([l, v]) => (
                   <div key={l} className="bg-white border border-[#efefef] rounded-lg p-3">
@@ -131,9 +135,9 @@ export default function DatabasePage() {
                 className="bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] px-4 py-2 rounded-md hover:bg-[#FF7A2E] transition-colors disabled:opacity-50">
                 {exporting ? 'Exporting…' : 'Export JSON'}
               </button>
-              <button onClick={resetAll} disabled={resetting}
-                className="border border-[#e0b0b0] text-[#8B0000] bg-[#FBE9E7] text-[10px] font-bold uppercase tracking-[.1em] px-4 py-2 rounded-md hover:bg-[#fdd] transition-colors disabled:opacity-50">
-                {resetting ? 'Resetting…' : 'Reset All Data'}
+              <button onClick={() => { setShowResetModal(true); setResetInput('') }}
+                className="border border-[#e0b0b0] text-[#8B0000] bg-[#FBE9E7] text-[10px] font-bold uppercase tracking-[.1em] px-4 py-2 rounded-md hover:bg-[#fdd] transition-colors">
+                Reset All Data
               </button>
             </div>
             <p className="text-[10px] text-[#bcbcbc] mt-2">Export creates a full JSON backup of all your data across all tables.</p>
@@ -141,6 +145,37 @@ export default function DatabasePage() {
 
         </div>
       </div>
+      {/* Reset confirmation modal */}
+      {showResetModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl shadow-2xl p-6 w-[380px] max-w-[90vw]">
+            <div className="text-[16px] font-bold text-[#8B0000] mb-2">⚠️ Reset All Data</div>
+            <div className="text-[13px] text-[#555] mb-4 leading-relaxed">
+              This will permanently delete <strong>all</strong> your habits, logs, tasks, goals, letters, and reviews. This cannot be undone.
+            </div>
+            <div className="mb-4">
+              <div className="text-[11px] font-bold text-[#888] uppercase tracking-[.1em] mb-1.5">Type <span className="text-[#8B0000] font-mono">RESET</span> to confirm</div>
+              <input autoFocus
+                className="w-full border-2 border-[#dedede] rounded-lg px-3 py-2.5 text-[14px] font-mono outline-none focus:border-[#8B0000] transition-colors"
+                placeholder="RESET"
+                value={resetInput}
+                onChange={e => setResetInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && resetInput === 'RESET' && resetAll()}
+              />
+            </div>
+            <div className="flex gap-2">
+              <button onClick={resetAll} disabled={resetInput !== 'RESET' || resetting}
+                className="flex-1 bg-[#8B0000] text-white text-[11px] font-bold uppercase tracking-[.1em] py-2.5 rounded-lg disabled:opacity-30 hover:bg-red-800 transition-colors">
+                {resetting ? 'Deleting…' : 'Delete Everything'}
+              </button>
+              <button onClick={() => { setShowResetModal(false); setResetInput('') }}
+                className="px-4 border border-[#dedede] text-[11px] font-bold uppercase tracking-[.1em] rounded-lg hover:border-[#0A0A0A] transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

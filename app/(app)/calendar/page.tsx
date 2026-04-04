@@ -247,13 +247,15 @@ export default function CalendarPage() {
     if(!modal) return
     const {data:{user}}=await sb.auth.getUser(); if(!user) return
     if(modal.mode==='create'){
-      const {data}=await sb.from('schedule_blocks').insert({user_id:user.id,date:modal.date,start_minutes:modal.start_minutes,end_minutes:modal.end_minutes,title:modal.title||'(untitled)',category:'other',color:modal.color,note:modal.note}).select().single()
+      if(!modal.title.trim()){alert('Please add a title for this event.');return}
+      const {data}=await sb.from('schedule_blocks').insert({user_id:user.id,date:modal.date,start_minutes:modal.start_minutes,end_minutes:modal.end_minutes,title:modal.title.trim(),category:'other',color:modal.color,note:modal.note}).select().single()
       if(data)setBlocks(prev=>[...prev,data])
     } else if(modal.mode==='edit'){
       await sb.from('schedule_blocks').update({title:modal.title,color:modal.color,start_minutes:modal.start_minutes,end_minutes:modal.end_minutes,note:modal.note}).eq('id',modal.id!)
       setBlocks(prev=>prev.map(b=>b.id===modal.id?{...b,...modal}:b))
     } else if(modal.mode==='rec-create'){
-      const {data}=await sb.from('recurring_blocks').insert({user_id:user.id,title:modal.title||'(untitled)',category:'other',color:modal.color,start_minutes:modal.start_minutes,end_minutes:modal.end_minutes,days_of_week:modal.days_of_week??[0,1,2,3,4,5,6],note:modal.note,position:recurringBlocks.length}).select().single()
+      if(!modal.title.trim()){alert('Please add a title for this event.');return}
+      const {data}=await sb.from('recurring_blocks').insert({user_id:user.id,title:modal.title.trim(),category:'other',color:modal.color,start_minutes:modal.start_minutes,end_minutes:modal.end_minutes,days_of_week:modal.days_of_week??[0,1,2,3,4,5,6],note:modal.note,position:recurringBlocks.length}).select().single()
       if(data)setRec(prev=>[...prev,data])
     } else if(modal.mode==='rec-edit'){
       await sb.from('recurring_blocks').update({title:modal.title,color:modal.color,start_minutes:modal.start_minutes,end_minutes:modal.end_minutes,days_of_week:modal.days_of_week,note:modal.note}).eq('id',modal.recurring_id!)

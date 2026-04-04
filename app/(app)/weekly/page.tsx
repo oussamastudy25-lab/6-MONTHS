@@ -112,6 +112,7 @@ export default function WeeklyPage() {
   }
 
   const today = fmt()
+  const [hideCompleted, setHideCompleted] = useState(false)
 
   return (
     <>
@@ -180,7 +181,13 @@ export default function WeeklyPage() {
         </div>
 
         {/* Daily tasks grid */}
-        <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">Daily Tasks</div>
+        <div className="flex items-center justify-between mb-3">
+            <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase">Daily Tasks</div>
+            <button onClick={() => setHideCompleted(h => !h)}
+              className={`text-[9px] font-bold uppercase tracking-[.08em] px-2 py-1 rounded-md transition-all ${hideCompleted ? 'bg-[#0A0A0A] text-white' : 'bg-[#f0f0f0] text-[#888] hover:bg-[#e0e0e0]'}`}>
+              {hideCompleted ? 'Show All' : 'Hide Done'}
+            </button>
+          </div>
         <div className="grid gap-2" style={{gridTemplateColumns:'repeat(auto-fill,minmax(250px,1fr))'}}>
           {weekDays(weekMon).map(ds => {
             const d = new Date(ds)
@@ -203,7 +210,7 @@ export default function WeeklyPage() {
                   </div>
                 </div>
                 <div className="bg-white">
-                  {dayTasks.map((t, i) => (
+                  {dayTasks.filter(t => !hideCompleted || !t.done).map((t, i) => (
                     <div key={t.id} className="flex items-center gap-1.5 bg-white border-b border-[#f7f7f7] last:border-0 px-3 h-9 focus-within:bg-[#fafafa] transition-colors">
                       <input type="checkbox" checked={t.done} onChange={e => toggleTask(ds, t.id, e.target.checked)}
                         className="w-[13px] h-[13px] accent-[#FF5C00] cursor-pointer flex-shrink-0" />
