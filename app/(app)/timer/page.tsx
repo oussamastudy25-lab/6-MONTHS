@@ -51,6 +51,10 @@ export default function TimerPage() {
   const [restMins, setRestMins]       = useState(5)
   const [restElapsed, setRestElapsed] = useState(0)
   const [restDone, setRestDone]       = useState(false)
+  // Minimum warning + 2-min rule
+  const [showMinWarning, setShowMinWarning] = useState(false)
+  const MIN_SESSION_SECS = 5 * 60  // 5 minutes minimum before we warn
+  const TWO_MIN_SECS     = 2 * 60  // below 2 min → don't save at all
 
   const load = useCallback(async () => {
     const {data:{user}}=await sb.auth.getUser();if(!user)return
@@ -147,8 +151,26 @@ export default function TimerPage() {
     if(data){setRunning(data);setElapsed(0);setSessions(prev=>[...prev,data]);setTimeboxDone(false)}
   }
 
-  async function stopTimer(){
+  async function stopTimer(force=false){
     if(!running)return
+
+    // Path 1: under 2 minutes → delete the session entirely (two-minute rule)
+    if(!force && elapsed < TWO_MIN_SECS){
+      // Delete ghost session and clear
+      await sb.from('focus_sessions').delete().eq('id',running.id)
+      setSessions(prev=>prev.filter(s=>s.id!==running.id))
+      setRunning(null);setElapsed(0);setNote('');setTimeboxDone(false);setShowMinWarning(false)
+      return
+    }
+
+    // Path 2: under minimum (5 min) but over 2 min → warn, don't stop yet
+    if(!force && elapsed < MIN_SESSION_SECS && !timeboxDone){
+      setShowMinWarning(true)
+      return
+    }
+
+    // Path 3: normal save
+    setShowMinWarning(false)
     const now=new Date().toISOString()
     const addMins=Math.floor((Date.now()-new Date(running.started_at!).getTime())/60000)
     const total=running.duration_minutes+addMins
@@ -268,8 +290,9 @@ export default function TimerPage() {
 
                   {currentCat&&(
                     <>
-                      {/* Mode toggle: Free / Timebox */}
-                      <div className="flex gap-1 mb-5 bg-[#f7f7f7] p-1 rounded-lg">
+                      {/* Mode toggle: Free / Timebox — LOCKED while running */}
+                      <div className={`flex gap-1 mb-5 bg-[#f7f7f7] p-1 rounded-lg ${running ? 'opacity-50 pointer-events-none' : ''}`}
+                        title={running ? 'Stop the timer to change mode' : ''}>
                         <button onClick={()=>setTimeboxMode(false)}
                           className={`flex-1 py-2 rounded-md text-[10px] font-bold uppercase tracking-[.1em] transition-all ${!timeboxMode?'bg-white text-[#0A0A0A] shadow-sm':'text-[#888]'}`}>
                           Free Flow
@@ -279,6 +302,11 @@ export default function TimerPage() {
                           ⏦ Timebox
                         </button>
                       </div>
+                      {running && (
+                        <div className="text-[9px] text-[#bcbcbc] text-center -mt-4 mb-4 italic">
+                          Stop timer to switch mode
+                        </div>
+                      )}
 
                       {/* Timebox config */}
                       {timeboxMode&&!isRunningHere&&(
@@ -369,7 +397,7 @@ export default function TimerPage() {
                                     style={{background:currentCat?.color??'#FF5C00'}}>
                                     ▶ Start Next Block
                                   </button>
-                                  <button onClick={()=>{endRest();stopTimer()}}
+                                  <button onClick={()=>{endRest();stopTimer(true)}}
                                     className="px-4 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[.1em] border border-[#dedede] text-[#888] hover:border-[#0A0A0A] transition-colors">
                                     Done for now
                                   </button>
@@ -406,7 +434,7 @@ export default function TimerPage() {
                           <div className="space-y-2">
                             <div className="text-[13px] font-bold text-[#22c55e]">✓ Block complete — {fmtMins(timeboxMins)} focused</div>
                             <div className="flex gap-2 justify-center flex-wrap">
-                              <button onClick={stopTimer}
+                              <button onClick={()=>stopTimer(true)}
                                 className="px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[.1em] bg-[#22c55e] text-white hover:bg-green-600 transition-colors">
                                 ✓ Finish
                               </button>
@@ -423,11 +451,32 @@ export default function TimerPage() {
                             </div>
                           </div>
                         ):isRunningHere?(
-                          <button onClick={stopTimer}
-                            className="px-8 py-3 rounded-xl text-[13px] font-bold uppercase tracking-[.1em] text-white transition-all hover:opacity-90"
-                            style={{background:currentCat.color}}>
-                            ⏹ Stop
-                          </button>
+                          <div className="space-y-2 w-full">
+                            {showMinWarning && (
+                              <div className="bg-[#FFF8F5] border border-[#FF5C00]/30 rounded-xl px-4 py-3 text-center">
+                                <div className="text-[12px] font-bold text-[#FF5C00] mb-1">⚠ Only {Math.floor(elapsed/60)}m logged</div>
+                                <div className="text-[10px] text-[#888] mb-2.5">Push through — your best work happens after the resistance.</div>
+                                <div className="flex gap-2 justify-center">
+                                  <button onClick={()=>setShowMinWarning(false)}
+                                    className="px-4 py-2 rounded-lg text-[11px] font-bold text-white transition-colors"
+                                    style={{background:currentCat.color}}>
+                                    ▶ Keep going
+                                  </button>
+                                  <button onClick={()=>stopTimer(true)}
+                                    className="px-4 py-2 rounded-lg text-[11px] font-bold border border-[#dedede] text-[#888] hover:border-[#0A0A0A] transition-colors">
+                                    Stop anyway
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                            {!showMinWarning && (
+                              <button onClick={()=>stopTimer()}
+                                className="px-8 py-3 rounded-xl text-[13px] font-bold uppercase tracking-[.1em] text-white transition-all hover:opacity-90"
+                                style={{background:currentCat.color}}>
+                                ⏹ Stop
+                              </button>
+                            )}
+                          </div>
                         ):running?(
                           <div className="text-[12px] text-[#888]">
                             Timer running on <strong>{categories.find(c=>c.id===running.category_id)?.name}</strong> — stop it first
