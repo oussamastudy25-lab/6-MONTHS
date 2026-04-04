@@ -53,6 +53,7 @@ export default function TimerPage() {
   const [restDone, setRestDone]       = useState(false)
   // Minimum warning + 2-min rule
   const [showMinWarning, setShowMinWarning] = useState(false)
+  const [showRestOffer, setShowRestOffer] = useState(false)
   const MIN_SESSION_SECS = 5 * 60  // 5 minutes minimum before we warn
   const TWO_MIN_SECS     = 2 * 60  // below 2 min → don't save at all
 
@@ -148,7 +149,7 @@ export default function TimerPage() {
     const {data}=await sb.from('focus_sessions').insert({
       user_id:user.id,category_id:activeCat,date:today,started_at:now,duration_minutes:0,note
     }).select().single()
-    if(data){setRunning(data);setElapsed(0);setSessions(prev=>[...prev,data]);setTimeboxDone(false)}
+    if(data){setRunning(data);setElapsed(0);setSessions(prev=>[...prev,data]);setTimeboxDone(false);setShowRestOffer(false)}
   }
 
   async function stopTimer(force=false){
@@ -170,6 +171,7 @@ export default function TimerPage() {
     }
 
     // Path 3: normal save
+    const wasTimeboxDone = timeboxDone  // capture before clearing
     setShowMinWarning(false)
     const now=new Date().toISOString()
     const addMins=Math.floor((Date.now()-new Date(running.started_at!).getTime())/60000)
@@ -177,6 +179,8 @@ export default function TimerPage() {
     await sb.from('focus_sessions').update({ended_at:now,duration_minutes:total,note}).eq('id',running.id)
     setSessions(prev=>prev.map(s=>s.id===running.id?{...s,ended_at:now,duration_minutes:total}:s))
     setRunning(null);setElapsed(0);setNote('');setTimeboxDone(false)
+    // Offer rest for free-flow stops (timebox done already has its own rest UI)
+    if (!wasTimeboxDone) setShowRestOffer(true)
     load()
   }
 
@@ -383,7 +387,24 @@ export default function TimerPage() {
                         )}
 
                         {/* Control button */}
-                        {restMode?(
+                        {showRestOffer?(
+                          <div className="space-y-3 text-center py-1">
+                            <div className="text-[13px] font-bold text-[#22c55e]">✓ Session saved!</div>
+                            <div className="text-[11px] text-[#888]">Take a break before the next session?</div>
+                            <div className="flex gap-2 justify-center flex-wrap">
+                              {[5,10,15].map(m=>(
+                                <button key={m} onClick={()=>{startRest(m);setShowRestOffer(false)}}
+                                  className="px-4 py-2 rounded-xl text-[11px] font-bold border border-[#22c55e] text-[#22c55e] hover:bg-[#f0fdf4] transition-colors">
+                                  😴 {m}m
+                                </button>
+                              ))}
+                              <button onClick={()=>setShowRestOffer(false)}
+                                className="px-4 py-2 rounded-xl text-[11px] font-bold border border-[#dedede] text-[#888] hover:border-[#0A0A0A] transition-colors">
+                                Skip →
+                              </button>
+                            </div>
+                          </div>
+                        ):restMode?(
                           /* REST MODE */
                           <div className="space-y-3 py-2">
                             {restDone?(
