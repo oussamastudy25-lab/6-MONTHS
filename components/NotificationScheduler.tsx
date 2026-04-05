@@ -18,12 +18,21 @@ function getSettings() {
   try { return JSON.parse(localStorage.getItem('mizan_notif_settings') ?? '{}') } catch { return {} }
 }
 
-function fire(title: string, body: string, url: string, tag: string) {
+async function fire(title: string, body: string, url: string, tag: string) {
   if (!('Notification' in window) || Notification.permission !== 'granted') return
   try {
-    const n = new Notification(title, { body, icon: '/favicon.ico', tag, requireInteraction: false })
-    n.onclick = () => { window.focus(); window.location.href = url }
-  } catch {}
+    // Must use SW showNotification when a service worker is registered
+    if ('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.ready
+      await reg.showNotification(title, {
+        body, icon: '/favicon.ico', badge: '/favicon.ico', tag,
+        data: { url }, requireInteraction: false,
+      })
+    } else {
+      const n = new Notification(title, { body, icon: '/favicon.ico', tag })
+      n.onclick = () => { window.focus(); window.location.href = url }
+    }
+  } catch (e) { console.warn('Notification failed:', e) }
 }
 
 // Tracks which notifications already fired this session (prevent duplicates)

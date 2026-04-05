@@ -74,14 +74,22 @@ export default function NotificationsPage() {
     setLoading(false)
   }
 
-  function sendTest() {
+  async function sendTest() {
     if (Notification.permission !== 'granted') return
-    const n = new Notification('🔔 Mizan — Test notification', {
-      body: 'Notifications are working! You\'ll get calendar reminders and work nudges.',
-      icon: '/favicon.ico',
-      tag: 'mizan-test-' + Date.now(),
-    })
-    n.onclick = () => window.focus()
+    try {
+      if ('serviceWorker' in navigator) {
+        const reg = await navigator.serviceWorker.ready
+        await reg.showNotification('🔔 Mizan — Test notification', {
+          body: "Notifications are working! You'll get calendar reminders and work nudges.",
+          icon: '/favicon.ico',
+          tag: 'mizan-test-' + Date.now(),
+          data: { url: '/notifications' },
+        })
+      } else {
+        const n = new Notification('🔔 Mizan — Test', { body: 'Notifications are working!' })
+        n.onclick = () => window.focus()
+      }
+    } catch (e) { console.warn('Test notif:', e) }
     setTested(true)
     setTimeout(() => setTested(false), 3000)
   }
