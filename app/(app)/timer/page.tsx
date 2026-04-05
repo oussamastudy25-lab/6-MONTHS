@@ -57,6 +57,14 @@ export default function TimerPage() {
   const [showRestOffer, setShowRestOffer] = useState(false)
   const MIN_SESSION_SECS = 5 * 60  // 5 minutes minimum before we warn
   const TWO_MIN_SECS     = 2 * 60  // below 2 min → don't save at all
+  // Resistance system
+  const [resistMode, setResistMode]         = useState(false)
+  const [resistCount, setResistCount]       = useState(0)   // how many 2-min blocks survived
+  const [resistElapsed, setResistElapsed]   = useState(0)   // seconds into current 2-min block
+  const resistStartedAt = useRef<number|null>(null)
+  const resistRef = useRef<ReturnType<typeof setInterval>|null>(null)
+  const RESIST_REQUIRED = 2   // must survive this many 2-min blocks to unlock Stop
+  const RESIST_SECS     = 120 // 2 minutes per block
 
   const load = useCallback(async () => {
     const {data:{user}}=await sb.auth.getUser();if(!user)return
@@ -133,6 +141,36 @@ export default function TimerPage() {
     return ()=>{ if(restRef.current){ clearInterval(restRef.current); restRef.current = null } }
   },[restMode,restDone,restMins])
 
+  // Resistance countdown effect — timestamp-based
+  useEffect(()=>{
+    if(resistMode){
+      resistRef.current = setInterval(()=>{
+        if(!resistStartedAt.current) return
+        const e = Math.floor((Date.now() - resistStartedAt.current) / 1000)
+        setResistElapsed(e)
+        if(e >= RESIST_SECS){
+          // Block survived — increment count, reset for next block
+          setResistCount(n => n + 1)
+          setResistElapsed(0)
+          resistStartedAt.current = Date.now()
+        }
+      }, 500)
+    } else {
+      if(resistRef.current){ clearInterval(resistRef.current); resistRef.current = null }
+    }
+    return ()=>{ if(resistRef.current){ clearInterval(resistRef.current); resistRef.current = null } }
+  },[resistMode])
+
+  function startResist(){
+    resistStartedAt.current = Date.now()
+    setResistElapsed(0)
+    setResistMode(true)
+  }
+  function cancelResist(){
+    resistStartedAt.current = null
+    setResistMode(false); setResistElapsed(0); setResistCount(0)
+  }
+
   function startRest(mins:number){
     restStartedAt.current = Date.now()  // record start time
     setRestMins(mins); setRestElapsed(0); setRestDone(false); setRestMode(true)
@@ -151,7 +189,7 @@ export default function TimerPage() {
     const {data}=await sb.from('focus_sessions').insert({
       user_id:user.id,category_id:activeCat,date:today,started_at:now,duration_minutes:0,note
     }).select().single()
-    if(data){setRunning(data);setElapsed(0);setSessions(prev=>[...prev,data]);setTimeboxDone(false);setShowRestOffer(false)}
+    if(data){setRunning(data);setElapsed(0);setSessions(prev=>[...prev,data]);setTimeboxDone(false);setShowRestOffer(false);setResistMode(false);setResistElapsed(0);setResistCount(0);resistStartedAt.current=null}
   }
 
   async function stopTimer(force=false){
@@ -163,6 +201,7 @@ export default function TimerPage() {
       await sb.from('focus_sessions').delete().eq('id',running.id)
       setSessions(prev=>prev.filter(s=>s.id!==running.id))
       setRunning(null);setElapsed(0);setNote('');setTimeboxDone(false);setShowMinWarning(false)
+      setResistMode(false);setResistElapsed(0);setResistCount(0);resistStartedAt.current=null
       return
     }
 
@@ -181,6 +220,7 @@ export default function TimerPage() {
     await sb.from('focus_sessions').update({ended_at:now,duration_minutes:total,note}).eq('id',running.id)
     setSessions(prev=>prev.map(s=>s.id===running.id?{...s,ended_at:now,duration_minutes:total}:s))
     setRunning(null);setElapsed(0);setNote('');setTimeboxDone(false)
+    setResistMode(false);setResistElapsed(0);setResistCount(0);resistStartedAt.current=null
     // Offer rest for free-flow stops (timebox done already has its own rest UI)
     if (!wasTimeboxDone) setShowRestOffer(true)
     load()
@@ -498,26 +538,79 @@ export default function TimerPage() {
                             </div>
                           </div>
                         ):isRunningHere?(
-                          <div className="space-y-2 w-full">
-                            {showMinWarning && (
-                              <div className="bg-[#FFF8F5] border border-[#FF5C00]/30 rounded-xl px-4 py-3 text-center">
-                                <div className="text-[12px] font-bold text-[#FF5C00] mb-1">⚠ Only {Math.floor(elapsed/60)}m logged</div>
-                                <div className="text-[10px] text-[#888] mb-2.5">Push through — your best work happens after the resistance.</div>
-                                <div className="flex gap-2 justify-center">
-                                  <button onClick={()=>setShowMinWarning(false)}
-                                    className="px-4 py-2 rounded-lg text-[11px] font-bold text-white transition-colors"
+                          <div className="w-full space-y-2">
+                            {resistMode ? (
+                              /* RESISTANCE MODE — survive 2 min blocks */
+                              <div className="rounded-2xl overflow-hidden border border-[#FF5C00]/20 bg-[#FFF8F5]">
+                                {/* Header */}
+                                <div className="px-4 pt-4 pb-2 text-center">
+                                  <div className="text-[11px] font-black uppercase tracking-[.14em] text-[#FF5C00] mb-0.5">
+                                    {resistCount >= RESIST_REQUIRED
+                                      ? '✓ Resistance complete'
+                                      : `Resist #${resistCount + 1} of ${RESIST_REQUIRED}`}
+                                  </div>
+                                  <div className="text-[10px] text-[#aaa]">
+                                    {resistCount >= RESIST_REQUIRED
+                                      ? `You resisted ${RESIST_REQUIRED}× — stop is unlocked`
+                                      : `Hold on for ${RESIST_SECS/60} minutes`}
+                                  </div>
+                                </div>
+
+                                {/* Ring countdown or done state */}
+                                {resistCount < RESIST_REQUIRED ? (
+                                  <div className="flex flex-col items-center py-3">
+                                    <div className="relative w-24 h-24">
+                                      <svg className="w-24 h-24 -rotate-90" viewBox="0 0 96 96">
+                                        <circle cx="48" cy="48" r="40" fill="none" stroke="#fce7d6" strokeWidth="6"/>
+                                        <circle cx="48" cy="48" r="40" fill="none" stroke="#FF5C00" strokeWidth="6"
+                                          strokeDasharray={`${2*Math.PI*40}`}
+                                          strokeDashoffset={`${2*Math.PI*40*(1 - resistElapsed/RESIST_SECS)}`}
+                                          strokeLinecap="round" style={{transition:'stroke-dashoffset 0.5s linear'}}/>
+                                      </svg>
+                                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                        <span className="font-mono text-[20px] font-black text-[#FF5C00] leading-none">
+                                          {String(Math.floor(Math.max(0,RESIST_SECS-resistElapsed)/60)).padStart(2,'0')}:{String(Math.max(0,RESIST_SECS-resistElapsed)%60).padStart(2,'0')}
+                                        </span>
+                                        <span className="text-[9px] text-[#FF5C00]/60 uppercase tracking-[.08em] mt-0.5">resist</span>
+                                      </div>
+                                    </div>
+                                    {/* Dots for completed blocks */}
+                                    {RESIST_REQUIRED > 1 && (
+                                      <div className="flex gap-1.5 mt-2">
+                                        {Array.from({length:RESIST_REQUIRED}).map((_,i)=>(
+                                          <div key={i} className={`w-2 h-2 rounded-full ${i < resistCount ? 'bg-[#FF5C00]' : 'bg-[#fce7d6]'}`}/>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <div className="text-center py-4">
+                                    <div className="text-[28px]">💪</div>
+                                    <div className="text-[12px] font-bold text-[#FF5C00] mt-1">You made it!</div>
+                                  </div>
+                                )}
+
+                                {/* Actions */}
+                                <div className="px-4 pb-4 space-y-2">
+                                  <button onClick={cancelResist}
+                                    className="w-full py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[.08em] text-white transition-colors"
                                     style={{background:currentCat.color}}>
-                                    ▶ Keep going
+                                    ▶ Keep working
                                   </button>
-                                  <button onClick={()=>stopTimer(true)}
-                                    className="px-4 py-2 rounded-lg text-[11px] font-bold border border-[#dedede] text-[#888] hover:border-[#0A0A0A] transition-colors">
-                                    Stop anyway
-                                  </button>
+                                  {resistCount >= RESIST_REQUIRED ? (
+                                    <button onClick={()=>{cancelResist();stopTimer(true)}}
+                                      className="w-full py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[.08em] border-2 border-[#0A0A0A] text-[#0A0A0A] hover:bg-[#0A0A0A] hover:text-white transition-all">
+                                      ⏹ Stop session
+                                    </button>
+                                  ) : (
+                                    <div className="text-[9px] text-[#bcbcbc] text-center">
+                                      Stop unlocks after {RESIST_REQUIRED} resistances ({RESIST_REQUIRED - resistCount} remaining)
+                                    </div>
+                                  )}
                                 </div>
                               </div>
-                            )}
-                            {!showMinWarning && (
-                              <button onClick={()=>stopTimer()}
+                            ) : (
+                              <button onClick={startResist}
                                 className="px-8 py-3 rounded-xl text-[13px] font-bold uppercase tracking-[.1em] text-white transition-all hover:opacity-90"
                                 style={{background:currentCat.color}}>
                                 ⏹ Stop
