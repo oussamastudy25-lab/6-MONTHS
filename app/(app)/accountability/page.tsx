@@ -166,11 +166,9 @@ export default function AccountabilityPage() {
   const [windows,    setWindows]    = useState<Win[]>([])
   const [followed,   setFollowed]   = useState<Followed[]>([])
   const [loaded,     setLoaded]     = useState(false)
-  const [copied,     setCopied]     = useState(false)
   const [nameVal,    setNameVal]    = useState('')
   const [showWinForm,setShowWinForm]= useState(false)
   const [newWin,     setNewWin]     = useState({ label:'Deep Work', days:[1,2,3,4,5], start:540, end:780 })
-  const [origin,     setOrigin]     = useState('')
   // Follow by code
   const [addCode,    setAddCode]    = useState('')
   const [addNick,    setAddNick]    = useState('')
@@ -179,7 +177,6 @@ export default function AccountabilityPage() {
   const [addStep,    setAddStep]    = useState<'input'|'confirm'>('input')
   const [preview,    setPreview]    = useState<{name:string}|null>(null)
 
-  useEffect(() => { setOrigin(window.location.origin) }, [])
 
   const load = useCallback(async () => {
     const { data: { user } } = await sb.auth.getUser(); if (!user) return
@@ -221,20 +218,6 @@ export default function AccountabilityPage() {
     setWindows(w => w.filter(x => x.id !== id))
   }
 
-  async function regenSlug() {
-    if (!profile) return
-    if (!confirm('This breaks your existing link. Generate a new one?')) return
-    const newSlug = Math.random().toString(36).substring(2, 10)
-    await sb.from('accountability_profiles').update({ slug: newSlug }).eq('id', profile.id)
-    setProfile(p => p ? {...p, slug: newSlug} : p)
-  }
-
-  function copyLink() {
-    if (!profile) return
-    navigator.clipboard.writeText(`${origin}/public/${profile.slug}`)
-    setCopied(true); setTimeout(() => setCopied(false), 2500)
-  }
-
   // Follow flow
   async function lookupCode() {
     const code = addCode.trim()
@@ -269,8 +252,6 @@ export default function AccountabilityPage() {
 
   if (!loaded) return <div className="flex-1 flex items-center justify-center text-[#888] text-[13px]">Loading…</div>
 
-  const pubUrl = profile ? `${origin}/public/${profile.slug}` : ''
-
   return (
     <>
       <div className="bg-white px-6 py-3 border-b-2 border-[#0A0A0A] flex-shrink-0">
@@ -281,28 +262,16 @@ export default function AccountabilityPage() {
       <div className="flex-1 overflow-y-auto p-6">
         <div className="max-w-lg space-y-7">
 
-          {/* ── YOUR PUBLIC LINK ── */}
+          {/* ── YOUR CODE ── */}
           <div>
-            <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">Your Public Link</div>
-            <div className="bg-[#0A0A0A] rounded-xl p-4 space-y-3">
-              <div className="text-[11px] text-[#555]">Share this code or link with friends so they can follow you.</div>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 bg-[#1a1a1a] rounded-lg px-3 py-2.5 font-mono text-[11px] text-[#FF5C00] truncate border border-[#2a2a2a]">
-                  {pubUrl}
-                </div>
-                <button onClick={copyLink}
-                  className={`px-3 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-[.08em] transition-all flex-shrink-0 ${copied?'bg-[#22c55e] text-white':'bg-[#FF5C00] text-white hover:bg-[#FF7A2E]'}`}>
-                  {copied ? '✓ Copied!' : 'Copy'}
-                </button>
+            <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">Your Code</div>
+            <div className="bg-[#0A0A0A] rounded-xl p-5 flex items-center gap-5">
+              <div>
+                <div className="text-[9px] text-[#444] uppercase tracking-[.12em] mb-1.5">Share this with friends</div>
+                <div className="font-mono text-[28px] font-black text-[#FF5C00] tracking-[.18em]">{profile?.slug}</div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-3 py-1.5">
-                  <div className="text-[8px] text-[#444] uppercase tracking-[.1em] mb-0.5">Your code</div>
-                  <div className="font-mono text-[15px] font-bold text-[#FF5C00] tracking-[.12em]">{profile?.slug}</div>
-                </div>
-                <div className="text-[10px] text-[#444] leading-relaxed">
-                  Share just the code above — friends paste it inside Mizan to follow you.
-                </div>
+              <div className="flex-1 text-[11px] text-[#444] leading-relaxed">
+                Give this code to a friend — they paste it in Mizan to follow your live stats.
               </div>
             </div>
           </div>
@@ -477,13 +446,7 @@ export default function AccountabilityPage() {
             )}
           </div>
 
-          {/* ── DANGER ── */}
-          <div>
-            <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-2">Danger Zone</div>
-            <button onClick={regenSlug} className="text-[10px] text-[#aaa] hover:text-[#888] transition-colors uppercase tracking-[.08em]">
-              ↻ Regenerate link (invalidates existing)
-            </button>
-          </div>
+
 
         </div>
       </div>
