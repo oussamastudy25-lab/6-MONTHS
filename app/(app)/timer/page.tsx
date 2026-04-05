@@ -390,83 +390,107 @@ export default function TimerPage() {
 
                         {/* Control button */}
                         {showRestOffer?(
-                          <div className="space-y-3 text-center py-1">
-                            <div className="text-[13px] font-bold text-[#22c55e]">✓ Session saved!</div>
-                            <div className="text-[11px] text-[#888]">Take a break before the next session?</div>
-                            <div className="flex gap-2 justify-center flex-wrap">
-                              {[5,10,15].map(m=>(
+                          <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 text-center space-y-3">
+                            <div className="text-[22px]">✅</div>
+                            <div>
+                              <div className="text-[14px] font-bold text-[#15803d]">Session saved!</div>
+                              <div className="text-[11px] text-[#16a34a] mt-0.5">Take a proper break — you earned it</div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-2">
+                              {[
+                                {m:5,  label:'Quick', sub:'5 min'},
+                                {m:10, label:'Standard', sub:'10 min'},
+                                {m:15, label:'Long', sub:'15 min'},
+                              ].map(({m,label,sub})=>(
                                 <button key={m} onClick={()=>{startRest(m);setShowRestOffer(false)}}
-                                  className="px-4 py-2 rounded-xl text-[11px] font-bold border border-[#22c55e] text-[#22c55e] hover:bg-[#f0fdf4] transition-colors">
-                                  😴 {m}m
+                                  className="flex flex-col items-center gap-0.5 py-2.5 rounded-xl border-2 border-[#22c55e] text-[#15803d] hover:bg-[#22c55e] hover:text-white transition-all group">
+                                  <span className="text-[10px] font-black uppercase tracking-[.06em]">{label}</span>
+                                  <span className="text-[12px] font-bold">{sub}</span>
                                 </button>
                               ))}
-                              <button onClick={()=>setShowRestOffer(false)}
-                                className="px-4 py-2 rounded-xl text-[11px] font-bold border border-[#dedede] text-[#888] hover:border-[#0A0A0A] transition-colors">
-                                Skip →
-                              </button>
                             </div>
+                            <button onClick={()=>setShowRestOffer(false)}
+                              className="text-[10px] text-[#aaa] hover:text-[#555] transition-colors uppercase tracking-[.08em]">
+                              Skip break, start next →
+                            </button>
                           </div>
                         ):restMode?(
                           /* REST MODE */
-                          <div className="space-y-3 py-2">
+                          <div className="py-1">
                             {restDone?(
-                              <div className="text-center space-y-2">
-                                <div className="text-[28px]">🔔</div>
-                                <div className="text-[15px] font-bold text-[#0A0A0A]">Rest over!</div>
-                                <div className="text-[11px] text-[#888]">Ready for the next block?</div>
-                                <div className="flex gap-2 justify-center pt-1">
-                                  <button onClick={()=>{endRest();setTimeboxDone(false)}}
-                                    className="px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[.1em] text-white transition-colors"
-                                    style={{background:currentCat?.color??'#FF5C00'}}>
-                                    ▶ Start Next Block
-                                  </button>
-                                  <button onClick={()=>{endRest();stopTimer(true)}}
-                                    className="px-4 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[.1em] border border-[#dedede] text-[#888] hover:border-[#0A0A0A] transition-colors">
-                                    Done for now
-                                  </button>
+                              <div className="bg-[#fff7ed] border border-[#fed7aa] rounded-2xl p-5 text-center space-y-3">
+                                <div className="text-[36px]">🔔</div>
+                                <div>
+                                  <div className="text-[16px] font-black text-[#c2410c]">Break's over!</div>
+                                  <div className="text-[11px] text-[#ea580c] mt-1">You rested {restMins} minutes — time to lock in</div>
                                 </div>
+                                <button onClick={()=>{endRest();setTimeboxDone(false)}}
+                                  className="w-full py-3 rounded-xl text-[13px] font-bold uppercase tracking-[.08em] text-white transition-colors"
+                                  style={{background:currentCat?.color??'#FF5C00'}}>
+                                  ▶ Start Next Session
+                                </button>
+                                <button onClick={()=>{endRest();stopTimer(true)}}
+                                  className="text-[10px] text-[#aaa] hover:text-[#555] transition-colors uppercase tracking-[.08em]">
+                                  Done for today
+                                </button>
                               </div>
                             ):(
-                              <div className="text-center space-y-2">
-                                <div className="text-[11px] font-bold text-[#888] uppercase tracking-[.1em]">Rest Break</div>
-                                {/* Rest progress ring */}
-                                <div className="relative w-24 h-24 mx-auto">
-                                  <svg className="w-24 h-24 -rotate-90" viewBox="0 0 96 96">
-                                    <circle cx="48" cy="48" r="40" fill="none" stroke="#f0f0f0" strokeWidth="6"/>
-                                    <circle cx="48" cy="48" r="40" fill="none" stroke="#22c55e" strokeWidth="6"
-                                      strokeDasharray={`${2*Math.PI*40}`}
-                                      strokeDashoffset={`${2*Math.PI*40*(restElapsed/(restMins*60))}`}
-                                      strokeLinecap="round"/>
+                              <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-5 text-center space-y-4">
+                                <div className="text-[11px] font-bold text-[#16a34a] uppercase tracking-[.12em]">Rest Break</div>
+                                {/* Big rest ring */}
+                                <div className="relative w-32 h-32 mx-auto">
+                                  <svg className="w-32 h-32 -rotate-90" viewBox="0 0 128 128">
+                                    <circle cx="64" cy="64" r="56" fill="none" stroke="#dcfce7" strokeWidth="8"/>
+                                    <circle cx="64" cy="64" r="56" fill="none" stroke="#22c55e" strokeWidth="8"
+                                      strokeDasharray={`${2*Math.PI*56}`}
+                                      strokeDashoffset={`${2*Math.PI*56*(1 - restElapsed/(restMins*60))}`}
+                                      strokeLinecap="round" style={{transition:'stroke-dashoffset 0.5s linear'}}/>
                                   </svg>
                                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className="font-mono text-[16px] font-bold text-[#22c55e]">
-                                      {String(Math.floor((restMins*60-restElapsed)/60)).padStart(2,'0')}:{String((restMins*60-restElapsed)%60).padStart(2,'0')}
+                                    <span className="font-mono text-[26px] font-black text-[#15803d] leading-none">
+                                      {String(Math.floor(Math.max(0,restMins*60-restElapsed)/60)).padStart(2,'0')}:{String(Math.max(0,restMins*60-restElapsed)%60).padStart(2,'0')}
                                     </span>
-                                    <span className="text-[9px] text-[#aaa] uppercase tracking-[.08em]">rest</span>
+                                    <span className="text-[10px] text-[#4ade80] uppercase tracking-[.1em] mt-1">remaining</span>
                                   </div>
                                 </div>
-                                <div className="text-[11px] text-[#aaa]">Step away, breathe, hydrate 💧</div>
+                                <div className="space-y-1">
+                                  <div className="text-[13px] font-semibold text-[#15803d]">Step away from the screen</div>
+                                  <div className="text-[11px] text-[#4ade80]">Stretch · Breathe · Hydrate 💧</div>
+                                </div>
                                 <button onClick={skipRest}
-                                  className="text-[10px] text-[#bcbcbc] hover:text-[#888] transition-colors uppercase tracking-[.08em]">
-                                  Skip rest →
+                                  className="text-[10px] text-[#86efac] hover:text-[#15803d] transition-colors uppercase tracking-[.08em]">
+                                  End rest early →
                                 </button>
                               </div>
                             )}
                           </div>
                         ):timeboxDone?(
                           <div className="space-y-2">
-                            <div className="text-[13px] font-bold text-[#22c55e]">✓ Block complete — {fmtMins(timeboxMins)} focused</div>
-                            <div className="flex gap-2 justify-center flex-wrap">
-                              <button onClick={()=>stopTimer(true)}
-                                className="px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[.1em] bg-[#22c55e] text-white hover:bg-green-600 transition-colors">
-                                ✓ Finish
-                              </button>
-                              {[5,10,15].map(m=>(
+                            <div className="text-center">
+                              <div className="text-[22px] mb-1">🎯</div>
+                              <div className="text-[14px] font-black text-[#15803d]">Block complete!</div>
+                              <div className="text-[11px] text-[#aaa] mt-0.5">{fmtMins(timeboxMins)} of focused work done</div>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="text-[9px] font-bold text-[#bcbcbc] uppercase tracking-[.1em] text-center">Take a break?</div>
+                              <div className="grid grid-cols-3 gap-2">
+                              {[
+                                {m:5,label:'5 min'},
+                                {m:10,label:'10 min'},
+                                {m:15,label:'15 min'},
+                              ].map(({m,label})=>(
                                 <button key={m} onClick={()=>startRest(m)}
-                                  className="px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[.1em] border border-[#22c55e] text-[#22c55e] hover:bg-[#f0fdf4] transition-colors">
-                                  😴 {m}m Rest
+                                  className="py-2.5 rounded-xl text-[11px] font-bold border-2 border-[#22c55e] text-[#15803d] hover:bg-[#22c55e] hover:text-white transition-all">
+                                  {label}
                                 </button>
                               ))}
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <button onClick={()=>stopTimer(true)}
+                                className="flex-1 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[.1em] border border-[#dedede] text-[#888] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors">
+                                ✓ Done for today
+                              </button>
                               <button onClick={()=>setTimeboxDone(false)}
                                 className="px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[.1em] border border-[#dedede] text-[#888] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors">
                                 + Again
