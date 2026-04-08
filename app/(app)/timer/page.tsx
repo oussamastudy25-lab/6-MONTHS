@@ -58,6 +58,7 @@ export default function TimerPage() {
   const MIN_SESSION_SECS = 5 * 60  // 5 minutes minimum before we warn
   const TWO_MIN_SECS     = 2 * 60  // below 2 min → don't save at all
   // Resistance system
+  const [showStopChoice, setShowStopChoice] = useState(false)
   const [resistMode, setResistMode]         = useState(false)
   const [resistCount, setResistCount]       = useState(0)   // how many 2-min blocks survived
   const [resistElapsed, setResistElapsed]   = useState(0)   // seconds into current 2-min block
@@ -189,7 +190,7 @@ export default function TimerPage() {
     const {data}=await sb.from('focus_sessions').insert({
       user_id:user.id,category_id:activeCat,date:today,started_at:now,duration_minutes:0,note
     }).select().single()
-    if(data){setRunning(data);setElapsed(0);setSessions(prev=>[...prev,data]);setTimeboxDone(false);setShowRestOffer(false);setResistMode(false);setResistElapsed(0);setResistCount(0);resistStartedAt.current=null}
+    if(data){setRunning(data);setElapsed(0);setSessions(prev=>[...prev,data]);setTimeboxDone(false);setShowRestOffer(false);setShowStopChoice(false);setResistMode(false);setResistElapsed(0);setResistCount(0);resistStartedAt.current=null}
   }
 
   async function stopTimer(force=false){
@@ -201,7 +202,7 @@ export default function TimerPage() {
       await sb.from('focus_sessions').delete().eq('id',running.id)
       setSessions(prev=>prev.filter(s=>s.id!==running.id))
       setRunning(null);setElapsed(0);setNote('');setTimeboxDone(false);setShowMinWarning(false)
-      setResistMode(false);setResistElapsed(0);setResistCount(0);resistStartedAt.current=null
+      setResistMode(false);setResistElapsed(0);setResistCount(0);resistStartedAt.current=null;setShowStopChoice(false)
       return
     }
 
@@ -220,7 +221,7 @@ export default function TimerPage() {
     await sb.from('focus_sessions').update({ended_at:now,duration_minutes:total,note}).eq('id',running.id)
     setSessions(prev=>prev.map(s=>s.id===running.id?{...s,ended_at:now,duration_minutes:total}:s))
     setRunning(null);setElapsed(0);setNote('');setTimeboxDone(false)
-    setResistMode(false);setResistElapsed(0);setResistCount(0);resistStartedAt.current=null
+    setResistMode(false);setResistElapsed(0);setResistCount(0);resistStartedAt.current=null;setShowStopChoice(false)
     // Offer rest for free-flow stops (timebox done already has its own rest UI)
     if (!wasTimeboxDone) setShowRestOffer(true)
     load()
@@ -609,8 +610,29 @@ export default function TimerPage() {
                                   )}
                                 </div>
                               </div>
+                            ) : showStopChoice ? (
+                              /* STOP CHOICE — resist or stop immediately */
+                              <div className="bg-[#f7f7f7] border border-[#efefef] rounded-2xl p-4 space-y-3 text-center">
+                                <div className="text-[12px] font-bold text-[#0A0A0A]">Stop the session?</div>
+                                <div className="text-[10px] text-[#aaa]">Resist 2 minutes to build discipline, or stop now.</div>
+                                <div className="space-y-2">
+                                  <button onClick={()=>{setShowStopChoice(false);startResist()}}
+                                    className="w-full py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[.08em] text-white transition-colors"
+                                    style={{background:currentCat.color}}>
+                                    💪 Resist 2 min first
+                                  </button>
+                                  <button onClick={()=>{setShowStopChoice(false);stopTimer(true)}}
+                                    className="w-full py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[.08em] border border-[#dedede] text-[#888] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-all">
+                                    ⏹ Stop now
+                                  </button>
+                                  <button onClick={()=>setShowStopChoice(false)}
+                                    className="text-[10px] text-[#bcbcbc] hover:text-[#888] transition-colors uppercase tracking-[.06em]">
+                                    Cancel
+                                  </button>
+                                </div>
+                              </div>
                             ) : (
-                              <button onClick={startResist}
+                              <button onClick={()=>setShowStopChoice(true)}
                                 className="px-8 py-3 rounded-xl text-[13px] font-bold uppercase tracking-[.1em] text-white transition-all hover:opacity-90"
                                 style={{background:currentCat.color}}>
                                 ⏹ Stop
