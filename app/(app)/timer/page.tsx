@@ -57,6 +57,10 @@ export default function TimerPage() {
   const [showRestOffer, setShowRestOffer] = useState(false)
   const MIN_SESSION_SECS = 5 * 60  // 5 minutes minimum before we warn
   const TWO_MIN_SECS     = 2 * 60  // below 2 min → don't save at all
+  // Manual session form (analytics view)
+  const [showAddSession, setShowAddSession] = useState(false)
+  const [addForm, setAddForm] = useState({ category_id: '', date: fmt(), duration_minutes: 60, note: '' })
+
   // Resistance system
   const [showStopChoice, setShowStopChoice] = useState(false)
   const [resistMode, setResistMode]         = useState(false)
@@ -230,7 +234,28 @@ export default function TimerPage() {
   async function deleteSession(id:string){
     await sb.from('focus_sessions').delete().eq('id',id)
     setSessions(prev=>prev.filter(s=>s.id!==id))
+    setAllSessions(prev=>prev.filter(s=>s.id!==id))
     if(running?.id===id){setRunning(null);setElapsed(0)}
+  }
+
+  async function addManualSession(){
+    if(!addForm.category_id||addForm.duration_minutes<1)return
+    const {data:{user}}=await sb.auth.getUser();if(!user)return
+    const {data}=await sb.from('focus_sessions').insert({
+      user_id:user.id,
+      category_id:addForm.category_id,
+      date:addForm.date,
+      duration_minutes:addForm.duration_minutes,
+      note:addForm.note.trim()||null,
+      started_at:null,
+      ended_at:new Date().toISOString(),
+    }).select().single()
+    if(data){
+      setAllSessions(prev=>[data,...prev])
+      if(addForm.date===today) setSessions(prev=>[...prev,data])
+    }
+    setShowAddSession(false)
+    setAddForm({category_id:'',date:fmt(),duration_minutes:60,note:''})
   }
 
   async function saveCategory(){
@@ -747,22 +772,84 @@ export default function TimerPage() {
               })}
 
               <div>
-                <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">Recent Sessions</div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase">Recent Sessions</div>
+                  <button onClick={()=>{setShowAddSession(v=>!v);setAddForm({category_id:categories[0]?.id??'',date:fmt(),duration_minutes:60,note:''})}}
+                    className="text-[9px] font-bold uppercase tracking-[.1em] px-2.5 py-1 rounded-md border border-[#dedede] text-[#888] hover:border-[#FF5C00] hover:text-[#FF5C00] transition-all">
+                    {showAddSession?'✕ Cancel':'＋ Add'}
+                  </button>
+                </div>
+
+                {/* Add session form */}
+                {showAddSession&&(
+                  <div className="mb-3 bg-white border-2 border-[#FF5C00] rounded-lg p-4 space-y-3">
+                    <div className="text-[10px] font-bold text-[#FF5C00] uppercase tracking-[.1em]">Log a session manually</div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <div className="text-[8px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Category</div>
+                        <select className="w-full bg-[#f7f7f7] border border-[#dedede] rounded-md px-2 py-1.5 text-[12px] outline-none focus:border-[#FF5C00]"
+                          value={addForm.category_id} onChange={e=>setAddForm(p=>({...p,category_id:e.target.value}))}>
+                          {categories.map(c=><option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <div className="text-[8px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Date</div>
+                        <input type="date" className="w-full bg-[#f7f7f7] border border-[#dedede] rounded-md px-2 py-1.5 text-[12px] outline-none focus:border-[#FF5C00]"
+                          value={addForm.date} onChange={e=>setAddForm(p=>({...p,date:e.target.value}))}/>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-[8px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Duration (minutes)</div>
+                      <div className="flex items-center gap-2">
+                        <input type="number" min="1" max="600" step="5"
+                          className="flex-1 bg-[#f7f7f7] border border-[#dedede] rounded-md px-2 py-1.5 text-[12px] outline-none focus:border-[#FF5C00]"
+                          value={addForm.duration_minutes} onChange={e=>setAddForm(p=>({...p,duration_minutes:parseInt(e.target.value)||1}))}/>
+                        <span className="text-[10px] text-[#888] flex-shrink-0">{fmtMins(addForm.duration_minutes)}</span>
+                      </div>
+                      <div className="flex gap-1 mt-1.5 flex-wrap">
+                        {[15,25,30,45,60,90,120].map(m=>(
+                          <button key={m} onClick={()=>setAddForm(p=>({...p,duration_minutes:m}))}
+                            className={`text-[9px] px-2 py-0.5 rounded-md border font-mono transition-all ${addForm.duration_minutes===m?'bg-[#FF5C00] text-white border-[#FF5C00]':'border-[#dedede] text-[#888] hover:border-[#FF5C00]'}`}>
+                            {fmtMins(m)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-[8px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Note (optional)</div>
+                      <input className="w-full bg-[#f7f7f7] border border-[#dedede] rounded-md px-2 py-1.5 text-[12px] outline-none focus:border-[#FF5C00]"
+                        placeholder="What did you work on?" value={addForm.note} onChange={e=>setAddForm(p=>({...p,note:e.target.value}))}
+                        onKeyDown={e=>e.key==='Enter'&&addManualSession()}/>
+                    </div>
+                    <button onClick={addManualSession}
+                      className="w-full bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] py-2.5 rounded-md hover:bg-[#FF7A2E] transition-colors">
+                      + Log Session
+                    </button>
+                  </div>
+                )}
+
                 <div className="space-y-1">
                   {allSessions.filter(s=>s.ended_at).slice(0,20).map(s=>{
                     const cat=categories.find(c=>c.id===s.category_id);if(!cat)return null
                     return (
-                      <div key={s.id} className="flex items-center gap-3 px-4 py-2.5 bg-white border border-[#f7f7f7] rounded-lg hover:border-[#efefef] transition-colors">
+                      <div key={s.id} className="group flex items-center gap-3 px-4 py-2.5 bg-white border border-[#f7f7f7] rounded-lg hover:border-[#efefef] transition-colors">
                         <span className="text-[14px]">{cat.emoji}</span>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <span className="text-[11px] font-semibold">{cat.name}</span>
                           {s.note&&<span className="text-[10px] text-[#888] ml-2">— {s.note}</span>}
                         </div>
-                        <span className="text-[9px] text-[#bcbcbc] font-mono">{s.date}</span>
-                        <span className="font-mono text-[12px] font-bold" style={{color:cat.color}}>{fmtMins(s.duration_minutes)}</span>
+                        <span className="text-[9px] text-[#bcbcbc] font-mono flex-shrink-0">{s.date}</span>
+                        <span className="font-mono text-[12px] font-bold flex-shrink-0" style={{color:cat.color}}>{fmtMins(s.duration_minutes)}</span>
+                        <button onClick={()=>{if(confirm('Delete this session?'))deleteSession(s.id)}}
+                          className="opacity-0 group-hover:opacity-100 text-[14px] text-[#bcbcbc] hover:text-[#ef4444] transition-all leading-none flex-shrink-0 ml-1">
+                          ×
+                        </button>
                       </div>
                     )
                   })}
+                  {allSessions.filter(s=>s.ended_at).length===0&&(
+                    <div className="text-center py-8 text-[12px] text-[#bcbcbc]">No sessions yet. Start your timer!</div>
+                  )}
                 </div>
               </div>
             </div>
