@@ -252,7 +252,7 @@ export default function SetupPage() {
             <div style={{ fontSize: 11, fontWeight: 500, color: '#9AA0A6', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 12, fontFamily: 'Roboto, sans-serif' }}>Also configure</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {[
-                { href: '/goals',    emoji: '🎯', title: 'Goals & Milestones', desc: 'Set 6-month goals and track progress', color: '#E6F4EA' },
+                { href: '/goals',    emoji: '🎯', title: 'Goals & Milestones', desc: 'Set goals and track milestones', color: '#E6F4EA' },
                 { href: '/timer',    emoji: '⏱',  title: 'Focus Categories',   desc: 'Organize your deep work sessions',     color: '#E8F0FE' },
                 { href: '/calendar', emoji: '📅', title: 'Calendar Blocks',    desc: 'Schedule recurring time blocks',        color: '#FEF7E0' },
               ].map(item => (

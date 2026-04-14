@@ -375,7 +375,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Active 6M Goals */}
+        {/* Active Goals */}
         {goals.filter(g=>!g.archived).length > 0 && (
           <div style={mdCard}>
             <div style={mdCardHeader}>

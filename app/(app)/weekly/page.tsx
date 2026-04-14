@@ -182,7 +182,7 @@ export default function WeeklyPage() {
                 <button onClick={() => deleteWGoal(g.id)} className="w-5 h-5 flex items-center justify-center text-[11px] text-[#80868B] hover:text-[#8B0000] transition-colors flex-shrink-0">×</button>
                 <button
                   onClick={() => setLinkingId(linkingId === g.id ? null : g.id)}
-                  title="Link to a 6M goal"
+                  title="Link to a goal"
                   className={`w-5 h-5 flex items-center justify-center text-[11px] rounded transition-colors flex-shrink-0 ${g.goal_id ? 'text-[#1A73E8]' : 'text-[#dedede] hover:text-[#80868B]'}`}>
                   ◎
                 </button>
