@@ -134,7 +134,7 @@ export default function GoalsPage() {
             </button>
           )}
           <button onClick={() => { setShowForm(s=>!s); setEditId(null); setForm({title:'',description:'',category:'Work',start_date:today,end_date:''}) }}
-            className="bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
+            className="bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors px-4 py-2 rounded-full text-[13px] font-medium flex items-center gap-1.5">
             + New Goal
           </button>
         </div>
@@ -168,7 +168,7 @@ export default function GoalsPage() {
               </div>
             </div>
             <div className="col-span-2 flex gap-2">
-              <button onClick={saveGoal} className="bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
+              <button onClick={saveGoal} className="bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors px-4 py-2 rounded-full text-[13px] font-medium">
                 {editId ? 'Update' : 'Create Goal'}
               </button>
               <button onClick={()=>{setShowForm(false);setEditId(null)}} className="border border-[#DADCE0] text-[13px] font-medium px-4 py-2 rounded hover:border-[#1A73E8] transition-colors">Cancel</button>

@@ -356,7 +356,7 @@ export default function TimerPage() {
                   <div className="text-5xl mb-4">⏱</div>
                   <div className="text-[16px] font-medium mb-2">No categories yet</div>
                   <div className="text-[13px] text-[#5F6368] mb-6">Create focus categories for everything you do — Study, Business, Content, Gym.</div>
-                  <button onClick={()=>setShowSetup(true)} className="bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">+ Create Category</button>
+                  <button onClick={()=>setShowSetup(true)} className="bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors px-4 py-2 rounded-full text-[13px] font-medium">+ Create Category</button>
                 </div>
               ):(
                 <div className="max-w-xl mx-auto">
@@ -838,7 +838,7 @@ export default function TimerPage() {
                         onKeyDown={e=>e.key==='Enter'&&addManualSession()}/>
                     </div>
                     <button onClick={addManualSession}
-                      className="w-full bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
+                      className="w-full bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors px-4 py-2 rounded-full text-[13px] font-medium">
                       + Log Session
                     </button>
                   </div>
@@ -880,7 +880,7 @@ export default function TimerPage() {
                           </div>
                           <div className="flex gap-2">
                             <button onClick={saveEditSession}
-                              className="flex-1 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
+                              className="flex-1 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors px-4 py-2 rounded-full text-[13px] font-medium">
                               Save
                             </button>
                             <button onClick={()=>setEditSessionId(null)}
@@ -1031,7 +1031,7 @@ export default function TimerPage() {
                     <span className="text-[10px] text-[#5F6368]">{fmtMins(form.target_minutes)}/day</span>
                     <div className="w-4 h-4 rounded-sm" style={{background:form.color}}/>
                   </div>
-                  <button onClick={saveCategory} className="w-full bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
+                  <button onClick={saveCategory} className="w-full bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors px-4 py-2 rounded-full text-[13px] font-medium">
                     {editId==='new'?'+ Create Category':'Update'}
                   </button>
                   <button onClick={()=>{setEditId(null);setForm({name:'',color:'#1A73E8',emoji:'📚',target_minutes:120})}}

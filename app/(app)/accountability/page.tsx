@@ -314,7 +314,7 @@ export default function AccountabilityPage() {
                 />
                 <div className="flex gap-2">
                   <button onClick={confirmFollow} disabled={addLoading}
-                    className="flex-1 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors disabled:opacity-50">
+                    className="flex-1 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors px-4 py-2 rounded-full text-[13px] font-medium disabled:opacity-50">
                     {addLoading ? 'Adding…' : '＋ Follow'}
                   </button>
                   <button onClick={() => { setAddStep('input'); setPreview(null); setAddCode('') }}
@@ -426,7 +426,7 @@ export default function AccountabilityPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={addWindow} className="flex-1 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
+                  <button onClick={addWindow} className="flex-1 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors px-4 py-2 rounded-full text-[13px] font-medium">
                     ＋ Add Window
                   </button>
                   <button onClick={() => setShowWinForm(false)} className="px-4 border border-[#DADCE0] text-[13px] font-medium rounded-lg hover:border-[#1A73E8] transition-colors">

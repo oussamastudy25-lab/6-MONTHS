@@ -275,7 +275,7 @@ export default function LettersPage() {
               </div>
               <div className="flex gap-2">
                 <button onClick={createLetter} disabled={!newTitle.trim()}
-                  className="flex-1 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors disabled:opacity-40">
+                  className="flex-1 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors px-4 py-2 rounded-full text-[13px] font-medium disabled:opacity-40">
                   Create & Write
                 </button>
                 <button onClick={() => setShowNew(false)}
@@ -295,7 +295,7 @@ export default function LettersPage() {
               Write to yourself every day. Letters to your future self, reflections, plans — all in one place.
             </div>
             <button onClick={() => { setShowNew(true); setNewTitle(''); setNewDate(today) }}
-              className="bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
+              className="bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors px-4 py-2 rounded-full text-[13px] font-medium">
               + Write a New Letter
             </button>
           </div>
