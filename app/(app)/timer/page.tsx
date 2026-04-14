@@ -61,6 +61,10 @@ export default function TimerPage() {
   const [showAddSession, setShowAddSession] = useState(false)
   const [addForm, setAddForm] = useState({ category_id: '', date: fmt(), duration_minutes: 60, note: '' })
 
+  // Edit existing session record
+  const [editSessionId, setEditSessionId] = useState<string|null>(null)
+  const [editSessionForm, setEditSessionForm] = useState({ duration_minutes: 0, note: '' })
+
   // Resistance system
   const [showStopChoice, setShowStopChoice] = useState(false)
   const [resistMode, setResistMode]         = useState(false)
@@ -236,6 +240,18 @@ export default function TimerPage() {
     setSessions(prev=>prev.filter(s=>s.id!==id))
     setAllSessions(prev=>prev.filter(s=>s.id!==id))
     if(running?.id===id){setRunning(null);setElapsed(0)}
+  }
+
+  async function saveEditSession(){
+    if(!editSessionId||editSessionForm.duration_minutes<1)return
+    await sb.from('focus_sessions').update({
+      duration_minutes:editSessionForm.duration_minutes,
+      note:editSessionForm.note.trim()||null,
+    }).eq('id',editSessionId)
+    const update=(s:Session)=>s.id===editSessionId?{...s,duration_minutes:editSessionForm.duration_minutes,note:editSessionForm.note}:s
+    setSessions(prev=>prev.map(update))
+    setAllSessions(prev=>prev.map(update))
+    setEditSessionId(null)
   }
 
   async function addManualSession(){
@@ -831,6 +847,50 @@ export default function TimerPage() {
                 <div className="space-y-1">
                   {allSessions.filter(s=>s.ended_at).slice(0,20).map(s=>{
                     const cat=categories.find(c=>c.id===s.category_id);if(!cat)return null
+                    const isEditing=editSessionId===s.id
+                    if(isEditing){
+                      return (
+                        <div key={s.id} className="border-2 border-[#FF5C00] rounded-lg p-3 bg-white space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[14px]">{cat.emoji}</span>
+                            <span className="text-[11px] font-semibold flex-1">{cat.name}</span>
+                            <span className="text-[9px] text-[#bcbcbc] font-mono">{s.date}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <label className="text-[10px] text-[#888] uppercase tracking-[.1em] font-bold flex-shrink-0">Duration</label>
+                            <input type="number" min={1} max={999}
+                              value={editSessionForm.duration_minutes}
+                              onChange={e=>setEditSessionForm(p=>({...p,duration_minutes:parseInt(e.target.value)||1}))}
+                              className="w-16 text-center font-mono text-[13px] font-bold border border-[#dedede] rounded-md px-2 py-1 focus:outline-none focus:border-[#FF5C00]"/>
+                            <span className="text-[10px] text-[#888]">min</span>
+                            <div className="flex gap-1 flex-wrap">
+                              {[15,25,30,45,60,90,120].map(m=>(
+                                <button key={m} onClick={()=>setEditSessionForm(p=>({...p,duration_minutes:m}))}
+                                  className={`text-[9px] px-1.5 py-0.5 rounded font-mono border transition-all ${editSessionForm.duration_minutes===m?'bg-[#FF5C00] text-white border-[#FF5C00]':'border-[#dedede] text-[#888] hover:border-[#FF5C00]'}`}>
+                                  {m}m
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                          <div>
+                            <input type="text" placeholder="Note (optional)"
+                              value={editSessionForm.note}
+                              onChange={e=>setEditSessionForm(p=>({...p,note:e.target.value}))}
+                              className="w-full text-[11px] border border-[#dedede] rounded-md px-2 py-1.5 focus:outline-none focus:border-[#FF5C00]"/>
+                          </div>
+                          <div className="flex gap-2">
+                            <button onClick={saveEditSession}
+                              className="flex-1 bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] py-1.5 rounded-md hover:bg-[#FF7A2E] transition-colors">
+                              Save
+                            </button>
+                            <button onClick={()=>setEditSessionId(null)}
+                              className="px-3 text-[10px] font-bold uppercase tracking-[.1em] border border-[#dedede] rounded-md text-[#888] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors">
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    }
                     return (
                       <div key={s.id} className="group flex items-center gap-3 px-4 py-2.5 bg-white border border-[#f7f7f7] rounded-lg hover:border-[#efefef] transition-colors">
                         <span className="text-[14px]">{cat.emoji}</span>
@@ -840,8 +900,13 @@ export default function TimerPage() {
                         </div>
                         <span className="text-[9px] text-[#bcbcbc] font-mono flex-shrink-0">{s.date}</span>
                         <span className="font-mono text-[12px] font-bold flex-shrink-0" style={{color:cat.color}}>{fmtMins(s.duration_minutes)}</span>
+                        <button onClick={()=>{setEditSessionId(s.id);setEditSessionForm({duration_minutes:s.duration_minutes,note:s.note||''})}}
+                          className="opacity-0 group-hover:opacity-100 text-[13px] text-[#bcbcbc] hover:text-[#FF5C00] transition-all leading-none flex-shrink-0 ml-1"
+                          title="Edit duration">
+                          ✎
+                        </button>
                         <button onClick={()=>{if(confirm('Delete this session?'))deleteSession(s.id)}}
-                          className="opacity-0 group-hover:opacity-100 text-[14px] text-[#bcbcbc] hover:text-[#ef4444] transition-all leading-none flex-shrink-0 ml-1">
+                          className="opacity-0 group-hover:opacity-100 text-[14px] text-[#bcbcbc] hover:text-[#ef4444] transition-all leading-none flex-shrink-0">
                           ×
                         </button>
                       </div>
