@@ -119,12 +119,12 @@ export default function TrackerPage() {
 
       <div className="flex items-center gap-2 px-6 py-2 bg-[#f7f7f7] border-b border-[#E8EAED] flex-shrink-0">
         <button onClick={() => { if(month===0){setMonth(11);setYear(y=>y-1)}else setMonth(m=>m-1) }}
-          className="w-6 h-6 border border-[#DADCE0] rounded flex items-center justify-center text-[14px] text-[#5F6368] hover:bg-[#0A0A0A] hover:text-white hover:border-[#0A0A0A] transition-colors">‹</button>
-        <span className="text-[13px] font-bold tracking-[.04em] min-w-[140px] text-center">{MONTHS[month]} {year}</span>
+          className="w-6 h-6 border border-[#DADCE0] rounded flex items-center justify-center text-[14px] text-[#5F6368] hover:bg-[#1A73E8] hover:text-white hover:border-[#1A73E8] transition-colors">‹</button>
+        <span className="text-[14px] font-normal text-[#202124] min-w-[140px] text-center">{MONTHS[month]} {year}</span>
         <button onClick={() => { if(month===11){setMonth(0);setYear(y=>y+1)}else setMonth(m=>m+1) }}
-          className="w-6 h-6 border border-[#DADCE0] rounded flex items-center justify-center text-[14px] text-[#5F6368] hover:bg-[#0A0A0A] hover:text-white hover:border-[#0A0A0A] transition-colors">›</button>
+          className="w-6 h-6 border border-[#DADCE0] rounded flex items-center justify-center text-[14px] text-[#5F6368] hover:bg-[#1A73E8] hover:text-white hover:border-[#1A73E8] transition-colors">›</button>
         <button onClick={() => { setYear(now.getFullYear()); setMonth(now.getMonth()) }}
-          className="text-[9px] font-bold uppercase tracking-[.1em] px-3 py-1 rounded border border-[#DADCE0] text-[#5F6368] hover:bg-[#FF5C00] hover:text-white hover:border-[#FF5C00] transition-colors">Today</button>
+          className="text-[11px] font-medium tracking-[0.04em] uppercase px-3 py-1 rounded border border-[#DADCE0] text-[#5F6368] hover:bg-[#1A73E8] hover:text-white hover:border-[#1A73E8] transition-colors">Today</button>
       </div>
 
       <div className="flex-1 overflow-y-auto">
@@ -136,7 +136,7 @@ export default function TrackerPage() {
             <div className="text-[15px] font-bold mb-1">No habits yet</div>
             <div className="text-[13px] text-[#5F6368] mb-4">Add your first habit to start tracking</div>
             <a href="/setup"
-              className="inline-block bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] px-5 py-2.5 rounded-lg hover:bg-[#FF7A2E] transition-colors">
+              className="inline-block bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
               + Add Habits in Setup
             </a>
           </div>
@@ -145,7 +145,7 @@ export default function TrackerPage() {
             {/* TODAY'S LOG */}
             {isCurrentMonth && (
               <div className="px-5 pt-4 pb-4 border-b border-[#E8EAED] bg-white">
-                <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">
+                <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">
                   Today — {now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' })}
                 </div>
                 <div className="space-y-2">
@@ -165,7 +165,7 @@ export default function TrackerPage() {
                             return (
                               <button key={status}
                                 onClick={() => toggleStatus(h.id, today, status)}
-                                className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-[.06em] border-2 transition-all ${active ? cfg.on : cfg.off}`}>
+                                className={`px-2.5 py-1 rounded-lg text-[11px] font-medium tracking-[0.03em] uppercase border-2 transition-all ${active ? cfg.on : cfg.off}`}>
                                 {cfg.label}
                               </button>
                             )
@@ -197,12 +197,12 @@ export default function TrackerPage() {
                       <span className="font-mono text-[10px] text-[#80868B]">#{idx+1}</span>
                       <span className="text-[13px] font-bold flex-1">{h.name}</span>
                       <div className="text-right">
-                        <div className="font-mono text-[18px] font-semibold text-[#FF5C00]">{pct}%</div>
-                        {streak > 0 && <div className="text-[9px] text-[#FF5C00]/70 font-bold">🔥 {streak}d</div>}
+                        <div className="font-mono text-[18px] font-semibold text-[#1A73E8]">{pct}%</div>
+                        {streak > 0 && <div className="text-[9px] text-[#1A73E8]/70 font-bold">🔥 {streak}d</div>}
                       </div>
                     </div>
                     <div className="h-1 bg-[#efefef] rounded-full overflow-hidden mb-3">
-                      <div className="h-full bg-[#FF5C00] rounded-full" style={{width:`${pct}%`}} />
+                      <div className="h-full bg-[#1A73E8] rounded-full" style={{width:`${pct}%`}} />
                     </div>
                     <div className="flex flex-wrap gap-0.5 mb-3">
                       {days.map(d => {
@@ -217,10 +217,10 @@ export default function TrackerPage() {
                             onClick={() => dayScheduled && cycleStatus(h.id, d)}
                             className={`w-[18px] h-[18px] rounded-[3px] flex items-center justify-center font-mono text-[8px] transition-all cursor-pointer
                               ${!dayScheduled   ? 'bg-[#f3f3f3] text-[#e0e0e0] cursor-default'
-                              : v==='done'       ? 'bg-[#FF5C00] text-white hover:scale-125'
+                              : v==='done'       ? 'bg-[#1A73E8] text-white hover:scale-125'
                               : v==='missed'     ? 'bg-[#FBE9E7] text-[#8B0000] hover:scale-125'
                               : v==='na'         ? 'bg-[#f5f5f5] text-[#80868B] hover:scale-125'
-                              : isToday          ? 'bg-[#f0f0f0] text-[#0A0A0A] ring-1 ring-[#FF5C00] hover:scale-125'
+                              : isToday          ? 'bg-[#f0f0f0] text-[#0A0A0A] ring-1 ring-[#1A73E8] hover:scale-125'
                               : 'bg-[#f7f7f7] text-[#dedede] hover:scale-125'}`}>
                             {dayScheduled ? day : '·'}
                           </button>

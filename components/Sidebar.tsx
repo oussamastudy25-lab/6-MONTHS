@@ -47,7 +47,7 @@ export default function Sidebar({ streak='—', monthPct='—', tasks='—' }: P
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
             width: 34, height: 34, borderRadius: 10,
-            background: 'linear-gradient(135deg, #FF5C00, #FF7A2E)',
+            background: 'linear-gradient(135deg, #1A73E8, #1557B0)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
             boxShadow: '0 1px 3px rgba(255,92,0,0.3)',
           }}>
@@ -74,8 +74,8 @@ export default function Sidebar({ streak='—', monthPct='—', tasks='—' }: P
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 14,
                 padding: '9px 16px', borderRadius: 24,
-                background: active ? '#FFF0E8' : 'transparent',
-                color: active ? '#FF5C00' : '#3C4043',
+                background: active ? '#E8F0FE' : 'transparent',
+                color: active ? '#1A73E8' : '#3C4043',
                 fontFamily: 'Roboto, sans-serif',
                 fontSize: 13.5, fontWeight: active ? 600 : 400,
                 cursor: 'pointer',
@@ -83,17 +83,17 @@ export default function Sidebar({ streak='—', monthPct='—', tasks='—' }: P
                 userSelect: 'none',
               }}
               onMouseEnter={e => { if (!active)(e.currentTarget as HTMLDivElement).style.background = '#F1F3F4' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = active ? '#FFF0E8' : 'transparent' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = active ? '#E8F0FE' : 'transparent' }}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                  stroke={active ? '#FF5C00' : '#5F6368'}
+                  stroke={active ? '#1A73E8' : '#5F6368'}
                   strokeWidth={active ? 2 : 1.6}
                   strokeLinecap="round" strokeLinejoin="round"
                   style={{ flexShrink: 0 }}>
                   <path d={item.icon} />
                 </svg>
                 <span style={{ flex: 1 }}>{item.label}</span>
-                {active && <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#FF5C00' }} />}
+                {active && <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#1A73E8' }} />}
               </div>
             </Link>
           )
@@ -103,7 +103,7 @@ export default function Sidebar({ streak='—', monthPct='—', tasks='—' }: P
       {/* Stats */}
       <div style={{ margin: '4px 12px 8px', padding: '12px 14px', background: '#F8F9FA', borderRadius: 12, border: '1px solid #E8EAED' }}>
         <div style={{ fontSize: 10, fontWeight: 600, color: '#80868B', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Today</div>
-        {[['Month', monthPct, '#FF5C00'],['Streak', streak, '#34A853'],['Tasks', tasks, '#1A73E8']].map(([l,v,c]) => (
+        {[['Month', monthPct, '#1A73E8'],['Streak', streak, '#34A853'],['Tasks', tasks, '#1A73E8']].map(([l,v,c]) => (
           <div key={l} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
             <span style={{ fontSize: 12, color: '#5F6368', fontFamily: 'Roboto, sans-serif' }}>{l}</span>
             <span style={{ fontSize: 12, fontWeight: 700, color: c, fontFamily: 'Roboto Mono, monospace' }}>{v}</span>

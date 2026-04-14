@@ -87,16 +87,16 @@ function FriendCard({ followed, onRemove }: { followed: Followed; onRemove: (id:
             {/* Quick stats */}
             <div className="flex items-center gap-3 text-right flex-shrink-0">
               <div>
-                <div className="font-mono text-[13px] font-bold text-[#FF5C00]">{data.habits_done}/{data.habits_total}</div>
+                <div className="font-mono text-[13px] font-bold text-[#1A73E8]">{data.habits_done}/{data.habits_total}</div>
                 <div className="text-[8px] text-[#80868B] uppercase tracking-[.08em]">habits</div>
               </div>
               <div>
-                <div className="font-mono text-[13px] font-bold text-[#FF5C00]">{fmtMins(data.focus_today_mins)}</div>
+                <div className="font-mono text-[13px] font-bold text-[#1A73E8]">{fmtMins(data.focus_today_mins)}</div>
                 <div className="text-[8px] text-[#80868B] uppercase tracking-[.08em]">focus</div>
               </div>
             </div>
             <button onClick={() => setExpanded(e => !e)}
-              className="w-6 h-6 flex items-center justify-center text-[#80868B] hover:text-[#0A0A0A] transition-colors text-[12px]">
+              className="w-6 h-6 flex items-center justify-center text-[#80868B] hover:text-[#202124] transition-colors text-[12px]">
               {expanded ? '▲' : '▼'}
             </button>
           </>
@@ -123,7 +123,7 @@ function FriendCard({ followed, onRemove }: { followed: Followed; onRemove: (id:
             <div className="bg-[#f9f9f9] rounded-lg p-2.5 text-center">
               <div className="font-mono text-[15px] font-bold text-[#0A0A0A]">{data.habits_done}/{data.habits_total}</div>
               <div className="h-1 bg-[#efefef] rounded-full mt-1.5 mb-0.5 overflow-hidden">
-                <div className="h-full bg-[#FF5C00] rounded-full" style={{width:`${habitPct}%`}}/>
+                <div className="h-full bg-[#1A73E8] rounded-full" style={{width:`${habitPct}%`}}/>
               </div>
               <div className="text-[8.5px] text-[#aaa] uppercase tracking-[.08em]">Habits</div>
             </div>
@@ -144,10 +144,10 @@ function FriendCard({ followed, onRemove }: { followed: Followed; onRemove: (id:
                 <div key={i}>
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-[11px] text-[#555] truncate flex-1">{g.title}</span>
-                    <span className="text-[10px] font-bold text-[#FF5C00] flex-shrink-0 ml-2">{g.pct}%</span>
+                    <span className="text-[10px] font-bold text-[#1A73E8] flex-shrink-0 ml-2">{g.pct}%</span>
                   </div>
                   <div className="h-1 bg-[#efefef] rounded-full overflow-hidden">
-                    <div className="h-full bg-[#FF5C00] rounded-full" style={{width:`${g.pct}%`}}/>
+                    <div className="h-full bg-[#1A73E8] rounded-full" style={{width:`${g.pct}%`}}/>
                   </div>
                 </div>
               ))}
@@ -264,11 +264,11 @@ export default function AccountabilityPage() {
 
           {/* ── YOUR CODE ── */}
           <div>
-            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">Your Code</div>
+            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">Your Code</div>
             <div className="bg-[#0A0A0A] rounded-xl p-5 flex items-center gap-5">
               <div>
                 <div className="text-[9px] text-[#444] uppercase tracking-[.12em] mb-1.5">Share this with friends</div>
-                <div className="font-mono text-[28px] font-black text-[#FF5C00] tracking-[.18em]">{profile?.slug}</div>
+                <div className="font-mono text-[28px] font-black text-[#1A73E8] tracking-[.18em]">{profile?.slug}</div>
               </div>
               <div className="flex-1 text-[11px] text-[#444] leading-relaxed">
                 Give this code to a friend — they paste it in Mizan to follow your live stats.
@@ -278,19 +278,19 @@ export default function AccountabilityPage() {
 
           {/* ── FOLLOW A FRIEND ── */}
           <div>
-            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">Follow a Friend</div>
+            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">Follow a Friend</div>
             {addStep === 'input' ? (
               <div className="space-y-2">
                 <div className="flex gap-2">
                   <input
-                    className="flex-1 border border-[#E8EAED] rounded-lg px-3 py-2.5 text-[13px] font-mono outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)] transition-colors"
+                    className="flex-1 border border-[#E8EAED] rounded-lg px-3 py-2.5 text-[13px] font-mono outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)] transition-colors"
                     placeholder="Paste their code (e.g. mp13m4w0)"
                     value={addCode}
                     onChange={e => { setAddCode(e.target.value); setAddError('') }}
                     onKeyDown={e => e.key === 'Enter' && lookupCode()}
                   />
                   <button onClick={lookupCode} disabled={!addCode.trim() || addLoading}
-                    className="px-4 bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.08em] rounded-lg hover:bg-[#FF7A2E] transition-colors disabled:opacity-40">
+                    className="px-4 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors disabled:opacity-40">
                     {addLoading ? '…' : 'Find'}
                   </button>
                 </div>
@@ -306,7 +306,7 @@ export default function AccountabilityPage() {
                   </div>
                 </div>
                 <input
-                  className="w-full border border-[#E8EAED] rounded-lg px-3 py-2 text-[12px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)] transition-colors bg-white"
+                  className="w-full border border-[#E8EAED] rounded-lg px-3 py-2 text-[12px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)] transition-colors bg-white"
                   placeholder="Nickname (optional — e.g. Karim)"
                   value={addNick}
                   onChange={e => setAddNick(e.target.value)}
@@ -314,11 +314,11 @@ export default function AccountabilityPage() {
                 />
                 <div className="flex gap-2">
                   <button onClick={confirmFollow} disabled={addLoading}
-                    className="flex-1 bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.08em] py-2.5 rounded-lg hover:bg-[#FF7A2E] transition-colors disabled:opacity-50">
+                    className="flex-1 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors disabled:opacity-50">
                     {addLoading ? 'Adding…' : '＋ Follow'}
                   </button>
                   <button onClick={() => { setAddStep('input'); setPreview(null); setAddCode('') }}
-                    className="px-4 border border-[#DADCE0] text-[10px] font-bold uppercase tracking-[.08em] rounded-lg hover:border-[#0A0A0A] transition-colors">
+                    className="px-4 border border-[#DADCE0] text-[13px] font-medium rounded-lg hover:border-[#1A73E8] transition-colors">
                     Cancel
                   </button>
                 </div>
@@ -329,7 +329,7 @@ export default function AccountabilityPage() {
           {/* ── FOLLOWING LIST ── */}
           {followed.length > 0 && (
             <div>
-              <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">
+              <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">
                 Following · {followed.length}
               </div>
               <div className="space-y-2">
@@ -342,9 +342,9 @@ export default function AccountabilityPage() {
 
           {/* ── DISPLAY NAME ── */}
           <div>
-            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-2">Your Display Name</div>
+            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-2">Your Display Name</div>
             <input
-              className="w-full border border-[#E8EAED] rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)] transition-colors"
+              className="w-full border border-[#E8EAED] rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)] transition-colors"
               value={nameVal}
               onChange={e => setNameVal(e.target.value)}
               onBlur={() => nameVal.trim() && updateProfile({ display_name: nameVal.trim() })}
@@ -355,7 +355,7 @@ export default function AccountabilityPage() {
 
           {/* ── VISIBILITY ── */}
           <div>
-            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">Show on Public Page</div>
+            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">Show on Public Page</div>
             <div className="space-y-2">
               {([
                 ['show_habits', '▦  Habits'],
@@ -366,7 +366,7 @@ export default function AccountabilityPage() {
                   <span className="text-[12px] text-[#0A0A0A]">{label}</span>
                   <button onClick={() => updateProfile({ [key]: !profile?.[key] })}
                     className="relative flex-shrink-0" style={{width:40,height:22}}>
-                    <div className={`w-10 rounded-full transition-colors ${profile?.[key]?'bg-[#FF5C00]':'bg-[#dedede]'}`} style={{height:22}}/>
+                    <div className={`w-10 rounded-full transition-colors ${profile?.[key]?'bg-[#1A73E8]':'bg-[#dedede]'}`} style={{height:22}}/>
                     <div className={`absolute top-0.5 w-[18px] h-[18px] bg-white rounded-full shadow transition-all ${profile?.[key]?'left-[20px]':'left-[2px]'}`}/>
                   </button>
                 </div>
@@ -376,7 +376,7 @@ export default function AccountabilityPage() {
 
           {/* ── WINDOWS ── */}
           <div>
-            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-1">Accountability Windows</div>
+            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-1">Accountability Windows</div>
             <div className="text-[10px] text-[#aaa] mb-3 leading-relaxed">
               During these hours: <span className="text-[#ef4444] font-bold">🔴 NOT WORKING</span> if timer off,
               <span className="text-[#16a34a] font-bold"> 🟢 LIVE</span> if timer running.
@@ -402,7 +402,7 @@ export default function AccountabilityPage() {
             </div>
             {showWinForm ? (
               <div className="bg-[#f7f7f7] border border-[#E8EAED] rounded-xl p-4 space-y-3">
-                <input className="w-full bg-white border border-[#E8EAED] rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)] transition-colors"
+                <input className="w-full bg-white border border-[#E8EAED] rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)] transition-colors"
                   placeholder="Label (e.g. Deep Work)" value={newWin.label}
                   onChange={e => setNewWin(w => ({...w, label: e.target.value}))} />
                 <div>
@@ -411,7 +411,7 @@ export default function AccountabilityPage() {
                     {DOW.map((d, i) => (
                       <button key={i}
                         onClick={() => setNewWin(w => ({ ...w, days: w.days.includes(i) ? w.days.filter(x=>x!==i) : [...w.days, i].sort() }))}
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all ${newWin.days.includes(i)?'bg-[#FF5C00] text-white border-[#0A0A0A]':'border-[#DADCE0] text-[#5F6368] hover:border-[#0A0A0A] hover:text-[#0A0A0A]'}`}>
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all ${newWin.days.includes(i)?'bg-[#1A73E8] text-white border-[#1A73E8]':'border-[#DADCE0] text-[#5F6368] hover:border-[#1A73E8] hover:text-[#1A73E8]'}`}>
                         {d}
                       </button>
                     ))}
@@ -420,27 +420,27 @@ export default function AccountabilityPage() {
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.08em] mb-1">Start</div>
-                    <input type="time" className="w-full bg-white border border-[#E8EAED] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
+                    <input type="time" className="w-full bg-white border border-[#E8EAED] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
                       value={minsToLabel(newWin.start)} onChange={e => setNewWin(w => ({...w, start: labelToMins(e.target.value)}))} />
                   </div>
                   <div>
                     <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.08em] mb-1">End</div>
-                    <input type="time" className="w-full bg-white border border-[#E8EAED] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
+                    <input type="time" className="w-full bg-white border border-[#E8EAED] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
                       value={minsToLabel(newWin.end)} onChange={e => setNewWin(w => ({...w, end: labelToMins(e.target.value)}))} />
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={addWindow} className="flex-1 bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.08em] py-2.5 rounded-lg hover:bg-[#FF7A2E] transition-colors">
+                  <button onClick={addWindow} className="flex-1 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
                     ＋ Add Window
                   </button>
-                  <button onClick={() => setShowWinForm(false)} className="px-4 border border-[#DADCE0] text-[10px] font-bold uppercase tracking-[.08em] rounded-lg hover:border-[#0A0A0A] transition-colors">
+                  <button onClick={() => setShowWinForm(false)} className="px-4 border border-[#DADCE0] text-[13px] font-medium rounded-lg hover:border-[#1A73E8] transition-colors">
                     Cancel
                   </button>
                 </div>
               </div>
             ) : (
               <button onClick={() => setShowWinForm(true)}
-                className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg border border-dashed border-[#DADCE0] text-[10px] font-bold uppercase tracking-[.08em] text-[#5F6368] hover:border-[#FF5C00] hover:text-[#FF5C00] hover:bg-[#FFF0E8] transition-colors">
+                className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg border border-dashed border-[#DADCE0] text-[13px] font-medium text-[#5F6368] hover:border-[#1A73E8] hover:text-[#1A73E8] hover:bg-[#E8F0FE] transition-colors">
                 ＋ Add window
               </button>
             )}

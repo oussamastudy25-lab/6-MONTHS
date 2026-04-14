@@ -120,7 +120,7 @@ export default function NotificationsPage() {
               </div>
               {!granted && !denied && (
                 <button onClick={enable} disabled={loading}
-                  className="px-4 py-2.5 bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.08em] rounded-lg hover:bg-[#FF7A2E] transition-colors disabled:opacity-50 flex-shrink-0">
+                  className="px-4 py-2.5 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors disabled:opacity-50 flex-shrink-0">
                   {loading ? '…' : 'Enable'}
                 </button>
               )}
@@ -130,14 +130,14 @@ export default function NotificationsPage() {
           {/* Test button - most important, show first */}
           {granted && (
             <button onClick={sendTest}
-              className={`w-full py-3 text-[12px] font-bold uppercase tracking-[.08em] rounded-xl border-2 transition-all ${tested ? 'border-[#22c55e] text-[#22c55e] bg-[#f0fdf4]' : 'border-[#FF5C00] text-[#FF5C00] hover:bg-[#FFF0E8]'}`}>
+              className={`w-full py-3 text-[13px] font-medium rounded-xl border-2 transition-all ${tested ? 'border-[#22c55e] text-[#22c55e] bg-[#f0fdf4]' : 'border-[#1A73E8] text-[#1A73E8] hover:bg-[#E8F0FE]'}`}>
               {tested ? '✓ Notification sent — check your browser!' : '🔔 Send test notification now'}
             </button>
           )}
 
           {/* Calendar settings */}
           <div className={!granted ? 'opacity-40 pointer-events-none' : ''}>
-            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">📅 Calendar Reminders</div>
+            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">📅 Calendar Reminders</div>
             <div className="bg-white border border-[#E8EAED] rounded-xl overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3.5 border-b border-[#f5f5f5]">
                 <div>
@@ -146,17 +146,17 @@ export default function NotificationsPage() {
                 </div>
                 <button onClick={() => { const v = !calEnabled; setCalEnabled(v); saveSettings({calReminders:v}) }}
                   className="relative flex-shrink-0" style={{width:40,height:22}}>
-                  <div className={`w-10 rounded-full transition-colors ${calEnabled?'bg-[#FF5C00]':'bg-[#dedede]'}`} style={{height:22}}/>
+                  <div className={`w-10 rounded-full transition-colors ${calEnabled?'bg-[#1A73E8]':'bg-[#dedede]'}`} style={{height:22}}/>
                   <div className={`absolute top-0.5 w-[18px] h-[18px] bg-white rounded-full shadow transition-all ${calEnabled?'left-[20px]':'left-[2px]'}`}/>
                 </button>
               </div>
               {calEnabled && (
                 <div className="px-4 py-3">
-                  <div className="text-[10px] font-bold text-[#5F6368] uppercase tracking-[.08em] mb-2">Minutes before event</div>
+                  <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.04em] uppercase mb-2">Minutes before event</div>
                   <div className="flex gap-2">
                     {[5, 10, 15, 30].map(m => (
                       <button key={m} onClick={() => { setCalMins(m); saveSettings({calMinsBefore:m}) }}
-                        className={`px-4 py-1.5 rounded-lg text-[12px] font-bold border transition-all ${calMins===m?'bg-[#FF5C00] text-white border-[#0A0A0A]':'border-[#E8EAED] text-[#5F6368] hover:border-[#DADCE0]'}`}>
+                        className={`px-4 py-1.5 rounded-lg text-[12px] font-bold border transition-all ${calMins===m?'bg-[#1A73E8] text-white border-[#1A73E8]':'border-[#E8EAED] text-[#5F6368] hover:border-[#DADCE0]'}`}>
                         {m}m
                       </button>
                     ))}
@@ -168,7 +168,7 @@ export default function NotificationsPage() {
 
           {/* Work settings */}
           <div className={!granted ? 'opacity-40 pointer-events-none' : ''}>
-            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">⏱ Work Reminders</div>
+            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">⏱ Work Reminders</div>
             <div className="bg-white border border-[#E8EAED] rounded-xl overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3.5 border-b border-[#f5f5f5]">
                 <div>
@@ -177,17 +177,17 @@ export default function NotificationsPage() {
                 </div>
                 <button onClick={() => { const v = !workEnabled; setWorkEnabled(v); saveSettings({workReminders:v}) }}
                   className="relative flex-shrink-0" style={{width:40,height:22}}>
-                  <div className={`w-10 rounded-full transition-colors ${workEnabled?'bg-[#FF5C00]':'bg-[#dedede]'}`} style={{height:22}}/>
+                  <div className={`w-10 rounded-full transition-colors ${workEnabled?'bg-[#1A73E8]':'bg-[#dedede]'}`} style={{height:22}}/>
                   <div className={`absolute top-0.5 w-[18px] h-[18px] bg-white rounded-full shadow transition-all ${workEnabled?'left-[20px]':'left-[2px]'}`}/>
                 </button>
               </div>
               {workEnabled && (
                 <div className="px-4 py-3">
-                  <div className="text-[10px] font-bold text-[#5F6368] uppercase tracking-[.08em] mb-2">Remind every</div>
+                  <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.04em] uppercase mb-2">Remind every</div>
                   <div className="flex gap-2">
                     {[15, 30, 45, 60].map(m => (
                       <button key={m} onClick={() => { setWorkInterval(m); saveSettings({workInterval:m}) }}
-                        className={`px-4 py-1.5 rounded-lg text-[12px] font-bold border transition-all ${workInterval===m?'bg-[#FF5C00] text-white border-[#0A0A0A]':'border-[#E8EAED] text-[#5F6368] hover:border-[#DADCE0]'}`}>
+                        className={`px-4 py-1.5 rounded-lg text-[12px] font-bold border transition-all ${workInterval===m?'bg-[#1A73E8] text-white border-[#1A73E8]':'border-[#E8EAED] text-[#5F6368] hover:border-[#DADCE0]'}`}>
                         {m}m
                       </button>
                     ))}
@@ -201,7 +201,7 @@ export default function NotificationsPage() {
           {granted && debugInfo.length > 0 && (
             <div className="bg-[#f7f7f7] border border-[#E8EAED] rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
-                <div className="text-[10px] font-bold text-[#5F6368] uppercase tracking-[.1em]">Status</div>
+                <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.05em] uppercase">Status</div>
                 <button onClick={loadDebugInfo} className="text-[9px] text-[#80868B] hover:text-[#5F6368] uppercase tracking-[.08em]">Refresh</button>
               </div>
               <div className="space-y-0.5">
@@ -215,7 +215,7 @@ export default function NotificationsPage() {
           )}
 
           <div className="bg-[#f7f7f7] border border-[#E8EAED] rounded-xl p-4">
-            <div className="text-[10px] font-bold text-[#5F6368] uppercase tracking-[.1em] mb-2">How it works</div>
+            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.05em] uppercase mb-2">How it works</div>
             <div className="text-[11px] text-[#aaa] space-y-1.5 leading-relaxed">
               <div>• Mizan checks every 60 seconds whether a notification should fire</div>
               <div>• Works while browser is open, even if Mizan tab is in the background</div>

@@ -37,7 +37,7 @@ export default function LoginPage() {
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{
             width: 56, height: 56, borderRadius: 16,
-            background: 'linear-gradient(135deg, #FF5C00, #FF7A2E)',
+            background: 'linear-gradient(135deg, #1A73E8, #1557B0)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             margin: '0 auto 16px',
             boxShadow: '0 2px 8px rgba(255,92,0,0.3)',
@@ -116,7 +116,7 @@ export default function LoginPage() {
                       transition: 'border-color 0.15s, box-shadow 0.15s',
                       boxSizing: 'border-box',
                     }}
-                    onFocus={e => { e.target.style.borderColor='#FF5C00'; e.target.style.boxShadow='0 0 0 3px rgba(255,92,0,0.12)' }}
+                    onFocus={e => { e.target.style.borderColor='#1A73E8'; e.target.style.boxShadow='0 0 0 3px rgba(255,92,0,0.12)' }}
                     onBlur={e => { e.target.style.borderColor='#DADCE0'; e.target.style.boxShadow='none' }}
                   />
                 </div>
@@ -136,7 +136,7 @@ export default function LoginPage() {
                 <button type="submit" disabled={loading} style={{
                   padding: '11px 24px',
                   borderRadius: 24,
-                  background: loading ? '#FBBC04' : '#FF5C00',
+                  background: loading ? '#FBBC04' : '#1A73E8',
                   color: 'white',
                   border: 'none',
                   fontSize: 14, fontWeight: 500,

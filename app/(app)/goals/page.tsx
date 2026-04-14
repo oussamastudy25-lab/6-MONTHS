@@ -8,7 +8,7 @@ type Goal = { id: string; title: string; description: string; category: string; 
 const sb = createClient()
 const CATEGORIES = ['Health','Mind','Work','Relationships','Finance','Spirit','Other']
 const CAT_COLORS: Record<string,string> = {
-  Health:'#22c55e',Mind:'#8b5cf6',Work:'#FF5C00',
+  Health:'#22c55e',Mind:'#8b5cf6',Work:'#1A73E8',
   Relationships:'#ec4899',Finance:'#f59e0b',Spirit:'#06b6d4',Other:'#888'
 }
 
@@ -129,12 +129,12 @@ export default function GoalsPage() {
         <div className="ml-auto flex gap-2">
           {archived.length>0 && (
             <button onClick={() => setShowArchived(s=>!s)}
-              className={`px-3 py-1.5 rounded border text-[10px] font-bold uppercase tracking-[.1em] transition-all ${showArchived?'bg-[#FF5C00] text-white border-[#0A0A0A]':'border-[#DADCE0] text-[#5F6368] hover:border-[#0A0A0A] hover:text-[#0A0A0A]'}`}>
+              className={`px-3 py-1.5 rounded border text-[13px] font-medium transition-all ${showArchived?'bg-[#1A73E8] text-white border-[#1A73E8]':'border-[#DADCE0] text-[#5F6368] hover:border-[#1A73E8] hover:text-[#1A73E8]'}`}>
               {showArchived ? 'Hide archived' : `Archived (${archived.length})`}
             </button>
           )}
           <button onClick={() => { setShowForm(s=>!s); setEditId(null); setForm({title:'',description:'',category:'Work',start_date:today,end_date:''}) }}
-            className="bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] px-4 py-1.5 rounded hover:bg-[#FF7A2E] transition-colors">
+            className="bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
             + New Goal
           </button>
         </div>
@@ -144,34 +144,34 @@ export default function GoalsPage() {
       {showForm && (
         <div className="px-6 py-4 border-b border-[#E8EAED] bg-[#F8F9FA] flex-shrink-0">
           <div className="max-w-2xl grid grid-cols-2 gap-3">
-            <input className="col-span-2 bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
+            <input className="col-span-2 bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
               placeholder="Goal title *" value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))} />
-            <input className="col-span-2 bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
+            <input className="col-span-2 bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
               placeholder="Description (optional)" value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))} />
             <div>
-              <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-1">Category</div>
-              <select className="w-full bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
+              <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.05em] uppercase mb-1">Category</div>
+              <select className="w-full bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
                 value={form.category} onChange={e=>setForm(f=>({...f,category:e.target.value}))}>
                 {CATEGORIES.map(c=><option key={c}>{c}</option>)}
               </select>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-1">Start</div>
-                <input type="date" className="w-full bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[12px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
+                <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.05em] uppercase mb-1">Start</div>
+                <input type="date" className="w-full bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[12px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
                   value={form.start_date} onChange={e=>setForm(f=>({...f,start_date:e.target.value}))} />
               </div>
               <div>
-                <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-1">End *</div>
-                <input type="date" className="w-full bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[12px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
+                <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.05em] uppercase mb-1">End *</div>
+                <input type="date" className="w-full bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[12px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
                   value={form.end_date} onChange={e=>setForm(f=>({...f,end_date:e.target.value}))} />
               </div>
             </div>
             <div className="col-span-2 flex gap-2">
-              <button onClick={saveGoal} className="bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] px-5 py-2 rounded hover:bg-[#FF7A2E] transition-colors">
+              <button onClick={saveGoal} className="bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
                 {editId ? 'Update' : 'Create Goal'}
               </button>
-              <button onClick={()=>{setShowForm(false);setEditId(null)}} className="border border-[#DADCE0] text-[10px] font-bold uppercase tracking-[.1em] px-4 py-2 rounded hover:border-[#0A0A0A] transition-colors">Cancel</button>
+              <button onClick={()=>{setShowForm(false);setEditId(null)}} className="border border-[#DADCE0] text-[13px] font-medium px-4 py-2 rounded hover:border-[#1A73E8] transition-colors">Cancel</button>
             </div>
           </div>
         </div>
@@ -206,10 +206,10 @@ export default function GoalsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <span className={`text-[14px] font-bold ${g.archived?'line-through text-[#5F6368]':''}`}>{g.title}</span>
-                        <span className="text-[9px] font-bold uppercase tracking-[.1em] px-2 py-0.5 rounded-full" style={{background:color+'20',color}}>
+                        <span className="text-[11px] font-medium tracking-[0.04em] uppercase px-2 py-0.5 rounded-full" style={{background:color+'20',color}}>
                           {g.category}
                         </span>
-                        {g.archived && <span className="text-[9px] font-bold uppercase tracking-[.1em] px-2 py-0.5 rounded-full bg-[#f0f0f0] text-[#5F6368]">Archived</span>}
+                        {g.archived && <span className="text-[11px] font-medium tracking-[0.04em] uppercase px-2 py-0.5 rounded-full bg-[#f0f0f0] text-[#5F6368]">Archived</span>}
                         <span className="font-mono text-[10px] text-[#5F6368] ml-auto">{daysLeft(g.end_date)}</span>
                         <span className="font-mono text-[10px] text-[#80868B]">{duration(g.start_date,g.end_date)}</span>
                       </div>
@@ -236,13 +236,13 @@ export default function GoalsPage() {
                     {/* Action buttons */}
                     <div className="flex gap-1 flex-shrink-0">
                       <button onClick={() => toggleExpand(g.id)}
-                        className="w-7 h-7 border border-[#DADCE0] rounded flex items-center justify-center text-[11px] text-[#5F6368] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors"
+                        className="w-7 h-7 border border-[#DADCE0] rounded flex items-center justify-center text-[11px] text-[#5F6368] hover:border-[#1A73E8] hover:text-[#1A73E8] transition-colors"
                         title={isExpanded?'Collapse milestones':'Show milestones'}>
                         {isExpanded ? '▲' : '▼'}
                       </button>
                       {!g.archived && (
                         <button onClick={() => startEdit(g)}
-                          className="w-7 h-7 border border-[#DADCE0] rounded flex items-center justify-center text-[11px] text-[#5F6368] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors">✎</button>
+                          className="w-7 h-7 border border-[#DADCE0] rounded flex items-center justify-center text-[11px] text-[#5F6368] hover:border-[#1A73E8] hover:text-[#1A73E8] transition-colors">✎</button>
                       )}
                       {!g.archived ? (
                         <button onClick={() => archiveGoal(g.id, true)}
@@ -250,7 +250,7 @@ export default function GoalsPage() {
                           title="Archive (mark as accomplished)">✓</button>
                       ) : (
                         <button onClick={() => archiveGoal(g.id, false)}
-                          className="w-7 h-7 border border-[#DADCE0] rounded flex items-center justify-center text-[9px] text-[#5F6368] hover:border-[#FF5C00] hover:text-[#FF5C00] transition-colors"
+                          className="w-7 h-7 border border-[#DADCE0] rounded flex items-center justify-center text-[9px] text-[#5F6368] hover:border-[#1A73E8] hover:text-[#1A73E8] transition-colors"
                           title="Unarchive">↩</button>
                       )}
                       <button onClick={() => deleteGoal(g.id)}
@@ -264,7 +264,7 @@ export default function GoalsPage() {
                   <div className="px-3 pb-3 bg-[#F8F9FA] border-t border-[#f7f7f7]">
                     <div className="pt-3">
                       {ms.map((m,i) => (
-                        <div key={m.id} className="flex items-center gap-2 bg-white border border-[#E8EAED] rounded-lg px-2 mb-1 h-9 focus-within:border-[#FF5C00] transition-colors group">
+                        <div key={m.id} className="flex items-center gap-2 bg-white border border-[#E8EAED] rounded-lg px-2 mb-1 h-9 focus-within:border-[#1A73E8] transition-colors group">
                           <input type="checkbox" checked={m.done} onChange={e => toggleMilestone(g.id,m.id,e.target.checked)}
                             className="w-[13px] h-[13px] cursor-pointer flex-shrink-0" style={{accentColor:color}} />
                           <span className="font-mono text-[9px] text-[#80868B] min-w-[14px]">{i+1}</span>
@@ -277,7 +277,7 @@ export default function GoalsPage() {
                       ))}
                       {!g.archived && (
                         <button onClick={() => addMilestone(g.id)}
-                          className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-dashed border-[#DADCE0] text-[9px] font-bold uppercase tracking-[.08em] text-[#5F6368] hover:border-[#FF5C00] hover:text-[#FF5C00] hover:bg-[#FFF0E8] transition-colors">
+                          className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-dashed border-[#DADCE0] text-[11px] font-medium tracking-[0.04em] uppercase text-[#5F6368] hover:border-[#1A73E8] hover:text-[#1A73E8] hover:bg-[#E8F0FE] transition-colors">
                           ＋ Add milestone
                         </button>
                       )}

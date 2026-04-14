@@ -170,14 +170,14 @@ export default function DailyQuote() {
       padding: '10px 24px',
       display: 'flex', alignItems: 'center', gap: 12,
     }}>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="#FF5C00" style={{ flexShrink: 0, opacity: 0.8 }}>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="#1A73E8" style={{ flexShrink: 0, opacity: 0.8 }}>
         <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
       </svg>
       <div style={{ flex: 1 }}>
         <span style={{ fontSize: 12.5, color: '#3C4043', fontStyle: 'italic', fontFamily: 'Roboto, sans-serif', lineHeight: 1.5 }}>
           {quote.text}
         </span>
-        <span style={{ fontSize: 11, color: '#FF5C00', fontWeight: 600, marginLeft: 8, fontFamily: 'Roboto, sans-serif' }}>
+        <span style={{ fontSize: 11, color: '#1A73E8', fontWeight: 600, marginLeft: 8, fontFamily: 'Roboto, sans-serif' }}>
           — {quote.author}
         </span>
       </div>

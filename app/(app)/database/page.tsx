@@ -88,7 +88,7 @@ export default function DatabasePage() {
 
           {/* Stats */}
           <div>
-            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">Your Data</div>
+            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">Your Data</div>
             {loading ? (
               <div className="text-[13px] text-[#5F6368]">Loading…</div>
             ) : (
@@ -116,7 +116,7 @@ export default function DatabasePage() {
 
           {/* Stack info */}
           <div>
-            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">Stack</div>
+            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">Stack</div>
             <div className="bg-[#f7f7f7] border border-[#E8EAED] rounded-lg overflow-hidden">
               {INFO.map(({ label, value }, i) => (
                 <div key={label} className={`flex items-center justify-between px-4 py-3 ${i < INFO.length-1 ? 'border-b border-[#E8EAED]' : ''}`}>
@@ -129,14 +129,14 @@ export default function DatabasePage() {
 
           {/* Actions */}
           <div>
-            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">Actions</div>
+            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">Actions</div>
             <div className="flex gap-2 flex-wrap">
               <button onClick={exportData} disabled={exporting}
-                className="bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] px-4 py-2 rounded-lg hover:bg-[#FF7A2E] transition-colors disabled:opacity-50">
+                className="bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors disabled:opacity-50">
                 {exporting ? 'Exporting…' : 'Export JSON'}
               </button>
               <button onClick={() => { setShowResetModal(true); setResetInput('') }}
-                className="border border-[#e0b0b0] text-[#8B0000] bg-[#FBE9E7] text-[10px] font-bold uppercase tracking-[.1em] px-4 py-2 rounded-lg hover:bg-[#fdd] transition-colors">
+                className="border border-[#e0b0b0] text-[#8B0000] bg-[#FBE9E7] text-[13px] font-medium px-4 py-2 rounded-lg hover:bg-[#fdd] transition-colors">
                 Reset All Data
               </button>
             </div>
@@ -154,7 +154,7 @@ export default function DatabasePage() {
               This will permanently delete <strong>all</strong> your habits, logs, tasks, goals, letters, and reviews. This cannot be undone.
             </div>
             <div className="mb-4">
-              <div className="text-[11px] font-bold text-[#5F6368] uppercase tracking-[.1em] mb-1.5">Type <span className="text-[#8B0000] font-mono">RESET</span> to confirm</div>
+              <div className="text-[12px] font-medium text-[#5F6368] tracking-[0.04em] uppercase mb-1.5">Type <span className="text-[#8B0000] font-mono">RESET</span> to confirm</div>
               <input autoFocus
                 className="w-full border-2 border-[#DADCE0] rounded-lg px-3 py-2.5 text-[14px] font-mono outline-none focus:border-[#8B0000] transition-colors"
                 placeholder="RESET"
@@ -165,11 +165,11 @@ export default function DatabasePage() {
             </div>
             <div className="flex gap-2">
               <button onClick={resetAll} disabled={resetInput !== 'RESET' || resetting}
-                className="flex-1 bg-[#8B0000] text-white text-[11px] font-bold uppercase tracking-[.1em] py-2.5 rounded-lg disabled:opacity-30 hover:bg-red-800 transition-colors">
+                className="flex-1 bg-[#8B0000] text-white text-[13px] font-medium py-2.5 rounded-lg disabled:opacity-30 hover:bg-red-800 transition-colors">
                 {resetting ? 'Deleting…' : 'Delete Everything'}
               </button>
               <button onClick={() => { setShowResetModal(false); setResetInput('') }}
-                className="px-4 border border-[#DADCE0] text-[11px] font-bold uppercase tracking-[.1em] rounded-lg hover:border-[#0A0A0A] transition-colors">
+                className="px-4 border border-[#DADCE0] text-[13px] font-medium rounded-lg hover:border-[#1A73E8] transition-colors">
                 Cancel
               </button>
             </div>

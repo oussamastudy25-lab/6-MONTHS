@@ -37,7 +37,7 @@ function isScheduled(frequency: string, d = new Date()) {
 }
 
 const CAT_COLORS: Record<string,string> = {
-  Health:'#22c55e', Mind:'#8b5cf6', Work:'#FF5C00',
+  Health:'#22c55e', Mind:'#8b5cf6', Work:'#1A73E8',
   Relationships:'#ec4899', Finance:'#f59e0b', Spirit:'#06b6d4', Other:'#888'
 }
 
@@ -162,8 +162,8 @@ export default function DashboardPage() {
         </div>
         <div style={{
           padding: '6px 14px', borderRadius: 20,
-          background: '#FFF0E8', border: '1px solid #FFCCAA',
-          fontSize: 12, fontWeight: 500, color: '#FF5C00',
+          background: '#E8F0FE', border: '1px solid #FFCCAA',
+          fontSize: 12, fontWeight: 500, color: '#1A73E8',
           fontFamily: 'Roboto, sans-serif',
         }}>
           {habitsDone}/{scheduledHabits.length} habits done today
@@ -175,9 +175,9 @@ export default function DashboardPage() {
         {/* KPI strip — Google card style */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
           {([
-            ['Habits Done', scheduledHabits.length > 0 ? `${habitsDone}/${scheduledHabits.length}` : '—', habitsDone===scheduledHabits.length&&scheduledHabits.length>0?'#34A853':'#FF5C00', habitsDone===scheduledHabits.length&&scheduledHabits.length>0?'#E6F4EA':'#FFF0E8', habitsDone===scheduledHabits.length&&scheduledHabits.length>0?'#137333':'#5C1B00', 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
+            ['Habits Done', scheduledHabits.length > 0 ? `${habitsDone}/${scheduledHabits.length}` : '—', habitsDone===scheduledHabits.length&&scheduledHabits.length>0?'#34A853':'#1A73E8', habitsDone===scheduledHabits.length&&scheduledHabits.length>0?'#E6F4EA':'#E8F0FE', habitsDone===scheduledHabits.length&&scheduledHabits.length>0?'#137333':'#5C1B00', 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
             ['Focus Time',  todayFocusMins > 0 ? fmtMins(todayFocusMins) : '—', '#1A73E8', '#E8F0FE', '#174EA6', 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z'],
-            ['Tasks',  todayTasks.length > 0 ? `${tasksDone}/${todayTasks.length}` : '—', tasksDone===todayTasks.length&&todayTasks.length>0?'#34A853':'#FF5C00', tasksDone===todayTasks.length&&todayTasks.length>0?'#E6F4EA':'#FFF0E8', tasksDone===todayTasks.length&&todayTasks.length>0?'#137333':'#5C1B00', 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4'],
+            ['Tasks',  todayTasks.length > 0 ? `${tasksDone}/${todayTasks.length}` : '—', tasksDone===todayTasks.length&&todayTasks.length>0?'#34A853':'#1A73E8', tasksDone===todayTasks.length&&todayTasks.length>0?'#E6F4EA':'#E8F0FE', tasksDone===todayTasks.length&&todayTasks.length>0?'#137333':'#5C1B00', 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4'],
             ['Wk Goals', wgoalItems.length > 0 ? `${wgoalsDone}/${wgoalItems.length}` : '—', wgoalsDone===wgoalItems.length&&wgoalItems.length>0?'#34A853':'#9334E6', wgoalsDone===wgoalItems.length&&wgoalItems.length>0?'#E6F4EA':'#F3E8FD', wgoalsDone===wgoalItems.length&&wgoalItems.length>0?'#137333':'#6B21A8', 'M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172'],
           ] as const).map(([l,v,accent,bg,textColor,iconPath]) => (
             <div key={l} style={{ background: '#FFFFFF', borderRadius: 12, border: '1px solid #E8EAED', padding: '16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -206,7 +206,7 @@ export default function DashboardPage() {
               {scheduledHabits.length === 0 && (
                 <div style={{ padding: '24px 16px', textAlign: 'center' }}>
                   <div style={{ fontSize: 13, color: '#80868B', marginBottom: 8, fontFamily: 'Roboto, sans-serif' }}>No habits set up yet</div>
-                  <a href="/setup" style={{ fontSize: 12, color: '#FF5C00', textDecoration: 'none', fontWeight: 500 }}>Set up habits →</a>
+                  <a href="/setup" style={{ fontSize: 12, color: '#1A73E8', textDecoration: 'none', fontWeight: 500 }}>Set up habits →</a>
                 </div>
               )}
               {scheduledHabits.map((h, idx) => {
@@ -262,7 +262,7 @@ export default function DashboardPage() {
               {todayTasks.length === 0 && wgoalItems.length === 0 && (
                 <div style={{ padding: '24px 16px', textAlign: 'center' }}>
                   <div style={{ fontSize: 13, color: '#80868B', marginBottom: 8, fontFamily: 'Roboto, sans-serif' }}>No tasks for today</div>
-                  <a href="/weekly" style={{ fontSize: 12, color: '#FF5C00', textDecoration: 'none', fontWeight: 500 }}>Add tasks →</a>
+                  <a href="/weekly" style={{ fontSize: 12, color: '#1A73E8', textDecoration: 'none', fontWeight: 500 }}>Add tasks →</a>
                 </div>
               )}
               {todayTasks.map((t, idx) => (
@@ -272,7 +272,7 @@ export default function DashboardPage() {
                   borderBottom: '1px solid #F1F3F4',
                 }}>
                   <input type="checkbox" checked={t.done} onChange={e=>toggleTask(t.id,e.target.checked)}
-                    style={{ width: 16, height: 16, accentColor: '#FF5C00', cursor: 'pointer', flexShrink: 0 }} />
+                    style={{ width: 16, height: 16, accentColor: '#1A73E8', cursor: 'pointer', flexShrink: 0 }} />
                   <span style={{ fontSize: 13, flex: 1, fontFamily: 'Roboto, sans-serif', color: t.done ? '#80868B' : '#202124', textDecoration: t.done ? 'line-through' : 'none' }}>{t.text}</span>
                 </div>
               ))}
@@ -287,7 +287,7 @@ export default function DashboardPage() {
                       padding: '10px 16px', borderBottom: '1px solid #F1F3F4',
                     }}>
                       <input type="checkbox" checked={g.done} onChange={e=>toggleWGoal(g.id,e.target.checked)}
-                        style={{ width: 16, height: 16, accentColor: '#FF5C00', cursor: 'pointer', flexShrink: 0 }} />
+                        style={{ width: 16, height: 16, accentColor: '#1A73E8', cursor: 'pointer', flexShrink: 0 }} />
                       <span style={{ fontSize: 13, flex: 1, fontFamily: 'Roboto, sans-serif', color: g.done ? '#80868B' : '#202124', textDecoration: g.done ? 'line-through' : 'none' }}>{g.text}</span>
                     </div>
                   ))}
@@ -309,7 +309,7 @@ export default function DashboardPage() {
               {catTotals.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '16px 0' }}>
                   <div style={{ fontSize: 13, color: '#80868B', marginBottom: 8, fontFamily: 'Roboto, sans-serif' }}>No sessions today</div>
-                  <a href="/timer" style={{ fontSize: 12, color: '#FF5C00', textDecoration: 'none', fontWeight: 500 }}>Start a session →</a>
+                  <a href="/timer" style={{ fontSize: 12, color: '#1A73E8', textDecoration: 'none', fontWeight: 500 }}>Start a session →</a>
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -342,7 +342,7 @@ export default function DashboardPage() {
               {blocks.length === 0 && (
                 <div style={{ padding: '24px 16px', textAlign: 'center' }}>
                   <div style={{ fontSize: 13, color: '#80868B', marginBottom: 8, fontFamily: 'Roboto, sans-serif' }}>No events today</div>
-                  <a href="/calendar" style={{ fontSize: 12, color: '#FF5C00', textDecoration: 'none', fontWeight: 500 }}>Open Calendar →</a>
+                  <a href="/calendar" style={{ fontSize: 12, color: '#1A73E8', textDecoration: 'none', fontWeight: 500 }}>Open Calendar →</a>
                 </div>
               )}
               {blocks.map((b, idx) => {
@@ -360,7 +360,7 @@ export default function DashboardPage() {
                       <div style={{ fontSize: 13, fontFamily: 'Roboto, sans-serif', color: isPast ? '#80868B' : '#202124' }}>{b.title}</div>
                       <div style={{ fontSize: 11, color: '#80868B', fontFamily: 'Roboto Mono, monospace', marginTop: 2, display: 'flex', alignItems: 'center', gap: 6 }}>
                         {minsToLabel(b.start_minutes)} – {minsToLabel(b.end_minutes)}
-                        {isCurrent && <span style={{ color: '#FF5C00', fontWeight: 700, fontSize: 10, background: '#FFF0E8', padding: '1px 6px', borderRadius: 8 }}>NOW</span>}
+                        {isCurrent && <span style={{ color: '#1A73E8', fontWeight: 700, fontSize: 10, background: '#E8F0FE', padding: '1px 6px', borderRadius: 8 }}>NOW</span>}
                       </div>
                     </div>
                   </div>

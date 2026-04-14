@@ -135,12 +135,12 @@ export default function WeeklyPage() {
       {/* Month nav */}
       <div className="flex items-center gap-2 px-6 py-2 bg-[#f7f7f7] border-b border-[#E8EAED] flex-shrink-0">
         <button onClick={() => { if(month===0){setMonth(11);setYear(y=>y-1)}else setMonth(m=>m-1) }}
-          className="w-6 h-6 border border-[#DADCE0] rounded flex items-center justify-center text-[14px] text-[#5F6368] hover:bg-[#0A0A0A] hover:text-white hover:border-[#0A0A0A] transition-colors">‹</button>
-        <span className="text-[13px] font-bold tracking-[.04em] min-w-[140px] text-center">{MONTHS[month]} {year}</span>
+          className="w-6 h-6 border border-[#DADCE0] rounded flex items-center justify-center text-[14px] text-[#5F6368] hover:bg-[#1A73E8] hover:text-white hover:border-[#1A73E8] transition-colors">‹</button>
+        <span className="text-[14px] font-normal text-[#202124] min-w-[140px] text-center">{MONTHS[month]} {year}</span>
         <button onClick={() => { if(month===11){setMonth(0);setYear(y=>y+1)}else setMonth(m=>m+1) }}
-          className="w-6 h-6 border border-[#DADCE0] rounded flex items-center justify-center text-[14px] text-[#5F6368] hover:bg-[#0A0A0A] hover:text-white hover:border-[#0A0A0A] transition-colors">›</button>
+          className="w-6 h-6 border border-[#DADCE0] rounded flex items-center justify-center text-[14px] text-[#5F6368] hover:bg-[#1A73E8] hover:text-white hover:border-[#1A73E8] transition-colors">›</button>
         <button onClick={() => { setYear(now.getFullYear()); setMonth(now.getMonth()); setWeekMon(fmt(getMon())) }}
-          className="text-[9px] font-bold uppercase tracking-[.1em] px-3 py-1 rounded border border-[#DADCE0] text-[#5F6368] hover:bg-[#FF5C00] hover:text-white hover:border-[#FF5C00] transition-colors">Today</button>
+          className="text-[11px] font-medium tracking-[0.04em] uppercase px-3 py-1 rounded border border-[#DADCE0] text-[#5F6368] hover:bg-[#1A73E8] hover:text-white hover:border-[#1A73E8] transition-colors">Today</button>
       </div>
 
       {/* Week tabs */}
@@ -150,7 +150,7 @@ export default function WeeklyPage() {
           const on = wk === weekMon
           return (
             <button key={wk} onClick={() => setWeekMon(wk)}
-              className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-[.08em] border transition-all ${on?'bg-[#FF5C00] text-white border-[#0A0A0A]':'bg-[#f7f7f7] text-[#5F6368] border-[#E8EAED] hover:bg-[#efefef] hover:text-[#0A0A0A]'}`}>
+              className={`px-3 py-1.5 rounded-lg text-[13px] font-medium border transition-all ${on?'bg-[#1A73E8] text-white border-[#1A73E8]':'bg-[#f7f7f7] text-[#5F6368] border-[#E8EAED] hover:bg-[#efefef] hover:text-[#202124]'}`}>
               {weekLabel(w)}
             </button>
           )
@@ -160,8 +160,8 @@ export default function WeeklyPage() {
       <div className="flex-1 overflow-y-auto px-6 py-4">
         {/* Weekly goals */}
         <div className="border border-[#E8EAED] rounded-lg overflow-hidden mb-5">
-          <div className="bg-[#0A0A0A] px-4 py-2.5 flex items-center justify-between">
-            <span className="text-[11px] font-bold tracking-[.08em] text-white uppercase">Weekly Goals</span>
+          <div className="bg-[#FAFAFA] border-b border-[#E8EAED] px-4 py-2.5 flex items-center justify-between">
+            <span className="text-[13px] font-medium text-white">Weekly Goals</span>
             <span className="text-[10px] text-[#555] font-mono">{weekLabel(new Date(weekMon))}</span>
           </div>
           <div className="bg-white">
@@ -169,7 +169,7 @@ export default function WeeklyPage() {
               <div key={g.id} className="flex flex-col bg-white border-b border-[#f7f7f7] last:border-0">
                 <div className="flex items-center gap-1.5 px-3 h-10 focus-within:bg-[#F8F9FA] transition-colors">
                 <input type="checkbox" checked={g.done} onChange={e => toggleWGoal(g.id, e.target.checked)}
-                  className="w-[13px] h-[13px] accent-[#FF5C00] cursor-pointer flex-shrink-0" />
+                  className="w-[13px] h-[13px] accent-[#1A73E8] cursor-pointer flex-shrink-0" />
                 <span className="font-mono text-[9.5px] text-[#80868B] min-w-[13px]">{i+1}</span>
                 <div className="w-px h-[16px] bg-[#efefef] flex-shrink-0" />
                 <TextInput
@@ -183,7 +183,7 @@ export default function WeeklyPage() {
                 <button
                   onClick={() => setLinkingId(linkingId === g.id ? null : g.id)}
                   title="Link to a 6M goal"
-                  className={`w-5 h-5 flex items-center justify-center text-[11px] rounded transition-colors flex-shrink-0 ${g.goal_id ? 'text-[#FF5C00]' : 'text-[#dedede] hover:text-[#aaa]'}`}>
+                  className={`w-5 h-5 flex items-center justify-center text-[11px] rounded transition-colors flex-shrink-0 ${g.goal_id ? 'text-[#1A73E8]' : 'text-[#dedede] hover:text-[#aaa]'}`}>
                   ◎
                 </button>
                 </div>
@@ -192,7 +192,7 @@ export default function WeeklyPage() {
                     <select
                       value={g.goal_id ?? ''}
                       onChange={e => linkWGoal(g.id, e.target.value || null)}
-                      className="w-full text-[11px] bg-[#f7f7f7] border border-[#E8EAED] rounded-lg px-2 py-1.5 outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)] transition-colors"
+                      className="w-full text-[11px] bg-[#f7f7f7] border border-[#E8EAED] rounded-lg px-2 py-1.5 outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)] transition-colors"
                     >
                       <option value="">— No goal linked —</option>
                       {sixGoals.map(sg => (
@@ -200,7 +200,7 @@ export default function WeeklyPage() {
                       ))}
                     </select>
                     {g.goal_id && (
-                      <div className="text-[9px] text-[#FF5C00] mt-1 font-medium">
+                      <div className="text-[9px] text-[#1A73E8] mt-1 font-medium">
                         ◎ {sixGoals.find(sg => sg.id === g.goal_id)?.title ?? 'Linked goal'}
                       </div>
                     )}
@@ -210,7 +210,7 @@ export default function WeeklyPage() {
             ))}
             <div className="px-3 py-2">
               <button onClick={addWGoal}
-                className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded border border-dashed border-[#DADCE0] text-[9px] font-bold uppercase tracking-[.08em] text-[#5F6368] hover:border-[#FF5C00] hover:text-[#FF5C00] hover:bg-[#FFF0E8] transition-colors">
+                className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded border border-dashed border-[#DADCE0] text-[11px] font-medium tracking-[0.04em] uppercase text-[#5F6368] hover:border-[#1A73E8] hover:text-[#1A73E8] hover:bg-[#E8F0FE] transition-colors">
                 ＋ Add weekly goal
               </button>
             </div>
@@ -219,9 +219,9 @@ export default function WeeklyPage() {
 
         {/* Daily tasks grid */}
         <div className="flex items-center justify-between mb-3">
-            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase">Daily Tasks</div>
+            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase">Daily Tasks</div>
             <button onClick={() => setHideCompleted(h => !h)}
-              className={`text-[9px] font-bold uppercase tracking-[.08em] px-2 py-1 rounded-lg transition-all ${hideCompleted ? 'bg-[#FF5C00] text-white' : 'bg-[#f0f0f0] text-[#5F6368] hover:bg-[#e0e0e0]'}`}>
+              className={`text-[11px] font-medium tracking-[0.04em] uppercase px-2 py-1 rounded-lg transition-all ${hideCompleted ? 'bg-[#1A73E8] text-white' : 'bg-[#f0f0f0] text-[#5F6368] hover:bg-[#e0e0e0]'}`}>
               {hideCompleted ? 'Show All' : 'Hide Done'}
             </button>
           </div>
@@ -235,11 +235,11 @@ export default function WeeklyPage() {
             const done = dayTasks.filter(t => t.done && t.text).length
             const total = dayTasks.filter(t => t.text).length
             return (
-              <div key={ds} className={`border rounded-lg overflow-hidden ${isToday?'border-[#FF5C00] border-2':'border-[#E8EAED]'}`}>
-                <div className={`px-3 py-2 flex items-center justify-between ${isWknd?'bg-[#1E1E1E]':'bg-[#0A0A0A]'}`}>
+              <div key={ds} className={`border rounded-lg overflow-hidden ${isToday?'border-[#1A73E8] border-2':'border-[#E8EAED]'}`}>
+                <div className={`px-3 py-2 flex items-center justify-between ${isWknd ? 'bg-[#F8F9FA]' : 'bg-[#FAFAFA]'} border-b border-[#E8EAED]`}>
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold tracking-[.1em] text-white uppercase">{DOW[dow]}</span>
-                    {isToday && <span className="text-[8px] bg-[#FF5C00] text-white px-1.5 py-0.5 rounded font-bold uppercase tracking-[.08em]">Today</span>}
+                    <span className="text-[13px] font-medium text-[#202124]">{DOW[dow]}</span>
+                    {isToday && <span className="text-[10px] bg-[#1A73E8] text-white px-2 py-0.5 rounded-full font-medium">Today</span>}
                   </div>
                   <div className="flex items-center gap-2">
                     {total > 0 && <span className="font-mono text-[9px] text-[#555]">{done}/{total}</span>}
@@ -250,7 +250,7 @@ export default function WeeklyPage() {
                   {dayTasks.filter(t => !hideCompleted || !t.done).map((t, i) => (
                     <div key={t.id} className="flex items-center gap-1.5 bg-white border-b border-[#f7f7f7] last:border-0 px-3 h-9 focus-within:bg-[#F8F9FA] transition-colors">
                       <input type="checkbox" checked={t.done} onChange={e => toggleTask(ds, t.id, e.target.checked)}
-                        className="w-[13px] h-[13px] accent-[#FF5C00] cursor-pointer flex-shrink-0" />
+                        className="w-[13px] h-[13px] accent-[#1A73E8] cursor-pointer flex-shrink-0" />
                       <span className="font-mono text-[9.5px] text-[#80868B] min-w-[11px]">{i+1}</span>
                       <div className="w-px h-[14px] bg-[#efefef] flex-shrink-0" />
                       <TextInput
@@ -265,7 +265,7 @@ export default function WeeklyPage() {
                   ))}
                   <div className="px-2 py-1.5">
                     <button onClick={() => addTask(ds)}
-                      className="w-full flex items-center gap-1 px-2 py-1 rounded border border-dashed border-[#E8EAED] text-[9px] font-bold uppercase tracking-[.07em] text-[#80868B] hover:border-[#FF5C00] hover:text-[#FF5C00] hover:bg-[#FFF0E8] transition-colors">
+                      className="w-full flex items-center gap-1 px-2 py-1 rounded border border-dashed border-[#E8EAED] text-[12px] font-medium text-[#80868B] hover:border-[#1A73E8] hover:text-[#1A73E8] hover:bg-[#E8F0FE] transition-colors">
                       ＋ Add task
                     </button>
                   </div>

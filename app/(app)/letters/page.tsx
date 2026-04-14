@@ -18,7 +18,7 @@ function wordCount(html: string) {
 
 const COLORS = [
   { label:'Default',  value:'inherit',  bg:'#0A0A0A' },
-  { label:'Orange',   value:'#FF5C00',  bg:'#FF5C00' },
+  { label:'Orange',   value:'#1A73E8',  bg:'#1A73E8' },
   { label:'Blue',     value:'#3b82f6',  bg:'#3b82f6' },
   { label:'Green',    value:'#22c55e',  bg:'#22c55e' },
   { label:'Red',      value:'#ef4444',  bg:'#ef4444' },
@@ -161,7 +161,7 @@ export default function LettersPage() {
   const ToolBtn = ({ onClick, active, title, children }: { onClick:()=>void; active?:boolean; title:string; children:React.ReactNode }) => (
     <button onMouseDown={e=>{e.preventDefault();onClick()}} title={title}
       className={`w-7 h-7 rounded flex items-center justify-center text-[12px] font-bold transition-all
-        ${active ? 'bg-[#FF5C00] text-white' : 'text-[#555] hover:bg-[#f0f0f0]'}`}>
+        ${active ? 'bg-[#1A73E8] text-white' : 'text-[#555] hover:bg-[#f0f0f0]'}`}>
       {children}
     </button>
   )
@@ -178,7 +178,7 @@ export default function LettersPage() {
             <div className="text-[9px] text-[#5F6368] uppercase tracking-[.12em] mt-0.5">{letters.length} entries</div>
           </div>
           <button onClick={() => { setShowNew(true); setNewTitle(''); setNewDate(today) }}
-            className="w-7 h-7 bg-[#FF5C00] text-white rounded-lg flex items-center justify-center text-[16px] hover:bg-[#FF7A2E] transition-colors">
+            className="w-7 h-7 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
             +
           </button>
         </div>
@@ -186,7 +186,7 @@ export default function LettersPage() {
         {/* Search */}
         <div className="px-3 py-2 border-b border-[#E8EAED] flex-shrink-0">
           <input
-            className="w-full bg-[#f0f0f0] rounded-lg px-2.5 py-1.5 text-[11px] outline-none focus:bg-white focus:ring-1 focus:ring-[#FF5C00] transition-all placeholder:text-[#80868B]"
+            className="w-full bg-[#f0f0f0] rounded-lg px-2.5 py-1.5 text-[11px] outline-none focus:bg-white focus:ring-1 focus:ring-[#1A73E8] transition-all placeholder:text-[#80868B]"
             placeholder="Search letters…"
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -200,12 +200,12 @@ export default function LettersPage() {
           return (
             <div className="px-3 py-2 border-b border-[#E8EAED] flex gap-1 flex-wrap">
               <button onClick={() => setTagFilter('')}
-                className={`text-[9px] font-bold px-2 py-0.5 rounded-full transition-all ${!tagFilter ? 'bg-[#FF5C00] text-white' : 'bg-[#f0f0f0] text-[#5F6368] hover:bg-[#e0e0e0]'}`}>
+                className={`text-[9px] font-bold px-2 py-0.5 rounded-full transition-all ${!tagFilter ? 'bg-[#1A73E8] text-white' : 'bg-[#f0f0f0] text-[#5F6368] hover:bg-[#e0e0e0]'}`}>
                 All
               </button>
               {allTags.map(t => (
                 <button key={t} onClick={() => setTagFilter(tagFilter === t ? '' : t)}
-                  className={`text-[9px] font-bold px-2 py-0.5 rounded-full transition-all ${tagFilter === t ? 'bg-[#FF5C00] text-white' : 'bg-[#f0f0f0] text-[#5F6368] hover:bg-[#e0e0e0]'}`}>
+                  className={`text-[9px] font-bold px-2 py-0.5 rounded-full transition-all ${tagFilter === t ? 'bg-[#1A73E8] text-white' : 'bg-[#f0f0f0] text-[#5F6368] hover:bg-[#e0e0e0]'}`}>
                   #{t}
                 </button>
               ))}
@@ -231,7 +231,7 @@ export default function LettersPage() {
               return (
                 <button key={l.id} onClick={() => openLetter(l)}
                   className={`w-full text-left px-3 py-2.5 border-b border-[#f0f0f0] transition-all hover:bg-white
-                    ${selected?.id === l.id ? 'bg-white border-l-2 border-l-[#FF5C00]' : 'border-l-2 border-l-transparent'}`}>
+                    ${selected?.id === l.id ? 'bg-white border-l-2 border-l-[#1A73E8]' : 'border-l-2 border-l-transparent'}`}>
                   <div className="text-[12px] font-semibold truncate text-[#0A0A0A]">{l.title || l.letter_date}</div>
                   {snippet && (
                     <div className="text-[10px] text-[#aaa] mt-0.5 line-clamp-2 leading-relaxed">{snippet}</div>
@@ -239,7 +239,7 @@ export default function LettersPage() {
                   <div className="text-[9px] text-[#80868B] mt-1 flex items-center gap-2 flex-wrap">
                     <span>{displayDate(l.letter_date)}</span>
                     {l.content && <span>{wordCount(l.content)}w</span>}
-                    {(l.tags??[]).map(t => <span key={t} className="text-[#FF5C00]" >#{t}</span>)}
+                    {(l.tags??[]).map(t => <span key={t} className="text-[#1A73E8]" >#{t}</span>)}
                   </div>
                 </button>
               )
@@ -257,9 +257,9 @@ export default function LettersPage() {
             <div className="bg-white rounded-xl shadow-2xl p-6 w-[380px] max-w-[90vw]">
               <div className="text-[16px] font-bold mb-4">New Letter</div>
               <div className="mb-3">
-                <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-1">Title</div>
+                <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.05em] uppercase mb-1">Title</div>
                 <input autoFocus
-                  className="w-full border border-[#DADCE0] rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
+                  className="w-full border border-[#DADCE0] rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
                   placeholder="e.g. Letter to future self, Monday reflection…"
                   value={newTitle}
                   onChange={e => setNewTitle(e.target.value)}
@@ -267,19 +267,19 @@ export default function LettersPage() {
                 />
               </div>
               <div className="mb-5">
-                <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-1">Date</div>
+                <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.05em] uppercase mb-1">Date</div>
                 <input type="date"
-                  className="w-full border border-[#DADCE0] rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
+                  className="w-full border border-[#DADCE0] rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
                   value={newDate} onChange={e => setNewDate(e.target.value)}
                 />
               </div>
               <div className="flex gap-2">
                 <button onClick={createLetter} disabled={!newTitle.trim()}
-                  className="flex-1 bg-[#FF5C00] text-white text-[11px] font-bold uppercase tracking-[.1em] py-2.5 rounded-lg hover:bg-[#FF7A2E] transition-colors disabled:opacity-40">
+                  className="flex-1 bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors disabled:opacity-40">
                   Create & Write
                 </button>
                 <button onClick={() => setShowNew(false)}
-                  className="px-4 border border-[#DADCE0] text-[11px] font-bold uppercase tracking-[.1em] rounded-lg hover:border-[#0A0A0A] transition-colors">
+                  className="px-4 border border-[#DADCE0] text-[13px] font-medium rounded-lg hover:border-[#1A73E8] transition-colors">
                   Cancel
                 </button>
               </div>
@@ -295,7 +295,7 @@ export default function LettersPage() {
               Write to yourself every day. Letters to your future self, reflections, plans — all in one place.
             </div>
             <button onClick={() => { setShowNew(true); setNewTitle(''); setNewDate(today) }}
-              className="bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] px-5 py-2.5 rounded-lg hover:bg-[#FF7A2E] transition-colors">
+              className="bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
               + Write a New Letter
             </button>
           </div>
@@ -314,7 +314,7 @@ export default function LettersPage() {
                 {saveState === 'saved'  && <span className="text-[10px] text-[#22c55e] font-bold">✓ Saved</span>}
                 <span className="text-[10px] text-[#80868B] font-mono">{displayDate(selected.letter_date)}</span>
                 <button onClick={printLetter} title="Export as PDF"
-                  className="text-[10px] text-[#80868B] hover:text-[#0A0A0A] transition-colors px-1">⎙ PDF</button>
+                  className="text-[10px] text-[#80868B] hover:text-[#202124] transition-colors px-1">⎙ PDF</button>
                 <button onClick={deleteLetter} className="text-[10px] text-[#80868B] hover:text-[#ef4444] transition-colors px-1">Delete</button>
               </div>
             </div>
@@ -374,7 +374,7 @@ export default function LettersPage() {
                   title="Text color">
                   <div className="flex flex-col items-center gap-0.5">
                     <span className="text-[11px] font-bold text-[#555]">A</span>
-                    <div className="w-4 h-1 rounded-full bg-[#FF5C00]"/>
+                    <div className="w-4 h-1 rounded-full bg-[#1A73E8]"/>
                   </div>
                 </button>
                 {showColors && (
@@ -383,7 +383,7 @@ export default function LettersPage() {
                       <button key={c.value}
                         onMouseDown={e=>{e.preventDefault();cmd('foreColor',c.value);setShowColors(false)}}
                         title={c.label}
-                        className="w-6 h-6 rounded-full border-2 border-white hover:border-[#0A0A0A] transition-all"
+                        className="w-6 h-6 rounded-full border-2 border-white hover:border-[#1A73E8] transition-all"
                         style={{background:c.bg}}
                       />
                     ))}
@@ -411,9 +411,9 @@ export default function LettersPage() {
             <div className="px-4 py-2 border-b border-[#E8EAED] flex items-center gap-2 flex-wrap bg-[#F8F9FA]">
               <span className="text-[9px] font-bold text-[#80868B] uppercase tracking-[.1em] flex-shrink-0">Tags</span>
               {(selected.tags??[]).map(t => (
-                <span key={t} className="flex items-center gap-1 bg-[#FFF0E8] text-[#FF5C00] text-[9px] font-bold px-2 py-0.5 rounded-full">
+                <span key={t} className="flex items-center gap-1 bg-[#E8F0FE] text-[#1A73E8] text-[9px] font-bold px-2 py-0.5 rounded-full">
                   #{t}
-                  <button onClick={() => removeTag(t)} className="ml-0.5 hover:text-[#0A0A0A] transition-colors leading-none">×</button>
+                  <button onClick={() => removeTag(t)} className="ml-0.5 hover:text-[#202124] transition-colors leading-none">×</button>
                 </span>
               ))}
               <input
@@ -435,7 +435,7 @@ export default function LettersPage() {
                 onClick={() => setShowColors(false)}
                 className="min-h-full p-8 outline-none text-[15px] leading-[1.8] text-[#1a1a1a] font-sans"
                 style={{
-                  caretColor: '#FF5C00',
+                  caretColor: '#1A73E8',
                 }}
                 data-placeholder="Start writing…"
               />
@@ -465,7 +465,7 @@ export default function LettersPage() {
           color: #0A0A0A;
         }
         [contenteditable] blockquote {
-          border-left: 3px solid #FF5C00;
+          border-left: 3px solid #1A73E8;
           margin: 1em 0;
           padding: 0.5em 1em;
           background: #FFF8F5;
