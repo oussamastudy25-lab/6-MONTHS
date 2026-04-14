@@ -139,7 +139,7 @@ export default function DashboardPage() {
     background: '#FAFAFA',
   }
   const mdCardTitle: React.CSSProperties = {
-    fontSize: 13, fontWeight: 600, color: '#202124',
+    fontSize: 13, fontWeight: 500, color: '#202124',
     fontFamily: 'Google Sans, Roboto, sans-serif', letterSpacing: '-0.01em',
   }
 
@@ -187,7 +187,7 @@ export default function DashboardPage() {
                     <path d={iconPath} />
                   </svg>
                 </div>
-                <div style={{ fontSize: 22, fontWeight: 700, color: accent, fontFamily: 'Google Sans, Roboto, sans-serif' }}>{v}</div>
+                <div style={{ fontSize: 22, fontWeight: 500, color: accent, fontFamily: 'Google Sans, Roboto, sans-serif' }}>{v}</div>
               </div>
               <div style={{ fontSize: 12, color: '#5F6368', fontFamily: 'Roboto, sans-serif' }}>{l}</div>
             </div>
@@ -231,7 +231,7 @@ export default function DashboardPage() {
                             width: 28, height: 28, borderRadius: 8,
                             background: cfg.bg, color: cfg.color,
                             border: 'none', cursor: 'pointer',
-                            fontSize: 12, fontWeight: 600,
+                            fontSize: 12, fontWeight: 500,
                             transition: 'background 0.12s',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                           }}>
@@ -279,7 +279,7 @@ export default function DashboardPage() {
               {wgoalItems.length > 0 && (
                 <>
                   <div style={{ padding: '8px 16px', background: '#F8F9FA', borderTop: '1px solid #F1F3F4', borderBottom: '1px solid #F1F3F4' }}>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: '#5F6368', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'Roboto, sans-serif' }}>Weekly Goals</span>
+                    <span style={{ fontSize: 11, fontWeight: 500, color: '#5F6368', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'Roboto, sans-serif' }}>Weekly Goals</span>
                   </div>
                   {wgoalItems.map(g => (
                     <div key={g.id} style={{
@@ -303,7 +303,7 @@ export default function DashboardPage() {
           <div style={mdCard}>
             <div style={mdCardHeader}>
               <span style={mdCardTitle}>Focus Today</span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: todayFocusMins>0?'#1A73E8':'#80868B', fontFamily: 'Roboto Mono, monospace' }}>{todayFocusMins>0?fmtMins(todayFocusMins):'—'}</span>
+              <span style={{ fontSize: 13, fontWeight: 500, color: todayFocusMins>0?'#1A73E8':'#80868B', fontFamily: 'Roboto Mono, monospace' }}>{todayFocusMins>0?fmtMins(todayFocusMins):'—'}</span>
             </div>
             <div style={{ padding: 16 }}>
               {catTotals.length === 0 ? (
@@ -360,7 +360,7 @@ export default function DashboardPage() {
                       <div style={{ fontSize: 13, fontFamily: 'Roboto, sans-serif', color: isPast ? '#80868B' : '#202124' }}>{b.title}</div>
                       <div style={{ fontSize: 11, color: '#80868B', fontFamily: 'Roboto Mono, monospace', marginTop: 2, display: 'flex', alignItems: 'center', gap: 6 }}>
                         {minsToLabel(b.start_minutes)} – {minsToLabel(b.end_minutes)}
-                        {isCurrent && <span style={{ color: '#1A73E8', fontWeight: 700, fontSize: 10, background: '#E8F0FE', padding: '1px 6px', borderRadius: 8 }}>NOW</span>}
+                        {isCurrent && <span style={{ color: '#1A73E8', fontWeight: 500, fontSize: 10, background: '#E8F0FE', padding: '1px 6px', borderRadius: 8 }}>NOW</span>}
                       </div>
                     </div>
                   </div>
@@ -393,7 +393,7 @@ export default function DashboardPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                       <div style={{ width: 10, height: 10, borderRadius: '50%', background: color, flexShrink: 0 }} />
                       <span style={{ fontSize: 13, fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'Roboto, sans-serif', color: '#202124' }}>{g.title}</span>
-                      <span style={{ fontSize: 13, fontWeight: 700, color, fontFamily: 'Roboto Mono, monospace' }}>{pct}%</span>
+                      <span style={{ fontSize: 13, fontWeight: 500, color, fontFamily: 'Roboto Mono, monospace' }}>{pct}%</span>
                     </div>
                     <div style={{ height: 4, background: '#F1F3F4', borderRadius: 2, overflow: 'hidden' }}>
                       <div style={{ height: '100%', background: color, borderRadius: 2, width: `${pct}%` }} />

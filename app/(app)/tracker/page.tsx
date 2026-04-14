@@ -133,7 +133,7 @@ export default function TrackerPage() {
         ) : activeHabits.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-4xl mb-3">▦</div>
-            <div className="text-[15px] font-bold mb-1">No habits yet</div>
+            <div className="text-[15px] font-medium mb-1">No habits yet</div>
             <div className="text-[13px] text-[#5F6368] mb-4">Add your first habit to start tracking</div>
             <a href="/setup"
               className="inline-block bg-[#1A73E8] text-white hover:bg-[#1557B0] transition-colors">
@@ -153,7 +153,7 @@ export default function TrackerPage() {
                     const s = getStatus(h.id, today)
                     return (
                       <div key={h.id} className="flex items-center gap-3 bg-[#f7f7f7] rounded-lg px-3 py-2.5">
-                        <span className="text-[13px] font-semibold flex-1">{h.name}</span>
+                        <span className="text-[13px] font-medium flex-1">{h.name}</span>
                         <div className="flex gap-1.5">
                           {(['done','missed','na'] as const).map(status => {
                             const active = s === status
@@ -195,10 +195,10 @@ export default function TrackerPage() {
                   <div key={h.id} className="bg-white border border-[#E8EAED] rounded-lg p-4 hover:border-[#DADCE0] transition-colors">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="font-mono text-[10px] text-[#80868B]">#{idx+1}</span>
-                      <span className="text-[13px] font-bold flex-1">{h.name}</span>
+                      <span className="text-[13px] font-medium flex-1">{h.name}</span>
                       <div className="text-right">
-                        <div className="font-mono text-[18px] font-semibold text-[#1A73E8]">{pct}%</div>
-                        {streak > 0 && <div className="text-[9px] text-[#1A73E8]/70 font-bold">🔥 {streak}d</div>}
+                        <div className="font-mono text-[18px] font-medium text-[#1A73E8]">{pct}%</div>
+                        {streak > 0 && <div className="text-[9px] text-[#1A73E8]/70 font-medium">🔥 {streak}d</div>}
                       </div>
                     </div>
                     <div className="h-1 bg-[#efefef] rounded-full overflow-hidden mb-3">
@@ -230,7 +230,7 @@ export default function TrackerPage() {
                     <div className="flex gap-4 pt-2 border-t border-[#f7f7f7]">
                       {[['Done',done],['Missed',missed],['Streak',`${streak}d`],['Best',`${best}d`]].map(([l,v])=>(
                         <div key={l as string}>
-                          <div className="font-mono text-[14px] font-semibold">{v}</div>
+                          <div className="font-mono text-[14px] font-medium">{v}</div>
                           <div className="text-[8px] text-[#5F6368] uppercase tracking-[.08em] mt-0.5">{l}</div>
                         </div>
                       ))}

@@ -177,7 +177,7 @@ export default function DailyQuote() {
         <span style={{ fontSize: 12.5, color: '#3C4043', fontStyle: 'italic', fontFamily: 'Roboto, sans-serif', lineHeight: 1.5 }}>
           {quote.text}
         </span>
-        <span style={{ fontSize: 11, color: '#1A73E8', fontWeight: 600, marginLeft: 8, fontFamily: 'Roboto, sans-serif' }}>
+        <span style={{ fontSize: 11, color: '#1A73E8', fontWeight: 500, marginLeft: 8, fontFamily: 'Roboto, sans-serif' }}>
           — {quote.author}
         </span>
       </div>

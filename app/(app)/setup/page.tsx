@@ -78,10 +78,10 @@ function HabitRow({ habit, index, onUpdateName, onUpdateFreq, onRemove }: {
                 width: 18, height: 18, borderRadius: '50%',
                 background: selected ? '#1A73E8' : '#E8EAED',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 9, fontWeight: 700, color: selected ? 'white' : '#80868B',
+                fontSize: 9, fontWeight: 500, color: selected ? 'white' : '#80868B',
                 fontFamily: 'Roboto Mono, monospace', flexShrink: 0,
               }}>{o.icon}</span>
-              <span style={{ fontSize: 12, fontWeight: selected ? 600 : 400, color: selected ? '#1A73E8' : '#5F6368', fontFamily: 'Roboto, sans-serif', lineHeight: 1 }}>
+              <span style={{ fontSize: 12, fontWeight: selected ? 500 : 400, color: selected ? '#1A73E8' : '#5F6368', fontFamily: 'Roboto, sans-serif', lineHeight: 1 }}>
                 {o.label}
               </span>
               <span style={{ fontSize: 11, color: selected ? '#4285F4' : '#9AA0A6', fontFamily: 'Roboto, sans-serif' }}>
@@ -200,7 +200,7 @@ export default function SetupPage() {
 
           {/* Quick navigation to related pages */}
           <div style={{ marginTop: 28 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#80868B', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10, fontFamily: 'Roboto, sans-serif' }}>
+            <div style={{ fontSize: 11, fontWeight: 500, color: '#80868B', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10, fontFamily: 'Roboto, sans-serif' }}>
               Also configure
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>

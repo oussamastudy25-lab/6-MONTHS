@@ -22,9 +22,7 @@ const NAV = [
   { href: '/notifications',  icon: 'M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0', label: 'Notifications' },
 ]
 
-interface Props { streak?: string; monthPct?: string; tasks?: string }
-
-export default function Sidebar({ streak='—', monthPct='—', tasks='—' }: Props) {
+export default function Sidebar() {
   const path = usePathname()
   const router = useRouter()
   const supabase = createClient()
@@ -42,27 +40,36 @@ export default function Sidebar({ streak='—', monthPct='—', tasks='—' }: P
       borderRight: '1px solid #E8EAED',
       overflowY: 'auto',
     }}>
+
       {/* Logo */}
-      <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #E8EAED' }}>
+      <div style={{ padding: '16px 16px 14px', borderBottom: '1px solid #E8EAED' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {/* Balance scale icon — matches favicon */}
           <div style={{
-            width: 34, height: 34, borderRadius: 10,
-            background: 'linear-gradient(135deg, #1A73E8, #1557B0)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-            boxShadow: '0 1px 3px rgba(255,92,0,0.3)',
+            width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+            background: '#1A73E8',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 1px 4px rgba(26,115,232,0.3)',
           }}>
-            <span style={{ color: 'white', fontSize: 16, fontWeight: 700 }}>م</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="3" x2="12" y2="20"/>
+              <line x1="4" y1="7" x2="20" y2="7"/>
+              <path d="M4 7 C4 7 2 11 4 13 C6 15 8 13 8 13 C8 13 6 9 4 7Z" fill="white" stroke="none"/>
+              <path d="M20 7 C20 7 18 11 20 13 C22 15 24 13 24 13 C24 13 22 9 20 7Z" fill="white" stroke="none"/>
+              <line x1="9" y1="20" x2="15" y2="20"/>
+            </svg>
           </div>
           <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: '#202124', fontFamily: 'Google Sans, Roboto, sans-serif', letterSpacing: '-0.01em' }}>
+            <div style={{ fontSize: 15, fontWeight: 500, color: '#202124', fontFamily: 'Google Sans, Roboto, sans-serif', letterSpacing: '-0.01em', lineHeight: 1.2 }}>
               Mizan
+              <span style={{ marginLeft: 5, fontSize: 13, fontFamily: 'Noto Sans Arabic, serif', color: '#1A73E8', fontWeight: 400 }}>ميزان</span>
             </div>
-            <div style={{ fontSize: 10, color: '#80868B', letterSpacing: '0.04em', marginTop: 0 }}>Personal Habit OS</div>
+            <div style={{ fontSize: 11, color: '#9AA0A6', marginTop: 1, fontFamily: 'Roboto, sans-serif', fontWeight: 400 }}>Habit OS</div>
           </div>
         </div>
       </div>
 
-      {/* Nav */}
+      {/* Nav items */}
       <div style={{ flex: 1, padding: '8px 8px' }}>
         {NAV.map((item, i) => {
           if ('divider' in item) return (
@@ -77,9 +84,8 @@ export default function Sidebar({ streak='—', monthPct='—', tasks='—' }: P
                 background: active ? '#E8F0FE' : 'transparent',
                 color: active ? '#1A73E8' : '#3C4043',
                 fontFamily: 'Roboto, sans-serif',
-                fontSize: 13.5, fontWeight: active ? 600 : 400,
-                cursor: 'pointer',
-                transition: 'background 0.12s',
+                fontSize: 13.5, fontWeight: active ? 500 : 400,
+                cursor: 'pointer', transition: 'background 0.12s',
                 userSelect: 'none',
               }}
               onMouseEnter={e => { if (!active)(e.currentTarget as HTMLDivElement).style.background = '#F1F3F4' }}
@@ -93,31 +99,22 @@ export default function Sidebar({ streak='—', monthPct='—', tasks='—' }: P
                   <path d={item.icon} />
                 </svg>
                 <span style={{ flex: 1 }}>{item.label}</span>
-                {active && <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#1A73E8' }} />}
+                {active && (
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#1A73E8', flexShrink: 0 }} />
+                )}
               </div>
             </Link>
           )
         })}
       </div>
 
-      {/* Stats */}
-      <div style={{ margin: '4px 12px 8px', padding: '12px 14px', background: '#F8F9FA', borderRadius: 12, border: '1px solid #E8EAED' }}>
-        <div style={{ fontSize: 10, fontWeight: 600, color: '#80868B', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Today</div>
-        {[['Month', monthPct, '#1A73E8'],['Streak', streak, '#34A853'],['Tasks', tasks, '#1A73E8']].map(([l,v,c]) => (
-          <div key={l} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-            <span style={{ fontSize: 12, color: '#5F6368', fontFamily: 'Roboto, sans-serif' }}>{l}</span>
-            <span style={{ fontSize: 12, fontWeight: 700, color: c, fontFamily: 'Roboto Mono, monospace' }}>{v}</span>
-          </div>
-        ))}
-      </div>
-
       {/* Sign out */}
       <button onClick={signOut} style={{
-        margin: '0 12px 14px',
+        margin: '8px 12px 16px',
         padding: '8px 14px', borderRadius: 20,
         border: '1px solid #E8EAED', background: 'transparent',
-        color: '#5F6368', fontSize: 12.5,
-        fontFamily: 'Roboto, sans-serif',
+        color: '#5F6368', fontSize: 13,
+        fontFamily: 'Roboto, sans-serif', fontWeight: 400,
         cursor: 'pointer', textAlign: 'left',
         display: 'flex', alignItems: 'center', gap: 8,
         transition: 'background 0.12s, color 0.12s',
@@ -125,7 +122,7 @@ export default function Sidebar({ streak='—', monthPct='—', tasks='—' }: P
       onMouseEnter={e => { const b = e.currentTarget as HTMLButtonElement; b.style.background='#F1F3F4'; b.style.color='#202124' }}
       onMouseLeave={e => { const b = e.currentTarget as HTMLButtonElement; b.style.background='transparent'; b.style.color='#5F6368' }}
       >
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>
         Sign out

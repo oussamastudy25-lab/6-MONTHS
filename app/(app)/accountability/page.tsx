@@ -76,7 +76,7 @@ function FriendCard({ followed, onRemove }: { followed: Followed; onRemove: (id:
           <>
             <div className="text-[18px] leading-none">{statusCfg.dot}</div>
             <div className="flex-1 min-w-0">
-              <div className="text-[13px] font-bold text-[#0A0A0A] truncate">
+              <div className="text-[13px] font-medium text-[#0A0A0A] truncate">
                 {followed.nickname || data.display_name}
               </div>
               <div className="text-[10px] mt-0.5" style={{color: statusCfg.color}}>
@@ -87,11 +87,11 @@ function FriendCard({ followed, onRemove }: { followed: Followed; onRemove: (id:
             {/* Quick stats */}
             <div className="flex items-center gap-3 text-right flex-shrink-0">
               <div>
-                <div className="font-mono text-[13px] font-bold text-[#1A73E8]">{data.habits_done}/{data.habits_total}</div>
+                <div className="font-mono text-[13px] font-medium text-[#1A73E8]">{data.habits_done}/{data.habits_total}</div>
                 <div className="text-[8px] text-[#80868B] uppercase tracking-[.08em]">habits</div>
               </div>
               <div>
-                <div className="font-mono text-[13px] font-bold text-[#1A73E8]">{fmtMins(data.focus_today_mins)}</div>
+                <div className="font-mono text-[13px] font-medium text-[#1A73E8]">{fmtMins(data.focus_today_mins)}</div>
                 <div className="text-[8px] text-[#80868B] uppercase tracking-[.08em]">focus</div>
               </div>
             </div>
@@ -111,7 +111,7 @@ function FriendCard({ followed, onRemove }: { followed: Followed; onRemove: (id:
           {/* Status card */}
           {inWindow && (
             <div className="rounded-lg px-3 py-2.5" style={{background: statusCfg.bg, border: `1px solid ${statusCfg.border}`}}>
-              <div className="text-[11px] font-bold" style={{color: statusCfg.color}}>
+              <div className="text-[11px] font-medium" style={{color: statusCfg.color}}>
                 {statusCfg.dot} {statusCfg.label}
                 {activeWindow && ` · ${minsToLabel(activeWindow.start_minutes)}–${minsToLabel(activeWindow.end_minutes)}`}
               </div>
@@ -121,18 +121,18 @@ function FriendCard({ followed, onRemove }: { followed: Followed; onRemove: (id:
           {/* Stats grid */}
           <div className="grid grid-cols-3 gap-2">
             <div className="bg-[#f9f9f9] rounded-lg p-2.5 text-center">
-              <div className="font-mono text-[15px] font-bold text-[#0A0A0A]">{data.habits_done}/{data.habits_total}</div>
+              <div className="font-mono text-[15px] font-medium text-[#0A0A0A]">{data.habits_done}/{data.habits_total}</div>
               <div className="h-1 bg-[#efefef] rounded-full mt-1.5 mb-0.5 overflow-hidden">
                 <div className="h-full bg-[#1A73E8] rounded-full" style={{width:`${habitPct}%`}}/>
               </div>
               <div className="text-[8.5px] text-[#aaa] uppercase tracking-[.08em]">Habits</div>
             </div>
             <div className="bg-[#f9f9f9] rounded-lg p-2.5 text-center">
-              <div className="font-mono text-[15px] font-bold text-[#0A0A0A]">{fmtMins(data.focus_today_mins)}</div>
+              <div className="font-mono text-[15px] font-medium text-[#0A0A0A]">{fmtMins(data.focus_today_mins)}</div>
               <div className="text-[8.5px] text-[#aaa] uppercase tracking-[.08em] mt-1">Focus today</div>
             </div>
             <div className="bg-[#f9f9f9] rounded-lg p-2.5 text-center">
-              <div className="font-mono text-[15px] font-bold text-[#0A0A0A]">{data.weekly_goals_done}/{data.weekly_goals_total}</div>
+              <div className="font-mono text-[15px] font-medium text-[#0A0A0A]">{data.weekly_goals_done}/{data.weekly_goals_total}</div>
               <div className="text-[8.5px] text-[#aaa] uppercase tracking-[.08em] mt-1">Wk Goals</div>
             </div>
           </div>
@@ -144,7 +144,7 @@ function FriendCard({ followed, onRemove }: { followed: Followed; onRemove: (id:
                 <div key={i}>
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-[11px] text-[#555] truncate flex-1">{g.title}</span>
-                    <span className="text-[10px] font-bold text-[#1A73E8] flex-shrink-0 ml-2">{g.pct}%</span>
+                    <span className="text-[10px] font-medium text-[#1A73E8] flex-shrink-0 ml-2">{g.pct}%</span>
                   </div>
                   <div className="h-1 bg-[#efefef] rounded-full overflow-hidden">
                     <div className="h-full bg-[#1A73E8] rounded-full" style={{width:`${g.pct}%`}}/>
@@ -268,7 +268,7 @@ export default function AccountabilityPage() {
             <div className="bg-[#0A0A0A] rounded-xl p-5 flex items-center gap-5">
               <div>
                 <div className="text-[9px] text-[#444] uppercase tracking-[.12em] mb-1.5">Share this with friends</div>
-                <div className="font-mono text-[28px] font-black text-[#1A73E8] tracking-[.18em]">{profile?.slug}</div>
+                <div className="font-mono text-[28px] font-medium text-[#1A73E8] tracking-[.18em]">{profile?.slug}</div>
               </div>
               <div className="flex-1 text-[11px] text-[#444] leading-relaxed">
                 Give this code to a friend — they paste it in Mizan to follow your live stats.
@@ -301,7 +301,7 @@ export default function AccountabilityPage() {
                 <div className="flex items-center gap-3">
                   <div className="text-[24px]">👤</div>
                   <div>
-                    <div className="text-[14px] font-bold text-[#0A0A0A]">{preview?.name}</div>
+                    <div className="text-[14px] font-medium text-[#0A0A0A]">{preview?.name}</div>
                     <div className="text-[10px] text-[#aaa] font-mono">{addCode}</div>
                   </div>
                 </div>
@@ -390,7 +390,7 @@ export default function AccountabilityPage() {
               {windows.map(w => (
                 <div key={w.id} className="flex items-center gap-3 bg-white border border-[#E8EAED] rounded-lg px-4 py-3">
                   <div className="flex-1 min-w-0">
-                    <div className="text-[13px] font-semibold">{w.label}</div>
+                    <div className="text-[13px] font-medium">{w.label}</div>
                     <div className="text-[10px] text-[#5F6368] mt-0.5">
                       {w.days_of_week.map(d=>DOW[d]).join(' · ')} &nbsp;·&nbsp; {minsToLabel(w.start_minutes)}–{minsToLabel(w.end_minutes)}
                     </div>
@@ -406,12 +406,12 @@ export default function AccountabilityPage() {
                   placeholder="Label (e.g. Deep Work)" value={newWin.label}
                   onChange={e => setNewWin(w => ({...w, label: e.target.value}))} />
                 <div>
-                  <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.08em] mb-1.5">Days</div>
+                  <div className="text-[9px] font-medium text-[#5F6368] uppercase tracking-[.08em] mb-1.5">Days</div>
                   <div className="flex gap-1 flex-wrap">
                     {DOW.map((d, i) => (
                       <button key={i}
                         onClick={() => setNewWin(w => ({ ...w, days: w.days.includes(i) ? w.days.filter(x=>x!==i) : [...w.days, i].sort() }))}
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all ${newWin.days.includes(i)?'bg-[#1A73E8] text-white border-[#1A73E8]':'border-[#DADCE0] text-[#5F6368] hover:border-[#1A73E8] hover:text-[#1A73E8]'}`}>
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-medium border transition-all ${newWin.days.includes(i)?'bg-[#1A73E8] text-white border-[#1A73E8]':'border-[#DADCE0] text-[#5F6368] hover:border-[#1A73E8] hover:text-[#1A73E8]'}`}>
                         {d}
                       </button>
                     ))}
@@ -419,12 +419,12 @@ export default function AccountabilityPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.08em] mb-1">Start</div>
+                    <div className="text-[9px] font-medium text-[#5F6368] uppercase tracking-[.08em] mb-1">Start</div>
                     <input type="time" className="w-full bg-white border border-[#E8EAED] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
                       value={minsToLabel(newWin.start)} onChange={e => setNewWin(w => ({...w, start: labelToMins(e.target.value)}))} />
                   </div>
                   <div>
-                    <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.08em] mb-1">End</div>
+                    <div className="text-[9px] font-medium text-[#5F6368] uppercase tracking-[.08em] mb-1">End</div>
                     <input type="time" className="w-full bg-white border border-[#E8EAED] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
                       value={minsToLabel(newWin.end)} onChange={e => setNewWin(w => ({...w, end: labelToMins(e.target.value)}))} />
                   </div>

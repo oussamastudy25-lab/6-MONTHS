@@ -107,7 +107,7 @@ export default function NotificationsPage() {
             <div className="flex items-center gap-4">
               <div className="text-[32px]">{granted ? '🔔' : denied ? '🔕' : '🔔'}</div>
               <div className="flex-1">
-                <div className="text-[14px] font-bold">
+                <div className="text-[14px] font-medium">
                   {granted ? 'Notifications enabled' : denied ? 'Notifications blocked' : 'Notifications off'}
                 </div>
                 <div className="text-[11px] text-[#5F6368] mt-0.5 leading-relaxed">
@@ -156,7 +156,7 @@ export default function NotificationsPage() {
                   <div className="flex gap-2">
                     {[5, 10, 15, 30].map(m => (
                       <button key={m} onClick={() => { setCalMins(m); saveSettings({calMinsBefore:m}) }}
-                        className={`px-4 py-1.5 rounded-lg text-[12px] font-bold border transition-all ${calMins===m?'bg-[#1A73E8] text-white border-[#1A73E8]':'border-[#E8EAED] text-[#5F6368] hover:border-[#DADCE0]'}`}>
+                        className={`px-4 py-1.5 rounded-lg text-[12px] font-medium border transition-all ${calMins===m?'bg-[#1A73E8] text-white border-[#1A73E8]':'border-[#E8EAED] text-[#5F6368] hover:border-[#DADCE0]'}`}>
                         {m}m
                       </button>
                     ))}
@@ -187,7 +187,7 @@ export default function NotificationsPage() {
                   <div className="flex gap-2">
                     {[15, 30, 45, 60].map(m => (
                       <button key={m} onClick={() => { setWorkInterval(m); saveSettings({workInterval:m}) }}
-                        className={`px-4 py-1.5 rounded-lg text-[12px] font-bold border transition-all ${workInterval===m?'bg-[#1A73E8] text-white border-[#1A73E8]':'border-[#E8EAED] text-[#5F6368] hover:border-[#DADCE0]'}`}>
+                        className={`px-4 py-1.5 rounded-lg text-[12px] font-medium border transition-all ${workInterval===m?'bg-[#1A73E8] text-white border-[#1A73E8]':'border-[#E8EAED] text-[#5F6368] hover:border-[#DADCE0]'}`}>
                         {m}m
                       </button>
                     ))}

@@ -410,7 +410,7 @@ export default function CalendarPage() {
           {/* Recurring list */}
           {recurringBlocks.length>0&&(
             <div className="mt-3 pt-3 border-t border-[#f1f3f4]">
-              <div className="text-[10px] font-semibold text-[#5f6368] uppercase tracking-[.1em] mb-1.5">Recurring</div>
+              <div className="text-[10px] font-medium text-[#5f6368] uppercase tracking-[.1em] mb-1.5">Recurring</div>
               {recurringBlocks.map(r=>(
                 <div key={r.id} className="flex items-center gap-2 py-1 cursor-pointer hover:bg-[#f1f3f4] rounded px-1"
                   onClick={()=>setModal({mode:'rec-edit',recurring_id:r.id,start_minutes:r.start_minutes,end_minutes:r.end_minutes,title:r.title,color:r.color,note:r.note,days_of_week:r.days_of_week})}>
@@ -501,7 +501,7 @@ export default function CalendarPage() {
                     <div key={date} className="flex-1 flex flex-col items-center py-1.5 border-r border-[#f1f3f4] last:border-0 cursor-pointer hover:bg-[#f8f9fa] transition-colors"
                       onClick={()=>{setDayDate(date);if(viewMode==='week')setViewMode('day')}}>
                       {/* Day label — bolder, larger */}
-                      <div className={`text-[11px] font-semibold uppercase tracking-[.08em] mb-1 ${isToday?'text-[#1a73e8]':'text-[#5f6368]'}`}>
+                      <div className={`text-[11px] font-medium uppercase tracking-[.08em] mb-1 ${isToday?'text-[#1a73e8]':'text-[#5f6368]'}`}>
                         {viewMode==='week'?DOW[dow]:DOW_FULL[dow]}
                       </div>
                       {/* Date circle */}
@@ -514,7 +514,7 @@ export default function CalendarPage() {
                           <div className="w-10 h-1 bg-[#e8eaed] rounded-full overflow-hidden">
                             <div className="h-full rounded-full" style={{width:`${pct}%`,background:pct>=80?'#0f9d58':pct>=50?'#f4b400':'#db4437'}}/>
                           </div>
-                          <span className={`text-[9px] font-semibold ${pct>=80?'text-[#0f9d58]':pct>=50?'text-[#f4b400]':'text-[#db4437]'}`}>{pct}%</span>
+                          <span className={`text-[9px] font-medium ${pct>=80?'text-[#0f9d58]':pct>=50?'text-[#f4b400]':'text-[#db4437]'}`}>{pct}%</span>
                         </div>
                       )}
                     </div>
@@ -591,7 +591,7 @@ export default function CalendarPage() {
                             onClick={e=>{e.stopPropagation();openBlockEdit(b)}}
                             onPointerDown={e=>onBlockPointerDown(e,b,false)}>
                             <div className="px-2 py-1 h-full flex flex-col overflow-hidden select-none">
-                              <div className="text-[11px] text-white font-semibold leading-tight truncate">
+                              <div className="text-[11px] text-white font-medium leading-tight truncate">
                                 {b.title}{b.is_recurring&&<span className="opacity-60 ml-0.5 text-[9px]">↻</span>}
                               </div>
                               {height>36&&(
@@ -663,7 +663,7 @@ export default function CalendarPage() {
                       const sel=(modal.days_of_week??[]).includes(i)
                       return (
                         <button key={d} onClick={()=>setModal(m=>{if(!m)return m;const dw=m.days_of_week??[];return{...m,days_of_week:sel?dw.filter(x=>x!==i):[...dw,i].sort()}})}
-                          className={`w-8 h-8 rounded-full text-[10px] font-semibold transition-all ${sel?'text-white':'bg-[#f1f3f4] text-[#5f6368] hover:bg-[#e8eaed]'}`}
+                          className={`w-8 h-8 rounded-full text-[10px] font-medium transition-all ${sel?'text-white':'bg-[#f1f3f4] text-[#5f6368] hover:bg-[#e8eaed]'}`}
                           style={sel?{background:modal.color}:{}}>
                           {d}
                         </button>

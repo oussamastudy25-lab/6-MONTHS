@@ -182,7 +182,7 @@ export default function GoalsPage() {
         {active.length===0 && !showArchived && (
           <div className="text-center py-20">
             <div className="text-4xl mb-3">◎</div>
-            <div className="text-[15px] font-bold mb-1">No goals yet</div>
+            <div className="text-[15px] font-medium mb-1">No goals yet</div>
             <div className="text-[13px] text-[#5F6368]">Click + New Goal to start. Set your own dates — 1 month, 6 months, 1 year, whatever you need.</div>
           </div>
         )}
@@ -205,7 +205,7 @@ export default function GoalsPage() {
                     <div className="w-3 h-3 rounded-full flex-shrink-0 mt-1.5" style={{background:color}} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
-                        <span className={`text-[14px] font-bold ${g.archived?'line-through text-[#5F6368]':''}`}>{g.title}</span>
+                        <span className={`text-[14px] font-medium ${g.archived?'line-through text-[#5F6368]':''}`}>{g.title}</span>
                         <span className="text-[11px] font-medium tracking-[0.04em] uppercase px-2 py-0.5 rounded-full" style={{background:color+'20',color}}>
                           {g.category}
                         </span>
@@ -221,7 +221,7 @@ export default function GoalsPage() {
                           <div className="flex-1 h-1.5 bg-[#efefef] rounded-full overflow-hidden">
                             <div className="h-full rounded-full transition-all" style={{width:`${p}%`,background:color}} />
                           </div>
-                          <span className="font-mono text-[11px] font-bold" style={{color}}>{p}%</span>
+                          <span className="font-mono text-[11px] font-medium" style={{color}}>{p}%</span>
                           <span className="text-[9px] text-[#5F6368]">{doneMilestones}/{ms.length} done</span>
                         </div>
                         <div className="flex items-center gap-2">

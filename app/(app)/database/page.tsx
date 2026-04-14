@@ -107,7 +107,7 @@ export default function DatabasePage() {
                 ] as [string, number][]).map(([l, v]) => (
                   <div key={l} className="bg-white border border-[#E8EAED] rounded-lg p-3">
                     <div className="text-[8.5px] text-[#5F6368] uppercase tracking-[.1em] mb-1">{l}</div>
-                    <div className="font-mono text-[18px] font-semibold text-[#0A0A0A]">{v}</div>
+                    <div className="font-mono text-[18px] font-medium text-[#0A0A0A]">{v}</div>
                   </div>
                 ))}
               </div>
@@ -121,7 +121,7 @@ export default function DatabasePage() {
               {INFO.map(({ label, value }, i) => (
                 <div key={label} className={`flex items-center justify-between px-4 py-3 ${i < INFO.length-1 ? 'border-b border-[#E8EAED]' : ''}`}>
                   <span className="text-[11px] text-[#5F6368] uppercase tracking-[.08em]">{label}</span>
-                  <span className="font-mono text-[12px] font-semibold text-[#0A0A0A]">{value}</span>
+                  <span className="font-mono text-[12px] font-medium text-[#0A0A0A]">{value}</span>
                 </div>
               ))}
             </div>
@@ -149,7 +149,7 @@ export default function DatabasePage() {
       {showResetModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
           <div className="bg-white rounded-xl shadow-2xl p-6 w-[380px] max-w-[90vw]">
-            <div className="text-[16px] font-bold text-[#8B0000] mb-2">⚠️ Reset All Data</div>
+            <div className="text-[16px] font-medium text-[#8B0000] mb-2">⚠️ Reset All Data</div>
             <div className="text-[13px] text-[#555] mb-4 leading-relaxed">
               This will permanently delete <strong>all</strong> your habits, logs, tasks, goals, letters, and reviews. This cannot be undone.
             </div>
