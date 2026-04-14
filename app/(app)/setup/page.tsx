@@ -6,11 +6,32 @@ const sb = createClient()
 type Row = { id: string; name: string; position: number; frequency: string }
 
 const FREQ_OPTIONS = [
-  { value: 'daily',    label: 'Every day' },
-  { value: 'weekdays', label: 'Weekdays' },
-  { value: 'weekends', label: 'Weekends' },
-  { value: '3x',       label: 'Mon/Wed/Fri' },
+  { value: 'daily',    label: 'Daily',       sub: '7 days' },
+  { value: 'weekdays', label: 'Weekdays',    sub: 'Mon–Fri' },
+  { value: 'weekends', label: 'Weekends',    sub: 'Sat–Sun' },
+  { value: '3x',       label: 'Mon/Wed/Fri', sub: '3×/week' },
 ]
+
+function FreqChip({ value, selected, onClick }: { value: string; selected: boolean; onClick: () => void }) {
+  const opt = FREQ_OPTIONS.find(o => o.value === value)!
+  return (
+    <button onClick={onClick} style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      padding: '7px 10px', borderRadius: 8,
+      border: selected ? '2px solid #1A73E8' : '1.5px solid #DADCE0',
+      background: selected ? '#E8F0FE' : '#FFFFFF',
+      cursor: 'pointer', transition: 'all 0.12s',
+      minWidth: 72,
+    }}>
+      <span style={{ fontSize: 12, fontWeight: selected ? 600 : 500, color: selected ? '#1A73E8' : '#3C4043', fontFamily: 'Roboto, sans-serif', lineHeight: 1.3 }}>
+        {opt.label}
+      </span>
+      <span style={{ fontSize: 10, color: selected ? '#4285F4' : '#80868B', marginTop: 1, fontFamily: 'Roboto, sans-serif' }}>
+        {opt.sub}
+      </span>
+    </button>
+  )
+}
 
 function HabitRow({ habit, index, onUpdateName, onUpdateFreq, onRemove }: {
   habit: Row; index: number
@@ -19,28 +40,60 @@ function HabitRow({ habit, index, onUpdateName, onUpdateFreq, onRemove }: {
   onRemove: (id: string) => void
 }) {
   const [val, setVal] = useState(habit.name)
+  const [focused, setFocused] = useState(false)
+
   return (
-    <div className="flex items-center gap-1.5 bg-[#f7f7f7] border border-[#E8EAED] rounded-lg px-2 mb-1.5 focus-within:border-[#FF5C00] focus-within:bg-white transition-colors">
-      <span className="font-mono text-[10px] text-[#80868B] min-w-[16px] flex-shrink-0">{index+1}</span>
-      <div className="w-px h-[18px] bg-[#dedede] flex-shrink-0"/>
-      <input
-        className="flex-1 bg-transparent border-none outline-none text-[13px] py-2.5 min-w-0"
-        placeholder="Habit name…"
-        value={val}
-        onChange={e => setVal(e.target.value)}
-        onBlur={() => { if (val !== habit.name) onUpdateName(habit.id, val) }}
-        onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
-      />
-      <select
-        value={habit.frequency}
-        onChange={e => onUpdateFreq(habit.id, e.target.value)}
-        className="bg-transparent border-none outline-none text-[10px] text-[#5F6368] cursor-pointer py-2 pl-1 pr-0 flex-shrink-0"
-        title="Frequency"
-      >
-        {FREQ_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-      </select>
-      <button onClick={() => onRemove(habit.id)}
-        className="w-6 h-6 rounded border border-[#DADCE0] flex items-center justify-center text-[13px] text-[#5F6368] hover:bg-[#FBE9E7] hover:border-[#e0a0a0] hover:text-[#8B0000] transition-colors flex-shrink-0">×</button>
+    <div style={{
+      background: '#FFFFFF',
+      border: focused ? '1.5px solid #1A73E8' : '1.5px solid #E8EAED',
+      borderRadius: 12,
+      padding: '12px 14px',
+      marginBottom: 8,
+      boxShadow: focused ? '0 0 0 3px rgba(26,115,232,0.08)' : 'none',
+      transition: 'border-color 0.15s, box-shadow 0.15s',
+    }}>
+      {/* Name row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+        <span style={{ fontSize: 11, color: '#BDC1C6', fontFamily: 'Roboto Mono, monospace', minWidth: 18 }}>
+          {String(index + 1).padStart(2, '0')}
+        </span>
+        <input
+          style={{
+            flex: 1, background: 'transparent', border: 'none', outline: 'none',
+            fontSize: 14, color: '#202124', fontFamily: 'Roboto, sans-serif',
+            padding: 0,
+          }}
+          placeholder="Habit name…"
+          value={val}
+          onChange={e => setVal(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => { setFocused(false); if (val !== habit.name) onUpdateName(habit.id, val) }}
+          onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
+        />
+        <button onClick={() => onRemove(habit.id)} style={{
+          width: 24, height: 24, borderRadius: '50%',
+          border: 'none', background: 'transparent',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', color: '#BDC1C6', fontSize: 16,
+          transition: 'background 0.12s, color 0.12s',
+          flexShrink: 0,
+        }}
+        onMouseEnter={e => { const b = e.currentTarget as HTMLButtonElement; b.style.background='#FCE8E6'; b.style.color='#D93025' }}
+        onMouseLeave={e => { const b = e.currentTarget as HTMLButtonElement; b.style.background='transparent'; b.style.color='#BDC1C6' }}
+        >×</button>
+      </div>
+
+      {/* Frequency chips */}
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+        {FREQ_OPTIONS.map(o => (
+          <FreqChip
+            key={o.value}
+            value={o.value}
+            selected={habit.frequency === o.value}
+            onClick={() => onUpdateFreq(habit.id, o.value)}
+          />
+        ))}
+      </div>
     </div>
   )
 }
@@ -77,52 +130,86 @@ export default function SetupPage() {
 
   return (
     <>
-      <div className="bg-white px-6 py-3 border-b border-[#E8EAED] flex-shrink-0">
-        <div className="text-[22px] font-normal text-[#202124]">Setup</div>
-        <div className="text-[12px] text-[#5F6368] mt-1">Manage your daily habits</div>
+      <div style={{ background: '#FFFFFF', borderBottom: '1px solid #E8EAED', padding: '16px 24px', flexShrink: 0 }}>
+        <div style={{ fontSize: 22, fontWeight: 400, color: '#202124', fontFamily: 'Google Sans, Roboto, sans-serif' }}>Setup</div>
+        <div style={{ fontSize: 12, color: '#5F6368', marginTop: 2, fontFamily: 'Roboto, sans-serif' }}>Configure your habits and tracking frequency</div>
       </div>
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-md">
-          <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-1">Daily Habits</div>
-          <div className="text-[10px] text-[#aaa] mb-3">
-            Logged in Tracker. ✓ Done / ✗ Missed / — N/A · Set frequency per habit
+
+      <div style={{ flex: 1, overflowY: 'auto', padding: 24, background: '#F8F9FA' }}>
+        <div style={{ maxWidth: 480 }}>
+
+          {/* Section label */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#202124', fontFamily: 'Google Sans, Roboto, sans-serif' }}>
+                Habits
+              </div>
+              <div style={{ fontSize: 11, color: '#5F6368', marginTop: 2, fontFamily: 'Roboto, sans-serif' }}>
+                Tap a frequency chip to change the schedule for each habit
+              </div>
+            </div>
+            {habits.length > 0 && (
+              <span style={{
+                fontSize: 11, fontWeight: 500, color: '#1A73E8',
+                background: '#E8F0FE', padding: '3px 10px', borderRadius: 12,
+                fontFamily: 'Roboto, sans-serif',
+              }}>
+                {habits.length} habit{habits.length !== 1 ? 's' : ''}
+              </span>
+            )}
           </div>
 
+          {/* Empty state */}
+          {habits.length === 0 && (
+            <div style={{
+              background: '#FFFFFF', border: '1px solid #E8EAED', borderRadius: 12,
+              padding: '32px 24px', textAlign: 'center', marginBottom: 12,
+            }}>
+              <div style={{ fontSize: 32, marginBottom: 10 }}>✨</div>
+              <div style={{ fontSize: 14, fontWeight: 500, color: '#202124', fontFamily: 'Google Sans, Roboto, sans-serif', marginBottom: 4 }}>
+                No habits yet
+              </div>
+              <div style={{ fontSize: 13, color: '#5F6368', fontFamily: 'Roboto, sans-serif' }}>
+                Add your first habit below to start tracking
+              </div>
+            </div>
+          )}
+
+          {/* Habit rows */}
           {habits.map((h, i) => (
             <HabitRow key={h.id} habit={h} index={i}
               onUpdateName={updateName} onUpdateFreq={updateFreq} onRemove={remove} />
           ))}
 
-          <button onClick={add}
-            className="w-full flex items-center gap-1.5 px-3 py-2 rounded-lg border border-dashed border-[#DADCE0] text-[10px] font-bold uppercase tracking-[.08em] text-[#5F6368] hover:border-[#FF5C00] hover:text-[#FF5C00] hover:bg-[#FFF0E8] transition-colors mt-1">
-            ＋ Add habit
+          {/* Add button */}
+          <button onClick={add} style={{
+            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            padding: '11px 0', borderRadius: 12,
+            border: '1.5px dashed #DADCE0',
+            background: 'transparent',
+            color: '#5F6368', fontSize: 13, fontFamily: 'Roboto, sans-serif', fontWeight: 500,
+            cursor: 'pointer', transition: 'all 0.12s',
+            marginTop: 4,
+          }}
+          onMouseEnter={e => {
+            const b = e.currentTarget as HTMLButtonElement
+            b.style.borderColor = '#1A73E8'
+            b.style.color = '#1A73E8'
+            b.style.background = '#F8F9FF'
+          }}
+          onMouseLeave={e => {
+            const b = e.currentTarget as HTMLButtonElement
+            b.style.borderColor = '#DADCE0'
+            b.style.color = '#5F6368'
+            b.style.background = 'transparent'
+          }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add a habit
           </button>
 
-          {habits.length > 0 && (
-            <div className="mt-4 p-3 bg-[#f7f7f7] border border-[#E8EAED] rounded-lg">
-              <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.1em] mb-1.5">Frequency legend</div>
-              <div className="space-y-0.5">
-                {FREQ_OPTIONS.map(o => (
-                  <div key={o.value} className="text-[10px] text-[#aaa]">
-                    <span className="font-semibold text-[#666]">{o.label}</span>
-                    {o.value === 'daily' && ' — logged 7 days/week'}
-                    {o.value === 'weekdays' && ' — Mon to Fri only'}
-                    {o.value === 'weekends' && ' — Sat & Sun only'}
-                    {o.value === '3x' && ' — Mon, Wed, Fri only'}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="mt-6 bg-[#f7f7f7] border border-[#E8EAED] rounded-lg p-4">
-            <div className="text-[10px] font-bold text-[#5F6368] uppercase tracking-[.1em] mb-2">Other settings</div>
-            <div className="text-[11px] text-[#aaa] space-y-1">
-              <div>🎯 Goals & milestones → <span className="font-semibold text-[#5F6368]">Goals page</span></div>
-              <div>⏱ Focus categories → <span className="font-semibold text-[#5F6368]">Timer page</span></div>
-              <div>📅 Calendar blocks → <span className="font-semibold text-[#5F6368]">Calendar page</span></div>
-            </div>
-          </div>
         </div>
       </div>
     </>
