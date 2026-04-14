@@ -337,7 +337,7 @@ export default function CalendarPage() {
         {/* Nav */}
         <button onClick={navPrev} className="w-8 h-8 rounded-full flex items-center justify-center text-[#5f6368] hover:bg-[#f1f3f4] transition-colors text-[20px] leading-none">‹</button>
         <button onClick={()=>{setWeekMon(getMonday());setDayDate(today);setMonthYear(now.getFullYear());setMonthMonth(now.getMonth())}}
-          className="px-4 py-1.5 rounded border border-[#dadce0] text-[13px] font-medium text-[#3c4043] hover:bg-[#f1f3f4] transition-colors">Today</button>
+          className="px-4 py-1.5 rounded border border-[#dadce0] text-[14px] font-medium text-[#3c4043] hover:bg-[#f1f3f4] transition-colors">Today</button>
         <button onClick={navNext} className="w-8 h-8 rounded-full flex items-center justify-center text-[#5f6368] hover:bg-[#f1f3f4] transition-colors text-[20px] leading-none">›</button>
 
         <span className="text-[18px] font-normal text-[#3c4043] ml-1">{titleLabel()}</span>
@@ -452,7 +452,7 @@ export default function CalendarPage() {
                   return weeks.map((week,wi)=>(
                     <div key={wi} className="grid grid-cols-7 border-b border-[#e0e0e0]" style={{minHeight:120}}>
                       {week.map((ds,di)=>{
-                        if(!ds) return <div key={di} className="border-r border-[#e0e0e0] bg-[#fafafa]"/>
+                        if(!ds) return <div key={di} className="border-r border-[#e0e0e0] bg-[#F8F9FA]"/>
                         const isToday=ds===today
                         const dayBlocks=getBlocksForDate(ds).slice(0,3)
                         const more=getBlocksForDate(ds).length-3
@@ -703,9 +703,9 @@ export default function CalendarPage() {
                   </button>
                 )}
                 <div className="flex gap-2 ml-auto">
-                  <button onClick={()=>setModal(null)} className="px-4 py-2 rounded-full text-[13px] font-medium text-[#1a73e8] hover:bg-[#e8f0fe] transition-colors">Cancel</button>
+                  <button onClick={()=>setModal(null)} className="px-4 py-2 rounded-full text-[14px] font-medium text-[#1a73e8] hover:bg-[#e8f0fe] transition-colors">Cancel</button>
                   <button onClick={saveModal}
-                    className="px-5 py-2 rounded-full text-[13px] font-medium text-white transition-all hover:opacity-90"
+                    className="px-5 py-2 rounded-full text-[14px] font-medium text-white transition-all hover:opacity-90"
                     style={{background:modal.color}}>
                     {modal.mode.includes('create')?'Save':'Update'}
                   </button>

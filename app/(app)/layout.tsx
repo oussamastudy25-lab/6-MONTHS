@@ -9,7 +9,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden" style={{ background: '#F8F9FA' }}>
       <NotificationScheduler />
       <Sidebar />
       <main className="flex-1 overflow-hidden flex flex-col relative">

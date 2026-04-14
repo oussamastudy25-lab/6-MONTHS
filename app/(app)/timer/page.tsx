@@ -330,18 +330,18 @@ export default function TimerPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="bg-white px-6 py-3 border-b-2 border-[#0A0A0A] flex items-center flex-shrink-0">
+      <div className="bg-white px-6 py-3 border-b border-[#E8EAED] flex items-center flex-shrink-0">
         <div>
-          <div className="text-[19px] font-bold tracking-[.04em]">Focus Timer</div>
-          <div className="text-[10px] text-[#888] tracking-[.12em] uppercase mt-0.5">Total today: {fmtMins(todayTotal)}</div>
+          <div className="text-[22px] font-normal text-[#202124]">Focus Timer</div>
+          <div className="text-[12px] text-[#5F6368] mt-1">Total today: {fmtMins(todayTotal)}</div>
         </div>
         <div className="ml-auto flex items-center gap-2">
           <button onClick={()=>setView(v=>v==='timer'?'analytics':'timer')}
-            className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-[.1em] border transition-all ${view==='analytics'?'bg-[#0A0A0A] text-white border-[#0A0A0A]':'border-[#dedede] text-[#888] hover:border-[#0A0A0A] hover:text-[#0A0A0A]'}`}>
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-[.1em] border transition-all ${view==='analytics'?'bg-[#FF5C00] text-white border-[#0A0A0A]':'border-[#DADCE0] text-[#5F6368] hover:border-[#0A0A0A] hover:text-[#0A0A0A]'}`}>
             {view==='timer'?'◈ Analytics':'⏱ Timer'}
           </button>
           <button onClick={()=>{setShowSetup(s=>!s);setEditId(null);setForm({name:'',color:'#FF5C00',emoji:'📚',target_minutes:120})}}
-            className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-[.1em] border transition-all ${showSetup?'bg-[#0A0A0A] text-white border-[#0A0A0A]':'border-[#dedede] text-[#888] hover:border-[#0A0A0A] hover:text-[#0A0A0A]'}`}>
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-[.1em] border transition-all ${showSetup?'bg-[#FF5C00] text-white border-[#0A0A0A]':'border-[#DADCE0] text-[#5F6368] hover:border-[#0A0A0A] hover:text-[#0A0A0A]'}`}>
             ⚙ Categories
           </button>
         </div>
@@ -355,8 +355,8 @@ export default function TimerPage() {
                 <div className="flex flex-col items-center justify-center py-20 text-center">
                   <div className="text-5xl mb-4">⏱</div>
                   <div className="text-[16px] font-bold mb-2">No categories yet</div>
-                  <div className="text-[13px] text-[#888] mb-5">Create focus categories for everything you do — Study, Business, Content, Gym.</div>
-                  <button onClick={()=>setShowSetup(true)} className="bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] px-4 py-2 rounded-md hover:bg-[#FF7A2E] transition-colors">+ Create Category</button>
+                  <div className="text-[13px] text-[#5F6368] mb-5">Create focus categories for everything you do — Study, Business, Content, Gym.</div>
+                  <button onClick={()=>setShowSetup(true)} className="bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] px-4 py-2 rounded-lg hover:bg-[#FF7A2E] transition-colors">+ Create Category</button>
                 </div>
               ):(
                 <div className="max-w-xl mx-auto">
@@ -366,11 +366,11 @@ export default function TimerPage() {
                       const mins=todayMins(c.id),on=activeCat===c.id
                       return (
                         <button key={c.id} onClick={()=>setActiveCat(c.id)}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-md border text-[11px] font-bold transition-all ${on?'text-white border-transparent':'border-[#efefef] text-[#888] hover:border-[#dedede]'}`}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-[11px] font-bold transition-all ${on?'text-white border-transparent':'border-[#E8EAED] text-[#5F6368] hover:border-[#DADCE0]'}`}
                           style={on?{background:c.color}:{}}>
                           <span className="text-[14px]">{c.emoji}</span>
                           <span>{c.name}</span>
-                          <span className={`font-mono text-[9px] ${on?'text-white/70':'text-[#bcbcbc]'}`}>{fmtMins(mins)}</span>
+                          <span className={`font-mono text-[9px] ${on?'text-white/70':'text-[#80868B]'}`}>{fmtMins(mins)}</span>
                         </button>
                       )
                     })}
@@ -382,16 +382,16 @@ export default function TimerPage() {
                       <div className={`flex gap-1 mb-5 bg-[#f7f7f7] p-1 rounded-lg ${running ? 'opacity-50 pointer-events-none' : ''}`}
                         title={running ? 'Stop the timer to change mode' : ''}>
                         <button onClick={()=>setTimeboxMode(false)}
-                          className={`flex-1 py-2 rounded-md text-[10px] font-bold uppercase tracking-[.1em] transition-all ${!timeboxMode?'bg-white text-[#0A0A0A] shadow-sm':'text-[#888]'}`}>
+                          className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase tracking-[.1em] transition-all ${!timeboxMode?'bg-white text-[#0A0A0A] shadow-sm':'text-[#5F6368]'}`}>
                           Free Flow
                         </button>
                         <button onClick={()=>setTimeboxMode(true)}
-                          className={`flex-1 py-2 rounded-md text-[10px] font-bold uppercase tracking-[.1em] transition-all ${timeboxMode?'bg-white text-[#0A0A0A] shadow-sm':'text-[#888]'}`}>
+                          className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase tracking-[.1em] transition-all ${timeboxMode?'bg-white text-[#0A0A0A] shadow-sm':'text-[#5F6368]'}`}>
                           ⏦ Timebox
                         </button>
                       </div>
                       {running && (
-                        <div className="text-[9px] text-[#bcbcbc] text-center -mt-4 mb-4 italic">
+                        <div className="text-[9px] text-[#80868B] text-center -mt-4 mb-4 italic">
                           Stop timer to switch mode
                         </div>
                       )}
@@ -399,19 +399,19 @@ export default function TimerPage() {
                       {/* Timebox config */}
                       {timeboxMode&&!isRunningHere&&(
                         <div className="mb-5">
-                          <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-2">Block Duration</div>
+                          <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-2">Block Duration</div>
                           <div className="flex gap-1.5 flex-wrap">
                             {TIMEBOX_PRESETS.map(m=>(
                               <button key={m} onClick={()=>setTimeboxMins(m)}
-                                className={`px-3 py-1.5 rounded-md text-[11px] font-bold border transition-all ${timeboxMins===m?'text-white border-transparent':'border-[#efefef] text-[#888] hover:border-[#dedede]'}`}
+                                className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all ${timeboxMins===m?'text-white border-transparent':'border-[#E8EAED] text-[#5F6368] hover:border-[#DADCE0]'}`}
                                 style={timeboxMins===m?{background:currentCat.color}:{}}>
                                 {m}m
                               </button>
                             ))}
                             <div className="flex items-center gap-1">
-                              <input type="number" min="5" max="300" className="w-16 bg-[#f7f7f7] border border-[#dedede] rounded-md px-2 py-1.5 text-[11px] font-bold outline-none focus:border-[#FF5C00] text-center"
+                              <input type="number" min="5" max="300" className="w-16 bg-white border border-[#DADCE0] rounded-lg px-2 py-1.5 text-[11px] font-bold outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)] text-center"
                                 value={timeboxMins} onChange={e=>setTimeboxMins(Math.max(5,parseInt(e.target.value)||25))}/>
-                              <span className="text-[10px] text-[#888]">min</span>
+                              <span className="text-[10px] text-[#5F6368]">min</span>
                             </div>
                           </div>
                         </div>
@@ -435,14 +435,14 @@ export default function TimerPage() {
                               {timeboxDone?(
                                 <>
                                   <div className="text-[22px] font-bold text-[#22c55e]">DONE!</div>
-                                  <div className="text-[11px] text-[#888]">{fmtMins(timeboxMins)} block</div>
+                                  <div className="text-[11px] text-[#5F6368]">{fmtMins(timeboxMins)} block</div>
                                 </>
                               ):(
                                 <>
                                   <div className="font-mono text-[32px] font-bold leading-none" style={{color:isRunningHere?currentCat.color:'#0A0A0A'}}>
                                     {isRunningHere?fmtTime(timeboxRemaining):fmtTime(timeboxSecs)}
                                   </div>
-                                  <div className="text-[10px] text-[#888] mt-1">{timeboxPct}% done</div>
+                                  <div className="text-[10px] text-[#5F6368] mt-1">{timeboxPct}% done</div>
                                 </>
                               )}
                             </div>
@@ -459,13 +459,13 @@ export default function TimerPage() {
                           <div className="w-48 h-2 bg-[#efefef] rounded-full overflow-hidden">
                             <div className="h-full rounded-full transition-all" style={{width:`${dailyPct}%`,background:currentCat.color}}/>
                           </div>
-                          <span className="text-[11px] text-[#888] font-mono">{fmtMins(catTodayMins)} / {fmtMins(targetMins)}</span>
+                          <span className="text-[11px] text-[#5F6368] font-mono">{fmtMins(catTodayMins)} / {fmtMins(targetMins)}</span>
                         </div>
 
                         {/* Note + Control — sticky so always visible */}
                         <div className="sticky bottom-0 bg-white/95 backdrop-blur-sm pt-3 pb-2 -mx-6 px-6 border-t border-[#f0f0f0] mt-4">
                         {!running&&(
-                          <input className="w-full max-w-sm mx-auto block bg-[#f7f7f7] border border-[#dedede] rounded-md px-3 py-2 text-[12px] outline-none focus:border-[#FF5C00] text-center mb-3"
+                          <input className="w-full max-w-sm mx-auto block bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[12px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)] text-center mb-3"
                             placeholder="What are you working on? (optional)"
                             value={note} onChange={e=>setNote(e.target.value)}/>
                         )}
@@ -554,7 +554,7 @@ export default function TimerPage() {
                               <div className="text-[11px] text-[#aaa] mt-0.5">{fmtMins(timeboxMins)} of focused work done</div>
                             </div>
                             <div className="space-y-2">
-                              <div className="text-[9px] font-bold text-[#bcbcbc] uppercase tracking-[.1em] text-center">Take a break?</div>
+                              <div className="text-[9px] font-bold text-[#80868B] uppercase tracking-[.1em] text-center">Take a break?</div>
                               <div className="grid grid-cols-3 gap-2">
                               {[
                                 {m:5,label:'5 min'},
@@ -570,11 +570,11 @@ export default function TimerPage() {
                             </div>
                             <div className="flex gap-2">
                               <button onClick={()=>stopTimer(true)}
-                                className="flex-1 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[.1em] border border-[#dedede] text-[#888] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors">
+                                className="flex-1 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[.1em] border border-[#DADCE0] text-[#5F6368] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors">
                                 ✓ Done for today
                               </button>
                               <button onClick={()=>setTimeboxDone(false)}
-                                className="px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[.1em] border border-[#dedede] text-[#888] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors">
+                                className="px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[.1em] border border-[#DADCE0] text-[#5F6368] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors">
                                 + Again
                               </button>
                             </div>
@@ -645,7 +645,7 @@ export default function TimerPage() {
                                       ⏹ Stop session
                                     </button>
                                   ) : (
-                                    <div className="text-[9px] text-[#bcbcbc] text-center">
+                                    <div className="text-[9px] text-[#80868B] text-center">
                                       Stop unlocks after {RESIST_REQUIRED} resistances ({RESIST_REQUIRED - resistCount} remaining)
                                     </div>
                                   )}
@@ -653,7 +653,7 @@ export default function TimerPage() {
                               </div>
                             ) : showStopChoice ? (
                               /* STOP CHOICE — resist or stop immediately */
-                              <div className="bg-[#f7f7f7] border border-[#efefef] rounded-2xl p-4 space-y-3 text-center">
+                              <div className="bg-[#f7f7f7] border border-[#E8EAED] rounded-2xl p-4 space-y-3 text-center">
                                 <div className="text-[12px] font-bold text-[#0A0A0A]">Stop the session?</div>
                                 <div className="text-[10px] text-[#aaa]">Resist 2 minutes to build discipline, or stop now.</div>
                                 <div className="space-y-2">
@@ -663,11 +663,11 @@ export default function TimerPage() {
                                     💪 Resist 2 min first
                                   </button>
                                   <button onClick={()=>{setShowStopChoice(false);stopTimer(true)}}
-                                    className="w-full py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[.08em] border border-[#dedede] text-[#888] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-all">
+                                    className="w-full py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[.08em] border border-[#DADCE0] text-[#5F6368] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-all">
                                     ⏹ Stop now
                                   </button>
                                   <button onClick={()=>setShowStopChoice(false)}
-                                    className="text-[10px] text-[#bcbcbc] hover:text-[#888] transition-colors uppercase tracking-[.06em]">
+                                    className="text-[10px] text-[#80868B] hover:text-[#5F6368] transition-colors uppercase tracking-[.06em]">
                                     Cancel
                                   </button>
                                 </div>
@@ -681,7 +681,7 @@ export default function TimerPage() {
                             )}
                           </div>
                         ):running?(
-                          <div className="text-[12px] text-[#888]">
+                          <div className="text-[12px] text-[#5F6368]">
                             Timer running on <strong>{categories.find(c=>c.id===running.category_id)?.name}</strong> — stop it first
                           </div>
                         ):(
@@ -697,16 +697,16 @@ export default function TimerPage() {
                       {/* Today's sessions */}
                       {sessions.filter(s=>s.category_id===activeCat).length>0&&(
                         <div className="mt-4">
-                          <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-2">Today</div>
+                          <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-2">Today</div>
                           <div className="space-y-1.5">
                             {sessions.filter(s=>s.category_id===activeCat).map(s=>{
                               const isActive=!s.ended_at
                               return (
-                                <div key={s.id} className="flex items-center gap-3 px-4 py-3 bg-white border border-[#efefef] rounded-lg hover:border-[#dedede] group transition-colors">
+                                <div key={s.id} className="flex items-center gap-3 px-4 py-3 bg-white border border-[#E8EAED] rounded-lg hover:border-[#DADCE0] group transition-colors">
                                   <div className={`w-2 h-2 rounded-full flex-shrink-0 ${isActive?'animate-pulse':''}`} style={{background:currentCat.color}}/>
                                   <div className="flex-1">
                                     {s.note&&<div className="text-[11px] font-semibold">{s.note}</div>}
-                                    <div className="text-[10px] text-[#888] font-mono">
+                                    <div className="text-[10px] text-[#5F6368] font-mono">
                                       {s.started_at?new Date(s.started_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}
                                       {s.ended_at?` → ${new Date(s.ended_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`:' → running'}
                                     </div>
@@ -714,7 +714,7 @@ export default function TimerPage() {
                                   <div className="font-mono text-[13px] font-bold" style={{color:currentCat.color}}>
                                     {isActive?fmtTime(elapsed):fmtMins(s.duration_minutes)}
                                   </div>
-                                  <button onClick={()=>deleteSession(s.id)} className="text-[11px] text-[#bcbcbc] hover:text-[#ef4444] opacity-0 group-hover:opacity-100 transition-all">×</button>
+                                  <button onClick={()=>deleteSession(s.id)} className="text-[11px] text-[#80868B] hover:text-[#ef4444] opacity-0 group-hover:opacity-100 transition-all">×</button>
                                 </div>
                               )
                             })}
@@ -730,19 +730,19 @@ export default function TimerPage() {
             /* ANALYTICS */
             <div className="p-5 space-y-6">
               <div>
-                <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">Today's Focus</div>
+                <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">Today's Focus</div>
                 <div className="grid gap-3" style={{gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))'}}>
                   {categories.map(c=>{
                     const mins=todayMins(c.id)
                     const p=Math.min(100,Math.round(mins/c.target_minutes*100))
                     return (
-                      <div key={c.id} className="bg-white border border-[#efefef] rounded-lg p-4 hover:border-[#dedede] transition-colors">
+                      <div key={c.id} className="bg-white border border-[#E8EAED] rounded-lg p-4 hover:border-[#DADCE0] transition-colors">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="text-[18px]">{c.emoji}</span>
                           <span className="text-[12px] font-bold flex-1">{c.name}</span>
                         </div>
                         <div className="font-mono text-[22px] font-bold" style={{color:c.color}}>{fmtMins(mins)}</div>
-                        <div className="text-[9px] text-[#888] mb-2">of {fmtMins(c.target_minutes)} target</div>
+                        <div className="text-[9px] text-[#5F6368] mb-2">of {fmtMins(c.target_minutes)} target</div>
                         <div className="h-1.5 bg-[#efefef] rounded-full overflow-hidden">
                           <div className="h-full rounded-full" style={{width:`${p}%`,background:c.color}}/>
                         </div>
@@ -759,25 +759,25 @@ export default function TimerPage() {
                 if(total7===0)return null
                 return (
                   <div key={c.id}>
-                    <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">{c.emoji} {c.name} — Last 7 Days</div>
-                    <div className="bg-white border border-[#efefef] rounded-lg p-4">
+                    <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">{c.emoji} {c.name} — Last 7 Days</div>
+                    <div className="bg-white border border-[#E8EAED] rounded-lg p-4">
                       <div className="flex items-end gap-2 mb-2" style={{height:96}}>
                         {weekly.map((d,i)=>{
                           const barH=d.mins>0?Math.max(6,Math.round(d.mins/maxMins*80)):3
                           const isToday=i===6
                           return (
                             <div key={d.day} className="flex-1 flex flex-col items-center gap-1 group relative" style={{height:96}}>
-                              <div className="absolute bottom-full mb-1 hidden group-hover:block bg-[#0A0A0A] text-white text-[9px] px-1.5 py-1 rounded whitespace-nowrap z-10">
+                              <div className="absolute bottom-full mb-1 hidden group-hover:block bg-[#FF5C00] text-white text-[9px] px-1.5 py-1 rounded whitespace-nowrap z-10">
                                 {d.day}: {fmtMins(d.mins)}
                               </div>
                               <div className="flex-1"/>
                               <div className="w-full rounded-sm" style={{height:barH,background:d.mins>0?c.color:'#efefef',opacity:isToday?1:0.7}}/>
-                              <div className="text-[8px] text-[#bcbcbc]" style={{lineHeight:'1.2'}}>{d.day.slice(0,2)}</div>
+                              <div className="text-[8px] text-[#80868B]" style={{lineHeight:'1.2'}}>{d.day.slice(0,2)}</div>
                             </div>
                           )
                         })}
                       </div>
-                      <div className="flex items-center justify-between text-[10px] text-[#888]">
+                      <div className="flex items-center justify-between text-[10px] text-[#5F6368]">
                         <span>7-day: <span className="font-bold font-mono" style={{color:c.color}}>{fmtMins(total7)}</span></span>
                         <span>Daily avg: <span className="font-bold font-mono">{fmtMins(Math.round(total7/7))}</span></span>
                         <span>Target: <span className="font-bold font-mono">{fmtMins(c.target_minutes)}/day</span></span>
@@ -789,9 +789,9 @@ export default function TimerPage() {
 
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase">Recent Sessions</div>
+                  <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase">Recent Sessions</div>
                   <button onClick={()=>{setShowAddSession(v=>!v);setAddForm({category_id:categories[0]?.id??'',date:fmt(),duration_minutes:60,note:''})}}
-                    className="text-[9px] font-bold uppercase tracking-[.1em] px-2.5 py-1 rounded-md border border-[#dedede] text-[#888] hover:border-[#FF5C00] hover:text-[#FF5C00] transition-all">
+                    className="text-[9px] font-bold uppercase tracking-[.1em] px-2.5 py-1 rounded-lg border border-[#DADCE0] text-[#5F6368] hover:border-[#FF5C00] hover:text-[#FF5C00] transition-all">
                     {showAddSession?'✕ Cancel':'＋ Add'}
                   </button>
                 </div>
@@ -802,43 +802,43 @@ export default function TimerPage() {
                     <div className="text-[10px] font-bold text-[#FF5C00] uppercase tracking-[.1em]">Log a session manually</div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <div className="text-[8px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Category</div>
-                        <select className="w-full bg-[#f7f7f7] border border-[#dedede] rounded-md px-2 py-1.5 text-[12px] outline-none focus:border-[#FF5C00]"
+                        <div className="text-[8px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-1">Category</div>
+                        <select className="w-full bg-white border border-[#DADCE0] rounded-lg px-2 py-1.5 text-[12px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
                           value={addForm.category_id} onChange={e=>setAddForm(p=>({...p,category_id:e.target.value}))}>
                           {categories.map(c=><option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
                         </select>
                       </div>
                       <div>
-                        <div className="text-[8px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Date</div>
-                        <input type="date" className="w-full bg-[#f7f7f7] border border-[#dedede] rounded-md px-2 py-1.5 text-[12px] outline-none focus:border-[#FF5C00]"
+                        <div className="text-[8px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-1">Date</div>
+                        <input type="date" className="w-full bg-white border border-[#DADCE0] rounded-lg px-2 py-1.5 text-[12px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
                           value={addForm.date} onChange={e=>setAddForm(p=>({...p,date:e.target.value}))}/>
                       </div>
                     </div>
                     <div>
-                      <div className="text-[8px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Duration (minutes)</div>
+                      <div className="text-[8px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-1">Duration (minutes)</div>
                       <div className="flex items-center gap-2">
                         <input type="number" min="1" max="600" step="5"
-                          className="flex-1 bg-[#f7f7f7] border border-[#dedede] rounded-md px-2 py-1.5 text-[12px] outline-none focus:border-[#FF5C00]"
+                          className="flex-1 bg-white border border-[#DADCE0] rounded-lg px-2 py-1.5 text-[12px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
                           value={addForm.duration_minutes} onChange={e=>setAddForm(p=>({...p,duration_minutes:parseInt(e.target.value)||1}))}/>
-                        <span className="text-[10px] text-[#888] flex-shrink-0">{fmtMins(addForm.duration_minutes)}</span>
+                        <span className="text-[10px] text-[#5F6368] flex-shrink-0">{fmtMins(addForm.duration_minutes)}</span>
                       </div>
                       <div className="flex gap-1 mt-1.5 flex-wrap">
                         {[15,25,30,45,60,90,120].map(m=>(
                           <button key={m} onClick={()=>setAddForm(p=>({...p,duration_minutes:m}))}
-                            className={`text-[9px] px-2 py-0.5 rounded-md border font-mono transition-all ${addForm.duration_minutes===m?'bg-[#FF5C00] text-white border-[#FF5C00]':'border-[#dedede] text-[#888] hover:border-[#FF5C00]'}`}>
+                            className={`text-[9px] px-2 py-0.5 rounded-lg border font-mono transition-all ${addForm.duration_minutes===m?'bg-[#FF5C00] text-white border-[#FF5C00]':'border-[#DADCE0] text-[#5F6368] hover:border-[#FF5C00]'}`}>
                             {fmtMins(m)}
                           </button>
                         ))}
                       </div>
                     </div>
                     <div>
-                      <div className="text-[8px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Note (optional)</div>
-                      <input className="w-full bg-[#f7f7f7] border border-[#dedede] rounded-md px-2 py-1.5 text-[12px] outline-none focus:border-[#FF5C00]"
+                      <div className="text-[8px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-1">Note (optional)</div>
+                      <input className="w-full bg-white border border-[#DADCE0] rounded-lg px-2 py-1.5 text-[12px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
                         placeholder="What did you work on?" value={addForm.note} onChange={e=>setAddForm(p=>({...p,note:e.target.value}))}
                         onKeyDown={e=>e.key==='Enter'&&addManualSession()}/>
                     </div>
                     <button onClick={addManualSession}
-                      className="w-full bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] py-2.5 rounded-md hover:bg-[#FF7A2E] transition-colors">
+                      className="w-full bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] py-2.5 rounded-lg hover:bg-[#FF7A2E] transition-colors">
                       + Log Session
                     </button>
                   </div>
@@ -854,19 +854,19 @@ export default function TimerPage() {
                           <div className="flex items-center gap-2">
                             <span className="text-[14px]">{cat.emoji}</span>
                             <span className="text-[11px] font-semibold flex-1">{cat.name}</span>
-                            <span className="text-[9px] text-[#bcbcbc] font-mono">{s.date}</span>
+                            <span className="text-[9px] text-[#80868B] font-mono">{s.date}</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <label className="text-[10px] text-[#888] uppercase tracking-[.1em] font-bold flex-shrink-0">Duration</label>
+                            <label className="text-[10px] text-[#5F6368] uppercase tracking-[.1em] font-bold flex-shrink-0">Duration</label>
                             <input type="number" min={1} max={999}
                               value={editSessionForm.duration_minutes}
                               onChange={e=>setEditSessionForm(p=>({...p,duration_minutes:parseInt(e.target.value)||1}))}
-                              className="w-16 text-center font-mono text-[13px] font-bold border border-[#dedede] rounded-md px-2 py-1 focus:outline-none focus:border-[#FF5C00]"/>
-                            <span className="text-[10px] text-[#888]">min</span>
+                              className="w-16 text-center font-mono text-[13px] font-bold border border-[#DADCE0] rounded-lg px-2 py-1 focus:outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"/>
+                            <span className="text-[10px] text-[#5F6368]">min</span>
                             <div className="flex gap-1 flex-wrap">
                               {[15,25,30,45,60,90,120].map(m=>(
                                 <button key={m} onClick={()=>setEditSessionForm(p=>({...p,duration_minutes:m}))}
-                                  className={`text-[9px] px-1.5 py-0.5 rounded font-mono border transition-all ${editSessionForm.duration_minutes===m?'bg-[#FF5C00] text-white border-[#FF5C00]':'border-[#dedede] text-[#888] hover:border-[#FF5C00]'}`}>
+                                  className={`text-[9px] px-1.5 py-0.5 rounded font-mono border transition-all ${editSessionForm.duration_minutes===m?'bg-[#FF5C00] text-white border-[#FF5C00]':'border-[#DADCE0] text-[#5F6368] hover:border-[#FF5C00]'}`}>
                                   {m}m
                                 </button>
                               ))}
@@ -876,15 +876,15 @@ export default function TimerPage() {
                             <input type="text" placeholder="Note (optional)"
                               value={editSessionForm.note}
                               onChange={e=>setEditSessionForm(p=>({...p,note:e.target.value}))}
-                              className="w-full text-[11px] border border-[#dedede] rounded-md px-2 py-1.5 focus:outline-none focus:border-[#FF5C00]"/>
+                              className="w-full text-[11px] border border-[#DADCE0] rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"/>
                           </div>
                           <div className="flex gap-2">
                             <button onClick={saveEditSession}
-                              className="flex-1 bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] py-1.5 rounded-md hover:bg-[#FF7A2E] transition-colors">
+                              className="flex-1 bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] py-1.5 rounded-lg hover:bg-[#FF7A2E] transition-colors">
                               Save
                             </button>
                             <button onClick={()=>setEditSessionId(null)}
-                              className="px-3 text-[10px] font-bold uppercase tracking-[.1em] border border-[#dedede] rounded-md text-[#888] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors">
+                              className="px-3 text-[10px] font-bold uppercase tracking-[.1em] border border-[#DADCE0] rounded-lg text-[#5F6368] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors">
                               Cancel
                             </button>
                           </div>
@@ -892,28 +892,28 @@ export default function TimerPage() {
                       )
                     }
                     return (
-                      <div key={s.id} className="group flex items-center gap-3 px-4 py-2.5 bg-white border border-[#f7f7f7] rounded-lg hover:border-[#efefef] transition-colors">
+                      <div key={s.id} className="group flex items-center gap-3 px-4 py-2.5 bg-white border border-[#f7f7f7] rounded-lg hover:border-[#E8EAED] transition-colors">
                         <span className="text-[14px]">{cat.emoji}</span>
                         <div className="flex-1 min-w-0">
                           <span className="text-[11px] font-semibold">{cat.name}</span>
-                          {s.note&&<span className="text-[10px] text-[#888] ml-2">— {s.note}</span>}
+                          {s.note&&<span className="text-[10px] text-[#5F6368] ml-2">— {s.note}</span>}
                         </div>
-                        <span className="text-[9px] text-[#bcbcbc] font-mono flex-shrink-0">{s.date}</span>
+                        <span className="text-[9px] text-[#80868B] font-mono flex-shrink-0">{s.date}</span>
                         <span className="font-mono text-[12px] font-bold flex-shrink-0" style={{color:cat.color}}>{fmtMins(s.duration_minutes)}</span>
                         <button onClick={()=>{setEditSessionId(s.id);setEditSessionForm({duration_minutes:s.duration_minutes,note:s.note||''})}}
-                          className="opacity-0 group-hover:opacity-100 text-[13px] text-[#bcbcbc] hover:text-[#FF5C00] transition-all leading-none flex-shrink-0 ml-1"
+                          className="opacity-0 group-hover:opacity-100 text-[13px] text-[#80868B] hover:text-[#FF5C00] transition-all leading-none flex-shrink-0 ml-1"
                           title="Edit duration">
                           ✎
                         </button>
                         <button onClick={()=>{if(confirm('Delete this session?'))deleteSession(s.id)}}
-                          className="opacity-0 group-hover:opacity-100 text-[14px] text-[#bcbcbc] hover:text-[#ef4444] transition-all leading-none flex-shrink-0">
+                          className="opacity-0 group-hover:opacity-100 text-[14px] text-[#80868B] hover:text-[#ef4444] transition-all leading-none flex-shrink-0">
                           ×
                         </button>
                       </div>
                     )
                   })}
                   {allSessions.filter(s=>s.ended_at).length===0&&(
-                    <div className="text-center py-8 text-[12px] text-[#bcbcbc]">No sessions yet. Start your timer!</div>
+                    <div className="text-center py-8 text-[12px] text-[#80868B]">No sessions yet. Start your timer!</div>
                   )}
                 </div>
               </div>
@@ -923,14 +923,14 @@ export default function TimerPage() {
 
         {/* Setup sidebar */}
         {showSetup&&(
-          <div className="w-64 border-l border-[#efefef] flex flex-col bg-white flex-shrink-0 min-h-0">
+          <div className="w-64 border-l border-[#E8EAED] flex flex-col bg-white flex-shrink-0 min-h-0">
 
             {/* Mode: choose */}
             {!editId&&(
               <>
-                <div className="px-4 py-3 border-b border-[#efefef] flex-shrink-0 flex items-center justify-between">
+                <div className="px-4 py-3 border-b border-[#E8EAED] flex-shrink-0 flex items-center justify-between">
                   <div className="text-[12px] font-bold">Categories</div>
-                  <button onClick={()=>setShowSetup(false)} className="text-[16px] text-[#bcbcbc] hover:text-[#888] transition-colors leading-none">×</button>
+                  <button onClick={()=>setShowSetup(false)} className="text-[16px] text-[#80868B] hover:text-[#5F6368] transition-colors leading-none">×</button>
                 </div>
                 <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-3">
                   {/* Add new button */}
@@ -947,19 +947,19 @@ export default function TimerPage() {
                   {/* Existing categories */}
                   {categories.length>0&&(
                     <div>
-                      <div className="text-[9px] font-bold text-[#bcbcbc] uppercase tracking-[.12em] mb-2">Your Categories</div>
+                      <div className="text-[9px] font-bold text-[#80868B] uppercase tracking-[.12em] mb-2">Your Categories</div>
                       <div className="space-y-1">
                         {categories.map(c=>(
                           <button key={c.id}
                             onClick={()=>startEdit(c)}
-                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border border-[#efefef] hover:border-[#FF5C00] hover:bg-[#FFF8F5] transition-all text-left group">
+                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border border-[#E8EAED] hover:border-[#FF5C00] hover:bg-[#FFF8F5] transition-all text-left group">
                             <span className="text-[18px]">{c.emoji}</span>
                             <div className="flex-1 min-w-0">
                               <div className="text-[12px] font-semibold truncate">{c.name}</div>
-                              <div className="text-[9px] text-[#888]">{fmtMins(c.target_minutes)}/day</div>
+                              <div className="text-[9px] text-[#5F6368]">{fmtMins(c.target_minutes)}/day</div>
                             </div>
                             <div className="w-3 h-3 rounded-full flex-shrink-0" style={{background:c.color}}/>
-                            <span className="text-[10px] text-[#bcbcbc] group-hover:text-[#FF5C00] transition-colors">✎</span>
+                            <span className="text-[10px] text-[#80868B] group-hover:text-[#FF5C00] transition-colors">✎</span>
                           </button>
                         ))}
                       </div>
@@ -967,7 +967,7 @@ export default function TimerPage() {
                   )}
 
                   {categories.length===0&&(
-                    <div className="text-center py-6 text-[12px] text-[#bcbcbc]">
+                    <div className="text-center py-6 text-[12px] text-[#80868B]">
                       No categories yet.<br/>Create your first one above.
                     </div>
                   )}
@@ -978,64 +978,64 @@ export default function TimerPage() {
             {/* Mode: edit / create form */}
             {editId&&(
               <>
-                <div className="px-4 py-3 border-b border-[#efefef] flex-shrink-0 flex items-center gap-2">
+                <div className="px-4 py-3 border-b border-[#E8EAED] flex-shrink-0 flex items-center gap-2">
                   <button onClick={()=>{setEditId(null);setForm({name:'',color:'#FF5C00',emoji:'📚',target_minutes:120})}}
-                    className="text-[14px] text-[#bcbcbc] hover:text-[#0A0A0A] transition-colors">‹</button>
+                    className="text-[14px] text-[#80868B] hover:text-[#0A0A0A] transition-colors">‹</button>
                   <div className="text-[12px] font-bold">{editId==='new'?'New Category':'Edit Category'}</div>
                   {editId!=='new'&&(
                     <button onClick={()=>deleteCategory(editId)}
-                      className="ml-auto text-[9px] font-bold text-[#bcbcbc] hover:text-[#ef4444] transition-colors uppercase tracking-[.08em]">Delete</button>
+                      className="ml-auto text-[9px] font-bold text-[#80868B] hover:text-[#ef4444] transition-colors uppercase tracking-[.08em]">Delete</button>
                   )}
                 </div>
                 <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-3">
                   <div>
-                    <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Name</div>
-                    <input className="w-full bg-[#f7f7f7] border border-[#dedede] rounded-md px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00]"
+                    <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-1">Name</div>
+                    <input className="w-full bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
                       placeholder="e.g. Study, Business…" value={form.name} autoFocus
                       onChange={e=>setForm(p=>({...p,name:e.target.value}))}
                       onKeyDown={e=>e.key==='Enter'&&saveCategory()}/>
                   </div>
                   <div>
-                    <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Daily Target</div>
+                    <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-1">Daily Target</div>
                     <div className="flex items-center gap-2">
                       <input type="number" min="15" max="600" step="15"
-                        className="flex-1 bg-[#f7f7f7] border border-[#dedede] rounded-md px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00]"
+                        className="flex-1 bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#FF5C00] focus:ring-2 focus:ring-[rgba(255,92,0,0.12)]"
                         value={form.target_minutes} onChange={e=>setForm(p=>({...p,target_minutes:parseInt(e.target.value)||60}))}/>
-                      <span className="text-[10px] text-[#888]">{fmtMins(form.target_minutes)}</span>
+                      <span className="text-[10px] text-[#5F6368]">{fmtMins(form.target_minutes)}</span>
                     </div>
                   </div>
                   <div>
-                    <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Icon</div>
+                    <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-1">Icon</div>
                     <div className="flex flex-wrap gap-1.5">
                       {PRESET_EMOJIS.map(em=>(
                         <button key={em} onClick={()=>setForm(p=>({...p,emoji:em}))}
-                          className={`w-8 h-8 rounded-md flex items-center justify-center text-[16px] transition-all ${form.emoji===em?'bg-[#FFF0E8] ring-2 ring-[#FF5C00]':'bg-[#f7f7f7] hover:bg-[#efefef]'}`}>
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center text-[16px] transition-all ${form.emoji===em?'bg-[#FFF0E8] ring-2 ring-[#FF5C00]':'bg-[#f7f7f7] hover:bg-[#efefef]'}`}>
                           {em}
                         </button>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <div className="text-[9px] font-bold text-[#888] uppercase tracking-[.12em] mb-1">Color</div>
+                    <div className="text-[9px] font-bold text-[#5F6368] uppercase tracking-[.12em] mb-1">Color</div>
                     <div className="flex flex-wrap gap-1.5">
                       {PRESET_COLORS.map(col=>(
                         <button key={col} onClick={()=>setForm(p=>({...p,color:col}))}
-                          className={`w-7 h-7 rounded-md transition-all ${form.color===col?'ring-2 ring-offset-1 ring-[#0A0A0A] scale-110':''}`}
+                          className={`w-7 h-7 rounded-lg transition-all ${form.color===col?'ring-2 ring-offset-1 ring-[#0A0A0A] scale-110':''}`}
                           style={{background:col}}/>
                       ))}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 p-2.5 bg-[#f7f7f7] rounded-md">
+                  <div className="flex items-center gap-2 p-2.5 bg-[#f7f7f7] rounded-lg">
                     <span className="text-[18px]">{form.emoji}</span>
                     <span className="text-[12px] font-bold flex-1">{form.name||'Name'}</span>
-                    <span className="text-[10px] text-[#888]">{fmtMins(form.target_minutes)}/day</span>
+                    <span className="text-[10px] text-[#5F6368]">{fmtMins(form.target_minutes)}/day</span>
                     <div className="w-4 h-4 rounded-sm" style={{background:form.color}}/>
                   </div>
-                  <button onClick={saveCategory} className="w-full bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] py-2.5 rounded-md hover:bg-[#FF7A2E] transition-colors">
+                  <button onClick={saveCategory} className="w-full bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] py-2.5 rounded-lg hover:bg-[#FF7A2E] transition-colors">
                     {editId==='new'?'+ Create Category':'Update'}
                   </button>
                   <button onClick={()=>{setEditId(null);setForm({name:'',color:'#FF5C00',emoji:'📚',target_minutes:120})}}
-                    className="w-full border border-[#dedede] text-[10px] font-bold uppercase tracking-[.1em] py-2 rounded-md hover:border-[#0A0A0A] transition-colors">
+                    className="w-full border border-[#DADCE0] text-[10px] font-bold uppercase tracking-[.1em] py-2 rounded-lg hover:border-[#0A0A0A] transition-colors">
                     ‹ Back
                   </button>
                 </div>

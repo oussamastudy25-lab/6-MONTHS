@@ -127,65 +127,114 @@ export default function DashboardPage() {
     .filter(c => c.mins > 0).sort((a,b) => b.mins - a.mins)
   const upcomingBlocks  = blocks.filter(b => b.end_minutes > nowMins)
 
-  if (!loaded) return <div className="flex-1 flex items-center justify-center text-[#888] text-[13px]">Loading…</div>
+  if (!loaded) return <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#5F6368', fontSize: 14, fontFamily: 'Roboto, sans-serif' }}>Loading…</div>
+
+  const mdCard: React.CSSProperties = {
+    background: '#FFFFFF', borderRadius: 12, border: '1px solid #E8EAED',
+    overflow: 'hidden',
+  }
+  const mdCardHeader: React.CSSProperties = {
+    padding: '12px 16px', borderBottom: '1px solid #E8EAED',
+    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    background: '#FAFAFA',
+  }
+  const mdCardTitle: React.CSSProperties = {
+    fontSize: 13, fontWeight: 600, color: '#202124',
+    fontFamily: 'Google Sans, Roboto, sans-serif', letterSpacing: '-0.01em',
+  }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#fafafa]">
-      {/* Header */}
-      <div className="bg-white px-6 py-4 border-b-2 border-[#0A0A0A] flex-shrink-0">
-        <div className="text-[20px] font-bold">{greeting} 👋</div>
-        <div className="text-[11px] text-[#888] mt-0.5 tracking-[.04em]">
-          {now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' })}
+    <div style={{ flex: 1, overflowY: 'auto', background: '#F8F9FA' }}>
+
+      {/* Google-style page header */}
+      <div style={{
+        background: '#FFFFFF', borderBottom: '1px solid #E8EAED',
+        padding: '16px 24px', flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <div>
+          <div style={{ fontSize: 22, fontWeight: 400, color: '#202124', fontFamily: 'Google Sans, Roboto, sans-serif' }}>
+            {greeting} 👋
+          </div>
+          <div style={{ fontSize: 12, color: '#5F6368', marginTop: 2, fontFamily: 'Roboto, sans-serif' }}>
+            {now.toLocaleDateString('en-US', { weekday:'long', day:'numeric', month:'long', year:'numeric' })}
+          </div>
+        </div>
+        <div style={{
+          padding: '6px 14px', borderRadius: 20,
+          background: '#FFF0E8', border: '1px solid #FFCCAA',
+          fontSize: 12, fontWeight: 500, color: '#FF5C00',
+          fontFamily: 'Roboto, sans-serif',
+        }}>
+          {habitsDone}/{scheduledHabits.length} habits done today
         </div>
       </div>
 
-      <div className="p-5 space-y-4 max-w-5xl">
+      <div style={{ padding: '20px 24px', maxWidth: 1100, display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-        {/* KPI strip */}
-        <div className="grid grid-cols-4 gap-3">
+        {/* KPI strip — Google card style */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
           {([
-            ['Habits', scheduledHabits.length > 0 ? `${habitsDone}/${scheduledHabits.length}` : '—', habitsDone===scheduledHabits.length&&scheduledHabits.length>0?'#22c55e':'#FF5C00'],
-            ['Focus',  todayFocusMins > 0 ? fmtMins(todayFocusMins) : '—', '#FF5C00'],
-            ['Tasks',  todayTasks.length > 0 ? `${tasksDone}/${todayTasks.length}` : '—', tasksDone===todayTasks.length&&todayTasks.length>0?'#22c55e':'#FF5C00'],
-            ['Wk Goals',wgoalItems.length > 0 ? `${wgoalsDone}/${wgoalItems.length}` : '—', wgoalsDone===wgoalItems.length&&wgoalItems.length>0?'#22c55e':'#FF5C00'],
-          ] as const).map(([l,v,c]) => (
-            <div key={l} className="bg-[#0A0A0A] rounded-xl px-4 py-3">
-              <div className="font-mono text-[22px] font-bold leading-none" style={{color:c}}>{v}</div>
-              <div className="text-[9px] text-[#555] uppercase tracking-[.12em] mt-1.5">{l}</div>
+            ['Habits Done', scheduledHabits.length > 0 ? `${habitsDone}/${scheduledHabits.length}` : '—', habitsDone===scheduledHabits.length&&scheduledHabits.length>0?'#34A853':'#FF5C00', habitsDone===scheduledHabits.length&&scheduledHabits.length>0?'#E6F4EA':'#FFF0E8', habitsDone===scheduledHabits.length&&scheduledHabits.length>0?'#137333':'#5C1B00', 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
+            ['Focus Time',  todayFocusMins > 0 ? fmtMins(todayFocusMins) : '—', '#1A73E8', '#E8F0FE', '#174EA6', 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z'],
+            ['Tasks',  todayTasks.length > 0 ? `${tasksDone}/${todayTasks.length}` : '—', tasksDone===todayTasks.length&&todayTasks.length>0?'#34A853':'#FF5C00', tasksDone===todayTasks.length&&todayTasks.length>0?'#E6F4EA':'#FFF0E8', tasksDone===todayTasks.length&&todayTasks.length>0?'#137333':'#5C1B00', 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4'],
+            ['Wk Goals', wgoalItems.length > 0 ? `${wgoalsDone}/${wgoalItems.length}` : '—', wgoalsDone===wgoalItems.length&&wgoalItems.length>0?'#34A853':'#9334E6', wgoalsDone===wgoalItems.length&&wgoalItems.length>0?'#E6F4EA':'#F3E8FD', wgoalsDone===wgoalItems.length&&wgoalItems.length>0?'#137333':'#6B21A8', 'M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172'],
+          ] as const).map(([l,v,accent,bg,textColor,iconPath]) => (
+            <div key={l} style={{ background: '#FFFFFF', borderRadius: 12, border: '1px solid #E8EAED', padding: '16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d={iconPath} />
+                  </svg>
+                </div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: accent, fontFamily: 'Google Sans, Roboto, sans-serif' }}>{v}</div>
+              </div>
+              <div style={{ fontSize: 12, color: '#5F6368', fontFamily: 'Roboto, sans-serif' }}>{l}</div>
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+
           {/* Habits quick-log */}
-          <div className="bg-white border border-[#efefef] rounded-xl overflow-hidden">
-            <div className="px-4 py-2.5 bg-[#0A0A0A] flex items-center justify-between">
-              <span className="text-[11px] font-bold text-white uppercase tracking-[.08em]">Today's Habits</span>
-              <span className="text-[10px] text-[#555] font-mono">{habitsLogged}/{scheduledHabits.length} logged</span>
+          <div style={mdCard}>
+            <div style={mdCardHeader}>
+              <span style={mdCardTitle}>Today's Habits</span>
+              <span style={{ fontSize: 12, color: '#5F6368', fontFamily: 'Roboto, sans-serif' }}>{habitsLogged}/{scheduledHabits.length} logged</span>
             </div>
-            <div className="divide-y divide-[#f7f7f7]">
+            <div>
               {scheduledHabits.length === 0 && (
-                <div className="px-4 py-6 text-center">
-                  <div className="text-[12px] text-[#bcbcbc] mb-2">No habits set up yet</div>
-                  <a href="/setup" className="text-[10px] font-bold text-[#FF5C00] hover:underline">→ Add habits in Setup</a>
+                <div style={{ padding: '24px 16px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 13, color: '#80868B', marginBottom: 8, fontFamily: 'Roboto, sans-serif' }}>No habits set up yet</div>
+                  <a href="/setup" style={{ fontSize: 12, color: '#FF5C00', textDecoration: 'none', fontWeight: 500 }}>Set up habits →</a>
                 </div>
               )}
-              {scheduledHabits.map(h => {
+              {scheduledHabits.map((h, idx) => {
                 const s = getStatus(h.id)
                 return (
-                  <div key={h.id} className="flex items-center gap-2 px-3 py-2">
-                    <span className="text-[12px] font-medium flex-1 truncate">{h.name}</span>
-                    <div className="flex gap-1">
+                  <div key={h.id} style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '10px 16px',
+                    borderBottom: idx < scheduledHabits.length - 1 ? '1px solid #F1F3F4' : 'none',
+                  }}>
+                    <span style={{ fontSize: 13, fontFamily: 'Roboto, sans-serif', flex: 1, color: '#202124', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{h.name}</span>
+                    <div style={{ display: 'flex', gap: 4 }}>
                       {(['done','missed','na'] as const).map(status => {
                         const active = s === status
                         const cfg = {
-                          done:   { label:'✓', on:'bg-[#22c55e] text-white', off:'bg-[#f0f0f0] text-[#aaa] hover:text-[#22c55e]' },
-                          missed: { label:'✗', on:'bg-[#ef4444] text-white', off:'bg-[#f0f0f0] text-[#aaa] hover:text-[#ef4444]' },
-                          na:     { label:'—', on:'bg-[#888] text-white',    off:'bg-[#f0f0f0] text-[#aaa] hover:text-[#555]' },
+                          done:   { label:'✓', bg: active ? '#34A853' : '#F1F3F4', color: active ? 'white' : '#80868B' },
+                          missed: { label:'✗', bg: active ? '#EA4335' : '#F1F3F4', color: active ? 'white' : '#80868B' },
+                          na:     { label:'—', bg: active ? '#5F6368' : '#F1F3F4', color: active ? 'white' : '#80868B' },
                         }[status]
                         return (
-                          <button key={status} onClick={() => toggleHabit(h.id, status)}
-                            className={`w-7 h-7 rounded-md text-[11px] font-bold transition-all ${active ? cfg.on : cfg.off}`}>
+                          <button key={status} onClick={() => toggleHabit(h.id, status)} style={{
+                            width: 28, height: 28, borderRadius: 8,
+                            background: cfg.bg, color: cfg.color,
+                            border: 'none', cursor: 'pointer',
+                            fontSize: 12, fontWeight: 600,
+                            transition: 'background 0.12s',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          }}>
                             {cfg.label}
                           </button>
                         )
@@ -195,44 +244,51 @@ export default function DashboardPage() {
                 )
               })}
               {habits.filter(h => h.name && !isScheduled(h.frequency)).map(h => (
-                <div key={h.id} className="flex items-center gap-2 px-3 py-2 opacity-40">
-                  <span className="text-[12px] flex-1 truncate">{h.name}</span>
-                  <span className="text-[9px] text-[#888] uppercase tracking-[.06em]">rest day</span>
+                <div key={h.id} style={{ display: 'flex', alignItems: 'center', padding: '10px 16px', opacity: 0.4, borderTop: '1px solid #F1F3F4' }}>
+                  <span style={{ fontSize: 13, flex: 1, fontFamily: 'Roboto, sans-serif' }}>{h.name}</span>
+                  <span style={{ fontSize: 11, color: '#80868B', background: '#F1F3F4', padding: '2px 8px', borderRadius: 12 }}>Rest day</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Tasks + weekly goals */}
-          <div className="bg-white border border-[#efefef] rounded-xl overflow-hidden">
-            <div className="px-4 py-2.5 bg-[#0A0A0A] flex items-center justify-between">
-              <span className="text-[11px] font-bold text-white uppercase tracking-[.08em]">Tasks & Goals</span>
-              <a href="/weekly" className="text-[9px] text-[#555] hover:text-[#FF5C00] transition-colors uppercase tracking-[.08em]">→ Weekly</a>
+          <div style={mdCard}>
+            <div style={mdCardHeader}>
+              <span style={mdCardTitle}>Tasks & Weekly Goals</span>
+              <a href="/weekly" style={{ fontSize: 12, color: '#1A73E8', textDecoration: 'none', fontWeight: 500, fontFamily: 'Roboto, sans-serif' }}>Open Weekly →</a>
             </div>
-            <div className="divide-y divide-[#f7f7f7] max-h-[260px] overflow-y-auto">
+            <div style={{ maxHeight: 280, overflowY: 'auto' }}>
               {todayTasks.length === 0 && wgoalItems.length === 0 && (
-                <div className="px-4 py-6 text-center">
-                  <div className="text-[12px] text-[#bcbcbc] mb-2">No tasks for today</div>
-                  <a href="/weekly" className="text-[10px] font-bold text-[#FF5C00] hover:underline">→ Add tasks in Weekly</a>
+                <div style={{ padding: '24px 16px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 13, color: '#80868B', marginBottom: 8, fontFamily: 'Roboto, sans-serif' }}>No tasks for today</div>
+                  <a href="/weekly" style={{ fontSize: 12, color: '#FF5C00', textDecoration: 'none', fontWeight: 500 }}>Add tasks →</a>
                 </div>
               )}
-              {todayTasks.map(t => (
-                <div key={t.id} className="flex items-center gap-2.5 px-4 py-2">
+              {todayTasks.map((t, idx) => (
+                <div key={t.id} style={{
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '10px 16px',
+                  borderBottom: '1px solid #F1F3F4',
+                }}>
                   <input type="checkbox" checked={t.done} onChange={e=>toggleTask(t.id,e.target.checked)}
-                    className="w-[13px] h-[13px] accent-[#FF5C00] cursor-pointer flex-shrink-0" />
-                  <span className={`text-[12px] flex-1 ${t.done?'line-through text-[#bcbcbc]':''}`}>{t.text}</span>
+                    style={{ width: 16, height: 16, accentColor: '#FF5C00', cursor: 'pointer', flexShrink: 0 }} />
+                  <span style={{ fontSize: 13, flex: 1, fontFamily: 'Roboto, sans-serif', color: t.done ? '#80868B' : '#202124', textDecoration: t.done ? 'line-through' : 'none' }}>{t.text}</span>
                 </div>
               ))}
               {wgoalItems.length > 0 && (
                 <>
-                  <div className="px-4 py-1.5 bg-[#f9f9f9]">
-                    <span className="text-[9px] font-bold text-[#bcbcbc] uppercase tracking-[.1em]">Weekly Goals</span>
+                  <div style={{ padding: '8px 16px', background: '#F8F9FA', borderTop: '1px solid #F1F3F4', borderBottom: '1px solid #F1F3F4' }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: '#5F6368', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'Roboto, sans-serif' }}>Weekly Goals</span>
                   </div>
                   {wgoalItems.map(g => (
-                    <div key={g.id} className="flex items-center gap-2.5 px-4 py-2">
+                    <div key={g.id} style={{
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      padding: '10px 16px', borderBottom: '1px solid #F1F3F4',
+                    }}>
                       <input type="checkbox" checked={g.done} onChange={e=>toggleWGoal(g.id,e.target.checked)}
-                        className="w-[13px] h-[13px] accent-[#FF5C00] cursor-pointer flex-shrink-0" />
-                      <span className={`text-[12px] flex-1 ${g.done?'line-through text-[#bcbcbc]':''}`}>{g.text}</span>
+                        style={{ width: 16, height: 16, accentColor: '#FF5C00', cursor: 'pointer', flexShrink: 0 }} />
+                      <span style={{ fontSize: 13, flex: 1, fontFamily: 'Roboto, sans-serif', color: g.done ? '#80868B' : '#202124', textDecoration: g.done ? 'line-through' : 'none' }}>{g.text}</span>
                     </div>
                   ))}
                 </>
@@ -241,32 +297,32 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Focus + Schedule */}
-        <div className="grid grid-cols-2 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+
           {/* Focus today */}
-          <div className="bg-white border border-[#efefef] rounded-xl overflow-hidden">
-            <div className="px-4 py-2.5 bg-[#0A0A0A] flex items-center justify-between">
-              <span className="text-[11px] font-bold text-white uppercase tracking-[.08em]">Focus Today</span>
-              <span className="font-mono text-[11px] font-bold" style={{color:todayFocusMins>0?'#FF5C00':'#555'}}>{todayFocusMins>0?fmtMins(todayFocusMins):'—'}</span>
+          <div style={mdCard}>
+            <div style={mdCardHeader}>
+              <span style={mdCardTitle}>Focus Today</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: todayFocusMins>0?'#1A73E8':'#80868B', fontFamily: 'Roboto Mono, monospace' }}>{todayFocusMins>0?fmtMins(todayFocusMins):'—'}</span>
             </div>
-            <div className="p-4">
+            <div style={{ padding: 16 }}>
               {catTotals.length === 0 ? (
-                <div className="text-center py-4">
-                  <div className="text-[12px] text-[#bcbcbc] mb-2">No sessions today</div>
-                  <a href="/timer" className="text-[10px] font-bold text-[#FF5C00] hover:underline">→ Start a session</a>
+                <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                  <div style={{ fontSize: 13, color: '#80868B', marginBottom: 8, fontFamily: 'Roboto, sans-serif' }}>No sessions today</div>
+                  <a href="/timer" style={{ fontSize: 12, color: '#FF5C00', textDecoration: 'none', fontWeight: 500 }}>Start a session →</a>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                   {catTotals.map(c => {
                     const pct = todayFocusMins > 0 ? Math.round(c.mins/todayFocusMins*100) : 0
                     return (
                       <div key={c.id}>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[12px] font-medium">{c.emoji} {c.name}</span>
-                          <span className="font-mono text-[11px] text-[#888]">{fmtMins(c.mins)}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                          <span style={{ fontSize: 13, fontFamily: 'Roboto, sans-serif', color: '#202124' }}>{c.emoji} {c.name}</span>
+                          <span style={{ fontSize: 12, color: '#5F6368', fontFamily: 'Roboto Mono, monospace' }}>{fmtMins(c.mins)}</span>
                         </div>
-                        <div className="h-1.5 bg-[#efefef] rounded-full overflow-hidden">
-                          <div className="h-full rounded-full transition-all" style={{width:`${pct}%`,background:c.color}} />
+                        <div style={{ height: 6, background: '#F1F3F4', borderRadius: 3, overflow: 'hidden' }}>
+                          <div style={{ height: '100%', borderRadius: 3, background: c.color, width: `${pct}%`, transition: 'width 0.6s cubic-bezier(0.2,0,0,1)' }} />
                         </div>
                       </div>
                     )
@@ -277,29 +333,34 @@ export default function DashboardPage() {
           </div>
 
           {/* Today's schedule */}
-          <div className="bg-white border border-[#efefef] rounded-xl overflow-hidden">
-            <div className="px-4 py-2.5 bg-[#0A0A0A] flex items-center justify-between">
-              <span className="text-[11px] font-bold text-white uppercase tracking-[.08em]">Today's Schedule</span>
-              <a href="/calendar" className="text-[9px] text-[#555] hover:text-[#FF5C00] transition-colors uppercase tracking-[.08em]">→ Calendar</a>
+          <div style={mdCard}>
+            <div style={mdCardHeader}>
+              <span style={mdCardTitle}>Today's Schedule</span>
+              <a href="/calendar" style={{ fontSize: 12, color: '#1A73E8', textDecoration: 'none', fontWeight: 500, fontFamily: 'Roboto, sans-serif' }}>Open Calendar →</a>
             </div>
-            <div className="divide-y divide-[#f7f7f7] max-h-[200px] overflow-y-auto">
+            <div style={{ maxHeight: 220, overflowY: 'auto' }}>
               {blocks.length === 0 && (
-                <div className="px-4 py-6 text-center">
-                  <div className="text-[12px] text-[#bcbcbc] mb-2">No events today</div>
-                  <a href="/calendar" className="text-[10px] font-bold text-[#FF5C00] hover:underline">→ Open Calendar</a>
+                <div style={{ padding: '24px 16px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 13, color: '#80868B', marginBottom: 8, fontFamily: 'Roboto, sans-serif' }}>No events today</div>
+                  <a href="/calendar" style={{ fontSize: 12, color: '#FF5C00', textDecoration: 'none', fontWeight: 500 }}>Open Calendar →</a>
                 </div>
               )}
-              {blocks.map(b => {
+              {blocks.map((b, idx) => {
                 const isCurrent = b.start_minutes <= nowMins && b.end_minutes > nowMins
                 const isPast    = b.end_minutes <= nowMins
                 return (
-                  <div key={b.id} className={`flex items-center gap-3 px-4 py-2.5 ${isCurrent?'bg-[#FFF8F5]':''}`}>
-                    <div className="w-1 h-8 rounded-full flex-shrink-0" style={{background:b.color,opacity:isPast?0.3:1}} />
-                    <div>
-                      <div className={`text-[12px] font-medium ${isPast?'text-[#bcbcbc]':''}`}>{b.title}</div>
-                      <div className="text-[9px] text-[#aaa] font-mono mt-0.5 flex items-center gap-1.5">
+                  <div key={b.id} style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '10px 16px',
+                    borderBottom: idx < blocks.length - 1 ? '1px solid #F1F3F4' : 'none',
+                    background: isCurrent ? '#FFF8F5' : 'transparent',
+                  }}>
+                    <div style={{ width: 3, height: 36, borderRadius: 2, flexShrink: 0, background: b.color, opacity: isPast ? 0.3 : 1 }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, fontFamily: 'Roboto, sans-serif', color: isPast ? '#80868B' : '#202124' }}>{b.title}</div>
+                      <div style={{ fontSize: 11, color: '#80868B', fontFamily: 'Roboto Mono, monospace', marginTop: 2, display: 'flex', alignItems: 'center', gap: 6 }}>
                         {minsToLabel(b.start_minutes)} – {minsToLabel(b.end_minutes)}
-                        {isCurrent && <span className="text-[#FF5C00] font-bold">NOW</span>}
+                        {isCurrent && <span style={{ color: '#FF5C00', fontWeight: 700, fontSize: 10, background: '#FFF0E8', padding: '1px 6px', borderRadius: 8 }}>NOW</span>}
                       </div>
                     </div>
                   </div>
@@ -311,27 +372,33 @@ export default function DashboardPage() {
 
         {/* Active 6M Goals */}
         {goals.filter(g=>!g.archived).length > 0 && (
-          <div className="bg-white border border-[#efefef] rounded-xl overflow-hidden">
-            <div className="px-4 py-2.5 bg-[#0A0A0A] flex items-center justify-between">
-              <span className="text-[11px] font-bold text-white uppercase tracking-[.08em]">Active Goals</span>
-              <a href="/goals" className="text-[9px] text-[#555] hover:text-[#FF5C00] transition-colors uppercase tracking-[.08em]">→ Goals</a>
+          <div style={mdCard}>
+            <div style={mdCardHeader}>
+              <span style={mdCardTitle}>Active Goals</span>
+              <a href="/goals" style={{ fontSize: 12, color: '#1A73E8', textDecoration: 'none', fontWeight: 500, fontFamily: 'Roboto, sans-serif' }}>View all →</a>
             </div>
-            <div className="p-4 grid gap-3" style={{gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))'}}>
+            <div style={{ padding: 16, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 }}>
               {goals.filter(g=>!g.archived).map(g => {
                 const ms   = g.milestones ?? []
                 const pct  = ms.length > 0 ? Math.round(ms.filter(m=>m.done).length/ms.length*100) : 0
                 const color= CAT_COLORS[g.category] ?? '#888'
                 return (
-                  <div key={g.id} className="border border-[#efefef] rounded-lg p-3 hover:border-[#dedede] transition-colors">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-2 h-2 rounded-full flex-shrink-0" style={{background:color}} />
-                      <span className="text-[12px] font-bold flex-1 truncate">{g.title}</span>
-                      <span className="font-mono text-[12px] font-bold text-[#FF5C00]">{pct}%</span>
+                  <div key={g.id} style={{
+                    border: '1px solid #E8EAED', borderRadius: 10, padding: 14,
+                    transition: 'box-shadow 0.15s',
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 6px rgba(60,64,67,0.15)' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'none' }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                      <div style={{ width: 10, height: 10, borderRadius: '50%', background: color, flexShrink: 0 }} />
+                      <span style={{ fontSize: 13, fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'Roboto, sans-serif', color: '#202124' }}>{g.title}</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color, fontFamily: 'Roboto Mono, monospace' }}>{pct}%</span>
                     </div>
-                    <div className="h-1.5 bg-[#efefef] rounded-full overflow-hidden">
-                      <div className="h-full bg-[#FF5C00] rounded-full" style={{width:`${pct}%`}} />
+                    <div style={{ height: 4, background: '#F1F3F4', borderRadius: 2, overflow: 'hidden' }}>
+                      <div style={{ height: '100%', background: color, borderRadius: 2, width: `${pct}%` }} />
                     </div>
-                    <div className="text-[9px] text-[#bcbcbc] mt-1.5">{ms.filter(m=>m.done).length}/{ms.length} milestones</div>
+                    <div style={{ fontSize: 11, color: '#80868B', marginTop: 6, fontFamily: 'Roboto, sans-serif' }}>{ms.filter(m=>m.done).length}/{ms.length} milestones</div>
                   </div>
                 )
               })}

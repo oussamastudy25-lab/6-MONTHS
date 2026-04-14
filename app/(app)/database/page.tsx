@@ -78,9 +78,9 @@ export default function DatabasePage() {
 
   return (
     <>
-      <div className="bg-white px-6 py-3 border-b-2 border-[#0A0A0A] flex-shrink-0">
-        <div className="text-[19px] font-bold tracking-[.04em]">Database</div>
-        <div className="text-[10px] text-[#888] tracking-[.12em] uppercase mt-0.5">Export · Reset · Stack info</div>
+      <div className="bg-white px-6 py-3 border-b border-[#E8EAED] flex-shrink-0">
+        <div className="text-[22px] font-normal text-[#202124]">Database</div>
+        <div className="text-[12px] text-[#5F6368] mt-1">Export · Reset · Stack info</div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6">
@@ -88,9 +88,9 @@ export default function DatabasePage() {
 
           {/* Stats */}
           <div>
-            <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">Your Data</div>
+            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">Your Data</div>
             {loading ? (
-              <div className="text-[13px] text-[#888]">Loading…</div>
+              <div className="text-[13px] text-[#5F6368]">Loading…</div>
             ) : (
               <div className="grid gap-2" style={{gridTemplateColumns:'repeat(auto-fill,minmax(130px,1fr))'}}>
                 {stats && ([
@@ -105,8 +105,8 @@ export default function DatabasePage() {
                   ['Letters',     stats.letters],
                   ['Months Tracked', stats.months],
                 ] as [string, number][]).map(([l, v]) => (
-                  <div key={l} className="bg-white border border-[#efefef] rounded-lg p-3">
-                    <div className="text-[8.5px] text-[#888] uppercase tracking-[.1em] mb-1">{l}</div>
+                  <div key={l} className="bg-white border border-[#E8EAED] rounded-lg p-3">
+                    <div className="text-[8.5px] text-[#5F6368] uppercase tracking-[.1em] mb-1">{l}</div>
                     <div className="font-mono text-[18px] font-semibold text-[#0A0A0A]">{v}</div>
                   </div>
                 ))}
@@ -116,11 +116,11 @@ export default function DatabasePage() {
 
           {/* Stack info */}
           <div>
-            <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">Stack</div>
-            <div className="bg-[#f7f7f7] border border-[#efefef] rounded-lg overflow-hidden">
+            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">Stack</div>
+            <div className="bg-[#f7f7f7] border border-[#E8EAED] rounded-lg overflow-hidden">
               {INFO.map(({ label, value }, i) => (
-                <div key={label} className={`flex items-center justify-between px-4 py-3 ${i < INFO.length-1 ? 'border-b border-[#efefef]' : ''}`}>
-                  <span className="text-[11px] text-[#888] uppercase tracking-[.08em]">{label}</span>
+                <div key={label} className={`flex items-center justify-between px-4 py-3 ${i < INFO.length-1 ? 'border-b border-[#E8EAED]' : ''}`}>
+                  <span className="text-[11px] text-[#5F6368] uppercase tracking-[.08em]">{label}</span>
                   <span className="font-mono text-[12px] font-semibold text-[#0A0A0A]">{value}</span>
                 </div>
               ))}
@@ -129,18 +129,18 @@ export default function DatabasePage() {
 
           {/* Actions */}
           <div>
-            <div className="text-[9px] font-bold text-[#bcbcbc] tracking-[.16em] uppercase mb-3">Actions</div>
+            <div className="text-[9px] font-bold text-[#80868B] tracking-[.16em] uppercase mb-3">Actions</div>
             <div className="flex gap-2 flex-wrap">
               <button onClick={exportData} disabled={exporting}
-                className="bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] px-4 py-2 rounded-md hover:bg-[#FF7A2E] transition-colors disabled:opacity-50">
+                className="bg-[#FF5C00] text-white text-[10px] font-bold uppercase tracking-[.1em] px-4 py-2 rounded-lg hover:bg-[#FF7A2E] transition-colors disabled:opacity-50">
                 {exporting ? 'Exporting…' : 'Export JSON'}
               </button>
               <button onClick={() => { setShowResetModal(true); setResetInput('') }}
-                className="border border-[#e0b0b0] text-[#8B0000] bg-[#FBE9E7] text-[10px] font-bold uppercase tracking-[.1em] px-4 py-2 rounded-md hover:bg-[#fdd] transition-colors">
+                className="border border-[#e0b0b0] text-[#8B0000] bg-[#FBE9E7] text-[10px] font-bold uppercase tracking-[.1em] px-4 py-2 rounded-lg hover:bg-[#fdd] transition-colors">
                 Reset All Data
               </button>
             </div>
-            <p className="text-[10px] text-[#bcbcbc] mt-2">Export creates a full JSON backup of all your data across all tables.</p>
+            <p className="text-[10px] text-[#80868B] mt-2">Export creates a full JSON backup of all your data across all tables.</p>
           </div>
 
         </div>
@@ -154,9 +154,9 @@ export default function DatabasePage() {
               This will permanently delete <strong>all</strong> your habits, logs, tasks, goals, letters, and reviews. This cannot be undone.
             </div>
             <div className="mb-4">
-              <div className="text-[11px] font-bold text-[#888] uppercase tracking-[.1em] mb-1.5">Type <span className="text-[#8B0000] font-mono">RESET</span> to confirm</div>
+              <div className="text-[11px] font-bold text-[#5F6368] uppercase tracking-[.1em] mb-1.5">Type <span className="text-[#8B0000] font-mono">RESET</span> to confirm</div>
               <input autoFocus
-                className="w-full border-2 border-[#dedede] rounded-lg px-3 py-2.5 text-[14px] font-mono outline-none focus:border-[#8B0000] transition-colors"
+                className="w-full border-2 border-[#DADCE0] rounded-lg px-3 py-2.5 text-[14px] font-mono outline-none focus:border-[#8B0000] transition-colors"
                 placeholder="RESET"
                 value={resetInput}
                 onChange={e => setResetInput(e.target.value)}
@@ -169,7 +169,7 @@ export default function DatabasePage() {
                 {resetting ? 'Deleting…' : 'Delete Everything'}
               </button>
               <button onClick={() => { setShowResetModal(false); setResetInput('') }}
-                className="px-4 border border-[#dedede] text-[11px] font-bold uppercase tracking-[.1em] rounded-lg hover:border-[#0A0A0A] transition-colors">
+                className="px-4 border border-[#DADCE0] text-[11px] font-bold uppercase tracking-[.1em] rounded-lg hover:border-[#0A0A0A] transition-colors">
                 Cancel
               </button>
             </div>
