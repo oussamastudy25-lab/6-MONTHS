@@ -119,7 +119,7 @@ export default function GoalsPage() {
   return (
     <>
       {/* Header */}
-      <div className="bg-white px-6 py-3 border-b border-[#E8EAED] flex items-center flex-shrink-0">
+      <div className="bg-white px-7 py-5 border-b border-[#E8EAED] flex items-center flex-shrink-0">
         <div>
           <div className="text-[22px] font-normal text-[#202124]">Goals</div>
           <div className="text-[12px] text-[#5F6368] mt-1">
@@ -142,8 +142,8 @@ export default function GoalsPage() {
 
       {/* Form */}
       {showForm && (
-        <div className="px-6 py-4 border-b border-[#E8EAED] bg-[#F8F9FA] flex-shrink-0">
-          <div className="max-w-2xl grid grid-cols-2 gap-3">
+        <div className="px-7 py-5 border-b border-[#E8EAED] bg-[#F8F9FA] flex-shrink-0">
+          <div className="max-w-2xl grid grid-cols-2 gap-5">
             <input className="col-span-2 bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
               placeholder="Goal title *" value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))} />
             <input className="col-span-2 bg-white border border-[#DADCE0] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
@@ -186,7 +186,7 @@ export default function GoalsPage() {
             <div className="text-[13px] text-[#5F6368]">Click + New Goal to start. Set your own dates — 1 month, 6 months, 1 year, whatever you need.</div>
           </div>
         )}
-        <div className="space-y-3 max-w-4xl">
+        <div className="space-y-4 max-w-4xl">
           {(showArchived ? [...active,...archived] : active).map(g => {
             const p = pct(g)
             const ms = g.milestones??[]
@@ -200,8 +200,8 @@ export default function GoalsPage() {
             return (
               <div key={g.id} className={`bg-white border rounded-lg overflow-hidden transition-all ${g.archived?'border-[#f0f0f0] opacity-70':'border-[#E8EAED] hover:border-[#DADCE0]'}`}>
                 {/* Goal header */}
-                <div className="p-4">
-                  <div className="flex items-start gap-3">
+                <div className="p-5">
+                  <div className="flex items-start gap-5">
                     <div className="w-3 h-3 rounded-full flex-shrink-0 mt-1.5" style={{background:color}} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -222,13 +222,13 @@ export default function GoalsPage() {
                             <div className="h-full rounded-full transition-all" style={{width:`${p}%`,background:color}} />
                           </div>
                           <span className="font-mono text-[11px] font-medium" style={{color}}>{p}%</span>
-                          <span className="text-[9px] text-[#5F6368]">{doneMilestones}/{ms.length} done</span>
+                          <span className="text-[11px] text-[#5F6368]">{doneMilestones}/{ms.length} done</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <div className="flex-1 h-1 bg-[#efefef] rounded-full overflow-hidden">
                             <div className="h-full rounded-full" style={{width:`${timePct}%`,background:'#dedede'}} />
                           </div>
-                          <span className="text-[9px] text-[#5F6368] font-mono">{timePct}% time</span>
+                          <span className="text-[11px] text-[#5F6368] font-mono">{timePct}% time</span>
                         </div>
                       </div>
                     </div>
@@ -250,7 +250,7 @@ export default function GoalsPage() {
                           title="Archive (mark as accomplished)">✓</button>
                       ) : (
                         <button onClick={() => archiveGoal(g.id, false)}
-                          className="w-7 h-7 border border-[#DADCE0] rounded flex items-center justify-center text-[9px] text-[#5F6368] hover:border-[#1A73E8] hover:text-[#1A73E8] transition-colors"
+                          className="w-7 h-7 border border-[#DADCE0] rounded flex items-center justify-center text-[11px] text-[#5F6368] hover:border-[#1A73E8] hover:text-[#1A73E8] transition-colors"
                           title="Unarchive">↩</button>
                       )}
                       <button onClick={() => deleteGoal(g.id)}
@@ -267,7 +267,7 @@ export default function GoalsPage() {
                         <div key={m.id} className="flex items-center gap-2 bg-white border border-[#E8EAED] rounded-lg px-2 mb-1 h-9 focus-within:border-[#1A73E8] transition-colors group">
                           <input type="checkbox" checked={m.done} onChange={e => toggleMilestone(g.id,m.id,e.target.checked)}
                             className="w-[13px] h-[13px] cursor-pointer flex-shrink-0" style={{accentColor:color}} />
-                          <span className="font-mono text-[9px] text-[#80868B] min-w-[14px]">{i+1}</span>
+                          <span className="font-mono text-[11px] text-[#80868B] min-w-[14px]">{i+1}</span>
                           <input className={`flex-1 bg-transparent border-none outline-none text-[12px] ${m.done?'line-through text-[#80868B]':''}`}
                             placeholder="Milestone…" value={m.text}
                             onChange={e => updateMilestone(g.id,m.id,e.target.value)} />

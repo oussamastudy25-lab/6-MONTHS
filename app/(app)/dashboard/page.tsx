@@ -30,10 +30,15 @@ function minsToLabel(m: number) {
 }
 function isScheduled(frequency: string, d = new Date()) {
   const dow = d.getDay()
+  if (frequency === 'daily') return true
   if (frequency === 'weekdays') return dow >= 1 && dow <= 5
   if (frequency === 'weekends') return dow === 0 || dow === 6
   if (frequency === '3x') return [1, 3, 5].includes(dow)
-  return true // daily
+  if (frequency.startsWith('custom:')) {
+    const days = frequency.slice(7).split(',').map(Number)
+    return days.includes(dow)
+  }
+  return true
 }
 
 const CAT_COLORS: Record<string,string> = {
@@ -149,7 +154,7 @@ export default function DashboardPage() {
       {/* Google-style page header */}
       <div style={{
         background: '#FFFFFF', borderBottom: '1px solid #E8EAED',
-        padding: '16px 24px', flexShrink: 0,
+        padding: "20px 28px", flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
         <div>

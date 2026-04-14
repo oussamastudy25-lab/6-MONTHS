@@ -333,7 +333,7 @@ export default function CalendarPage() {
     <div className="flex flex-col h-full bg-white" style={{fontFamily:'Google Sans,Roboto,sans-serif'}}>
 
       {/* ── TOP BAR ── */}
-      <div className="flex items-center gap-3 px-4 py-2 border-b border-[#e0e0e0] bg-white flex-shrink-0">
+      <div className="flex items-center gap-5 px-4 py-2 border-b border-[#e0e0e0] bg-white flex-shrink-0">
         {/* Nav */}
         <button onClick={navPrev} className="w-8 h-8 rounded-full flex items-center justify-center text-[#5f6368] hover:bg-[#f1f3f4] transition-colors text-[20px] leading-none">‹</button>
         <button onClick={()=>{setWeekMon(getMonday());setDayDate(today);setMonthYear(now.getFullYear());setMonthMonth(now.getMonth())}}
@@ -417,7 +417,7 @@ export default function CalendarPage() {
                   <div className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{background:r.color}}/>
                   <div className="flex-1 min-w-0">
                     <div className="text-[11px] font-medium truncate text-[#3c4043]">{r.title}</div>
-                    <div className="text-[9px] text-[#5f6368]">{minsToLabel(r.start_minutes)} · {r.days_of_week.length===7?'daily':`${r.days_of_week.length}d/wk`}</div>
+                    <div className="text-[11px] text-[#5f6368]">{minsToLabel(r.start_minutes)} · {r.days_of_week.length===7?'daily':`${r.days_of_week.length}d/wk`}</div>
                   </div>
                 </div>
               ))}
@@ -476,7 +476,7 @@ export default function CalendarPage() {
                                 {minsToLabel(b.start_minutes)} {b.title}
                               </div>
                             ))}
-                            {more>0&&<div className="text-[9px] text-[#5f6368] px-1">{more} more</div>}
+                            {more>0&&<div className="text-[11px] text-[#5f6368] px-1">{more} more</div>}
                           </div>
                         )
                       })}
@@ -514,7 +514,7 @@ export default function CalendarPage() {
                           <div className="w-10 h-1 bg-[#e8eaed] rounded-full overflow-hidden">
                             <div className="h-full rounded-full" style={{width:`${pct}%`,background:pct>=80?'#0f9d58':pct>=50?'#f4b400':'#db4437'}}/>
                           </div>
-                          <span className={`text-[9px] font-medium ${pct>=80?'text-[#0f9d58]':pct>=50?'text-[#f4b400]':'text-[#db4437]'}`}>{pct}%</span>
+                          <span className={`text-[11px] font-medium ${pct>=80?'text-[#0f9d58]':pct>=50?'text-[#f4b400]':'text-[#db4437]'}`}>{pct}%</span>
                         </div>
                       )}
                     </div>
@@ -686,7 +686,7 @@ export default function CalendarPage() {
               </div>
 
               {/* Note */}
-              <div className="flex items-center gap-2 mb-5">
+              <div className="flex items-center gap-2 mb-6">
                 <span className="text-[#5f6368] text-[15px]">📝</span>
                 <input className="flex-1 bg-[#f1f3f4] rounded-lg px-3 py-2 text-[13px] text-[#3c4043] outline-none placeholder:text-[#bdc1c6]"
                   placeholder="Add note"

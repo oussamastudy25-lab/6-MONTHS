@@ -127,7 +127,7 @@ export default function WeeklyPage() {
   return (
     <>
       {/* Header */}
-      <div className="bg-white px-6 py-3 border-b border-[#E8EAED] flex-shrink-0">
+      <div className="bg-white px-7 py-5 border-b border-[#E8EAED] flex-shrink-0">
         <div className="text-[22px] font-normal text-[#202124]">Weekly</div>
         <div className="text-[12px] text-[#5F6368] mt-1">Goals + daily tasks</div>
       </div>
@@ -157,11 +157,11 @@ export default function WeeklyPage() {
         })}
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6 py-4">
+      <div className="flex-1 overflow-y-auto px-7 py-5">
         {/* Weekly goals */}
-        <div className="border border-[#E8EAED] rounded-lg overflow-hidden mb-5">
+        <div className="border border-[#E8EAED] rounded-lg overflow-hidden mb-6">
           <div className="bg-[#FAFAFA] border-b border-[#E8EAED] px-4 py-2.5 flex items-center justify-between">
-            <span className="text-[13px] font-medium text-white">Weekly Goals</span>
+            <span className="text-[13px] font-medium text-[#202124]">Weekly Goals</span>
             <span className="text-[10px] text-[#555] font-mono">{weekLabel(new Date(weekMon))}</span>
           </div>
           <div className="bg-white">
@@ -170,7 +170,7 @@ export default function WeeklyPage() {
                 <div className="flex items-center gap-1.5 px-3 h-10 focus-within:bg-[#F8F9FA] transition-colors">
                 <input type="checkbox" checked={g.done} onChange={e => toggleWGoal(g.id, e.target.checked)}
                   className="w-[13px] h-[13px] accent-[#1A73E8] cursor-pointer flex-shrink-0" />
-                <span className="font-mono text-[9.5px] text-[#80868B] min-w-[13px]">{i+1}</span>
+                <span className="font-mono text-[12px] text-[#80868B] min-w-[13px]">{i+1}</span>
                 <div className="w-px h-[16px] bg-[#efefef] flex-shrink-0" />
                 <TextInput
                   key={g.id}
@@ -183,7 +183,7 @@ export default function WeeklyPage() {
                 <button
                   onClick={() => setLinkingId(linkingId === g.id ? null : g.id)}
                   title="Link to a 6M goal"
-                  className={`w-5 h-5 flex items-center justify-center text-[11px] rounded transition-colors flex-shrink-0 ${g.goal_id ? 'text-[#1A73E8]' : 'text-[#dedede] hover:text-[#aaa]'}`}>
+                  className={`w-5 h-5 flex items-center justify-center text-[11px] rounded transition-colors flex-shrink-0 ${g.goal_id ? 'text-[#1A73E8]' : 'text-[#dedede] hover:text-[#80868B]'}`}>
                   ◎
                 </button>
                 </div>
@@ -200,7 +200,7 @@ export default function WeeklyPage() {
                       ))}
                     </select>
                     {g.goal_id && (
-                      <div className="text-[9px] text-[#1A73E8] mt-1 font-medium">
+                      <div className="text-[11px] text-[#1A73E8] mt-1 font-medium">
                         ◎ {sixGoals.find(sg => sg.id === g.goal_id)?.title ?? 'Linked goal'}
                       </div>
                     )}
@@ -242,8 +242,8 @@ export default function WeeklyPage() {
                     {isToday && <span className="text-[10px] bg-[#1A73E8] text-white px-2 py-0.5 rounded-full font-medium">Today</span>}
                   </div>
                   <div className="flex items-center gap-2">
-                    {total > 0 && <span className="font-mono text-[9px] text-[#555]">{done}/{total}</span>}
-                    <span className="text-[9.5px] text-[#555] font-mono">{d.getDate()} {MONTHS[d.getMonth()].slice(0,3)}</span>
+                    {total > 0 && <span className="font-mono text-[11px] text-[#555]">{done}/{total}</span>}
+                    <span className="text-[12px] text-[#555] font-mono">{d.getDate()} {MONTHS[d.getMonth()].slice(0,3)}</span>
                   </div>
                 </div>
                 <div className="bg-white">
@@ -251,7 +251,7 @@ export default function WeeklyPage() {
                     <div key={t.id} className="flex items-center gap-1.5 bg-white border-b border-[#f7f7f7] last:border-0 px-3 h-9 focus-within:bg-[#F8F9FA] transition-colors">
                       <input type="checkbox" checked={t.done} onChange={e => toggleTask(ds, t.id, e.target.checked)}
                         className="w-[13px] h-[13px] accent-[#1A73E8] cursor-pointer flex-shrink-0" />
-                      <span className="font-mono text-[9.5px] text-[#80868B] min-w-[11px]">{i+1}</span>
+                      <span className="font-mono text-[12px] text-[#80868B] min-w-[11px]">{i+1}</span>
                       <div className="w-px h-[14px] bg-[#efefef] flex-shrink-0" />
                       <TextInput
                         key={t.id}

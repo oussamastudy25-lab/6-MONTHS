@@ -67,11 +67,11 @@ function FriendCard({ followed, onRemove }: { followed: Followed; onRemove: (id:
   return (
     <div className="bg-white border border-[#E8EAED] rounded-xl overflow-hidden">
       {/* Header row */}
-      <div className="flex items-center gap-3 px-4 py-3">
+      <div className="flex items-center gap-5 px-4 py-3">
         {error ? (
           <div className="text-[12px] text-[#ef4444] flex-1">Invalid code — profile not found</div>
         ) : !data ? (
-          <div className="text-[12px] text-[#aaa] flex-1">Loading…</div>
+          <div className="text-[12px] text-[#80868B] flex-1">Loading…</div>
         ) : (
           <>
             <div className="text-[18px] leading-none">{statusCfg.dot}</div>
@@ -85,7 +85,7 @@ function FriendCard({ followed, onRemove }: { followed: Followed; onRemove: (id:
               </div>
             </div>
             {/* Quick stats */}
-            <div className="flex items-center gap-3 text-right flex-shrink-0">
+            <div className="flex items-center gap-5 text-right flex-shrink-0">
               <div>
                 <div className="font-mono text-[13px] font-medium text-[#1A73E8]">{data.habits_done}/{data.habits_total}</div>
                 <div className="text-[8px] text-[#80868B] uppercase tracking-[.08em]">habits</div>
@@ -107,7 +107,7 @@ function FriendCard({ followed, onRemove }: { followed: Followed; onRemove: (id:
 
       {/* Expanded detail */}
       {expanded && data && (
-        <div className="border-t border-[#f5f5f5] px-4 py-3 space-y-3">
+        <div className="border-t border-[#f5f5f5] px-4 py-3 space-y-4">
           {/* Status card */}
           {inWindow && (
             <div className="rounded-lg px-3 py-2.5" style={{background: statusCfg.bg, border: `1px solid ${statusCfg.border}`}}>
@@ -125,21 +125,21 @@ function FriendCard({ followed, onRemove }: { followed: Followed; onRemove: (id:
               <div className="h-1 bg-[#efefef] rounded-full mt-1.5 mb-0.5 overflow-hidden">
                 <div className="h-full bg-[#1A73E8] rounded-full" style={{width:`${habitPct}%`}}/>
               </div>
-              <div className="text-[8.5px] text-[#aaa] uppercase tracking-[.08em]">Habits</div>
+              <div className="text-[8.5px] text-[#80868B] uppercase tracking-[.08em]">Habits</div>
             </div>
             <div className="bg-[#f9f9f9] rounded-lg p-2.5 text-center">
               <div className="font-mono text-[15px] font-medium text-[#0A0A0A]">{fmtMins(data.focus_today_mins)}</div>
-              <div className="text-[8.5px] text-[#aaa] uppercase tracking-[.08em] mt-1">Focus today</div>
+              <div className="text-[8.5px] text-[#80868B] uppercase tracking-[.08em] mt-1">Focus today</div>
             </div>
             <div className="bg-[#f9f9f9] rounded-lg p-2.5 text-center">
               <div className="font-mono text-[15px] font-medium text-[#0A0A0A]">{data.weekly_goals_done}/{data.weekly_goals_total}</div>
-              <div className="text-[8.5px] text-[#aaa] uppercase tracking-[.08em] mt-1">Wk Goals</div>
+              <div className="text-[8.5px] text-[#80868B] uppercase tracking-[.08em] mt-1">Wk Goals</div>
             </div>
           </div>
 
           {/* Goals */}
           {data.goals && data.goals.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {data.goals.map((g, i) => (
                 <div key={i}>
                   <div className="flex items-center justify-between mb-1">
@@ -154,7 +154,7 @@ function FriendCard({ followed, onRemove }: { followed: Followed; onRemove: (id:
             </div>
           )}
 
-          <div className="text-[9px] text-[#ddd] text-center">Refreshes every 30s</div>
+          <div className="text-[11px] text-[#ddd] text-center">Refreshes every 30s</div>
         </div>
       )}
     </div>
@@ -254,12 +254,12 @@ export default function AccountabilityPage() {
 
   return (
     <>
-      <div className="bg-white px-6 py-3 border-b border-[#E8EAED] flex-shrink-0">
+      <div className="bg-white px-7 py-5 border-b border-[#E8EAED] flex-shrink-0">
         <div className="text-[22px] font-normal text-[#202124]">Accountability</div>
         <div className="text-[12px] text-[#5F6368] mt-1">Your page · follow friends</div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-7">
         <div className="max-w-lg space-y-7">
 
           {/* ── YOUR CODE ── */}
@@ -267,7 +267,7 @@ export default function AccountabilityPage() {
             <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">Your Code</div>
             <div className="bg-[#0A0A0A] rounded-xl p-5 flex items-center gap-5">
               <div>
-                <div className="text-[9px] text-[#444] uppercase tracking-[.12em] mb-1.5">Share this with friends</div>
+                <div className="text-[11px] text-[#444] uppercase tracking-[.12em] mb-1.5">Share this with friends</div>
                 <div className="font-mono text-[28px] font-medium text-[#1A73E8] tracking-[.18em]">{profile?.slug}</div>
               </div>
               <div className="flex-1 text-[11px] text-[#444] leading-relaxed">
@@ -280,7 +280,7 @@ export default function AccountabilityPage() {
           <div>
             <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">Follow a Friend</div>
             {addStep === 'input' ? (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex gap-2">
                   <input
                     className="flex-1 border border-[#E8EAED] rounded-lg px-3 py-2.5 text-[13px] font-mono outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)] transition-colors"
@@ -297,12 +297,12 @@ export default function AccountabilityPage() {
                 {addError && <div className="text-[11px] text-[#ef4444]">{addError}</div>}
               </div>
             ) : (
-              <div className="bg-[#f7f7f7] border border-[#E8EAED] rounded-xl p-4 space-y-3">
-                <div className="flex items-center gap-3">
+              <div className="bg-[#f7f7f7] border border-[#E8EAED] rounded-xl p-5 space-y-4">
+                <div className="flex items-center gap-5">
                   <div className="text-[24px]">👤</div>
                   <div>
                     <div className="text-[14px] font-medium text-[#0A0A0A]">{preview?.name}</div>
-                    <div className="text-[10px] text-[#aaa] font-mono">{addCode}</div>
+                    <div className="text-[10px] text-[#80868B] font-mono">{addCode}</div>
                   </div>
                 </div>
                 <input
@@ -332,7 +332,7 @@ export default function AccountabilityPage() {
               <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">
                 Following · {followed.length}
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {followed.map(f => (
                   <FriendCard key={f.id} followed={f} onRemove={removeFollowed} />
                 ))}
@@ -356,7 +356,7 @@ export default function AccountabilityPage() {
           {/* ── VISIBILITY ── */}
           <div>
             <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">Show on Public Page</div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {([
                 ['show_habits', '▦  Habits'],
                 ['show_focus',  '⏱  Focus time'],
@@ -376,19 +376,15 @@ export default function AccountabilityPage() {
 
           {/* ── WINDOWS ── */}
           <div>
-            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-1">Accountability Windows</div>
-            <div className="text-[10px] text-[#aaa] mb-3 leading-relaxed">
-              During these hours: <span className="text-[#ef4444] font-bold">🔴 NOT WORKING</span> if timer off,
-              <span className="text-[#16a34a] font-bold"> 🟢 LIVE</span> if timer running.
-            </div>
-            <div className="space-y-2 mb-3">
+            <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">Accountability Windows</div>
+            <div className="space-y-3 mb-3">
               {windows.length === 0 && !showWinForm && (
                 <div className="text-[12px] text-[#80868B] text-center py-5 bg-[#f9f9f9] rounded-lg border border-dashed border-[#E8EAED]">
                   No windows yet
                 </div>
               )}
               {windows.map(w => (
-                <div key={w.id} className="flex items-center gap-3 bg-white border border-[#E8EAED] rounded-lg px-4 py-3">
+                <div key={w.id} className="flex items-center gap-5 bg-white border border-[#E8EAED] rounded-lg px-4 py-3">
                   <div className="flex-1 min-w-0">
                     <div className="text-[13px] font-medium">{w.label}</div>
                     <div className="text-[10px] text-[#5F6368] mt-0.5">
@@ -401,12 +397,12 @@ export default function AccountabilityPage() {
               ))}
             </div>
             {showWinForm ? (
-              <div className="bg-[#f7f7f7] border border-[#E8EAED] rounded-xl p-4 space-y-3">
+              <div className="bg-[#f7f7f7] border border-[#E8EAED] rounded-xl p-5 space-y-4">
                 <input className="w-full bg-white border border-[#E8EAED] rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)] transition-colors"
                   placeholder="Label (e.g. Deep Work)" value={newWin.label}
                   onChange={e => setNewWin(w => ({...w, label: e.target.value}))} />
                 <div>
-                  <div className="text-[9px] font-medium text-[#5F6368] uppercase tracking-[.08em] mb-1.5">Days</div>
+                  <div className="text-[11px] font-medium text-[#5F6368] uppercase tracking-[.08em] mb-1.5">Days</div>
                   <div className="flex gap-1 flex-wrap">
                     {DOW.map((d, i) => (
                       <button key={i}
@@ -419,12 +415,12 @@ export default function AccountabilityPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <div className="text-[9px] font-medium text-[#5F6368] uppercase tracking-[.08em] mb-1">Start</div>
+                    <div className="text-[11px] font-medium text-[#5F6368] uppercase tracking-[.08em] mb-1">Start</div>
                     <input type="time" className="w-full bg-white border border-[#E8EAED] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
                       value={minsToLabel(newWin.start)} onChange={e => setNewWin(w => ({...w, start: labelToMins(e.target.value)}))} />
                   </div>
                   <div>
-                    <div className="text-[9px] font-medium text-[#5F6368] uppercase tracking-[.08em] mb-1">End</div>
+                    <div className="text-[11px] font-medium text-[#5F6368] uppercase tracking-[.08em] mb-1">End</div>
                     <input type="time" className="w-full bg-white border border-[#E8EAED] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[rgba(26,115,232,0.15)]"
                       value={minsToLabel(newWin.end)} onChange={e => setNewWin(w => ({...w, end: labelToMins(e.target.value)}))} />
                   </div>

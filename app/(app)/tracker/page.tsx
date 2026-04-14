@@ -13,6 +13,7 @@ function isScheduled(frequency: string, d = new Date()) {
   if (frequency === 'weekdays') return dow >= 1 && dow <= 5
   if (frequency === 'weekends') return dow === 0 || dow === 6
   if (frequency === '3x') return [1, 3, 5].includes(dow)
+  if (frequency.startsWith('custom:')) { const days = frequency.slice(7).split(',').map(Number); return days.includes(dow) }
   return true
 }
 
@@ -112,7 +113,7 @@ export default function TrackerPage() {
 
   return (
     <>
-      <div className="bg-white px-6 py-3 border-b border-[#E8EAED] flex-shrink-0">
+      <div className="bg-white px-7 py-5 border-b border-[#E8EAED] flex-shrink-0">
         <div className="text-[22px] font-normal text-[#202124]">Tracker</div>
         <div className="text-[12px] text-[#5F6368] mt-1">Log today's habits · monthly overview</div>
       </div>
@@ -148,11 +149,11 @@ export default function TrackerPage() {
                 <div className="text-[11px] font-medium text-[#5F6368] tracking-[0.06em] uppercase mb-3">
                   Today — {now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' })}
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {scheduledToday.map(h => {
                     const s = getStatus(h.id, today)
                     return (
-                      <div key={h.id} className="flex items-center gap-3 bg-[#f7f7f7] rounded-lg px-3 py-2.5">
+                      <div key={h.id} className="flex items-center gap-5 bg-[#f7f7f7] rounded-lg px-3 py-2.5">
                         <span className="text-[13px] font-medium flex-1">{h.name}</span>
                         <div className="flex gap-1.5">
                           {(['done','missed','na'] as const).map(status => {
@@ -178,7 +179,7 @@ export default function TrackerPage() {
                 {restDayToday.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1.5 px-1">
                     {restDayToday.map(h => (
-                      <span key={h.id} className="text-[9px] text-[#80868B] bg-[#f5f5f5] px-2 py-1 rounded-lg">
+                      <span key={h.id} className="text-[11px] text-[#80868B] bg-[#f5f5f5] px-2 py-1 rounded-lg">
                         {h.name} · rest day
                       </span>
                     ))}
@@ -188,17 +189,17 @@ export default function TrackerPage() {
             )}
 
             {/* MONTHLY GRID CARDS */}
-            <div className="p-5 grid gap-3 max-w-5xl" style={{gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))'}}>
+            <div className="p-5 grid gap-5 max-w-5xl" style={{gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))'}}>
               {activeHabits.map((h, idx) => {
                 const { done, missed, streak, best, pct } = cardStats(h.id)
                 return (
-                  <div key={h.id} className="bg-white border border-[#E8EAED] rounded-lg p-4 hover:border-[#DADCE0] transition-colors">
+                  <div key={h.id} className="bg-white border border-[#E8EAED] rounded-lg p-5 hover:border-[#DADCE0] transition-colors">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="font-mono text-[10px] text-[#80868B]">#{idx+1}</span>
                       <span className="text-[13px] font-medium flex-1">{h.name}</span>
                       <div className="text-right">
                         <div className="font-mono text-[18px] font-medium text-[#1A73E8]">{pct}%</div>
-                        {streak > 0 && <div className="text-[9px] text-[#1A73E8]/70 font-medium">🔥 {streak}d</div>}
+                        {streak > 0 && <div className="text-[11px] text-[#1A73E8]/70 font-medium">🔥 {streak}d</div>}
                       </div>
                     </div>
                     <div className="h-1 bg-[#efefef] rounded-full overflow-hidden mb-3">
@@ -227,7 +228,7 @@ export default function TrackerPage() {
                         )
                       })}
                     </div>
-                    <div className="flex gap-4 pt-2 border-t border-[#f7f7f7]">
+                    <div className="flex gap-5 pt-2 border-t border-[#f7f7f7]">
                       {[['Done',done],['Missed',missed],['Streak',`${streak}d`],['Best',`${best}d`]].map(([l,v])=>(
                         <div key={l as string}>
                           <div className="font-mono text-[14px] font-medium">{v}</div>
