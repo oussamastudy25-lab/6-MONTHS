@@ -134,6 +134,12 @@ export default function DashboardPage() {
 
   if (!loaded) return <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#5F6368', fontSize: 14, fontFamily: 'Roboto, sans-serif' }}>Loading…</div>
 
+  // Overdue checks
+  const unloggedCount      = scheduledHabits.filter(h => getStatus(h.id) === '').length
+  const pendingTasksCount  = todayTasks.filter(t => !t.done).length
+  const pendingWGoalsCount = wgoalItems.filter(g => !g.done).length
+  const hasOverdue = unloggedCount > 0 || pendingTasksCount > 0 || pendingWGoalsCount > 0
+
   const mdCard: React.CSSProperties = {
     background: '#FFFFFF', borderRadius: 12, border: '1px solid #E8EAED',
     overflow: 'hidden',
@@ -174,6 +180,35 @@ export default function DashboardPage() {
           {habitsDone}/{scheduledHabits.length} habits done today
         </div>
       </div>
+
+      {/* OVERDUE BANNER */}
+      {hasOverdue && (
+        <div style={{
+          background: '#FFF8F0', borderBottom: '1px solid #FFD4B8',
+          padding: '10px 28px', display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center',
+        }}>
+          <span style={{ fontSize: 14, flexShrink: 0 }}>⚠️</span>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', flex: 1 }}>
+            {unloggedCount > 0 && (
+              <span style={{ fontSize: 12, color: '#B45309', fontWeight: 500 }}>
+                {unloggedCount} habit{unloggedCount !== 1 ? 's' : ''} not logged today
+              </span>
+            )}
+            {pendingTasksCount > 0 && (
+              <span style={{ fontSize: 12, color: '#B45309', fontWeight: 500 }}>
+                {pendingTasksCount} task{pendingTasksCount !== 1 ? 's' : ''} pending today
+              </span>
+            )}
+            {pendingWGoalsCount > 0 && (
+              <span style={{ fontSize: 12, color: '#B45309', fontWeight: 500 }}>
+                {pendingWGoalsCount} weekly goal{pendingWGoalsCount !== 1 ? 's' : ''} not done this week
+              </span>
+            )}
+          </div>
+          <a href="/tracker" style={{ fontSize: 11, color: '#FF5C00', fontWeight: 600, textDecoration: 'none', flexShrink: 0 }}>Open Tracker →</a>
+          <a href="/weekly" style={{ fontSize: 11, color: '#FF5C00', fontWeight: 600, textDecoration: 'none', flexShrink: 0, marginLeft: 8 }}>Open Weekly →</a>
+        </div>
+      )}
 
       <div style={{ padding: '20px 24px', maxWidth: 1100, display: 'flex', flexDirection: 'column', gap: 20 }}>
 
